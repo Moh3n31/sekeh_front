@@ -1,8 +1,9 @@
+import { BrowserRouter } from "react-router";
+import AllRoutes from "./presentation/AllRoutes";
 export default function App() {
-
-  return (
-    <>
-      
-    </>
-  )
+	return (
+		<BrowserRouter>
+			<AllRoutes />
+		</BrowserRouter>
+	);
 }

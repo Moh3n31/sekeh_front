@@ -1,0 +1,8 @@
+@import "tailwindcss";
+@import "./chat.css";
+
+@theme {
+	--color-grey-100: #d6d6d6;
+	--color-black: #1e1e1e;
+	--color-red: #ec5b50;
+}

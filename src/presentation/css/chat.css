@@ -1,0 +1,35 @@
+@layer components {
+	@keyframes rotateColors {
+		0% {
+			background-position: 0% 50%;
+		}
+		50% {
+			background-position: 100% 50%;
+		}
+		100% {
+			background-position: 0% 50%;
+		}
+	}
+
+	.chat-bg {
+		position: relative;
+		overflow: hidden;
+	}
+	.chat-bg:after {
+		content: "";
+		position: absolute;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100vh;
+		border-radius: 16px;
+		background: linear-gradient(
+				45deg,
+				rgba(51, 0, 255, 0.233) 0%,
+				rgba(255, 0, 0, 0.233) 100%
+			),
+			#ebebeb;
+		background-size: 400% 400%;
+		animation: rotateColors 10s ease infinite;
+	}
+}
