@@ -1,10 +1,6 @@
 import type { IconProps } from "../../services/types";
 
-export default function UserIcon({
-	className,
-	mainFill,
-	subFill,
-}: IconProps) {
+export default function UserIcon({ className }: IconProps) {
 	return (
 		<svg
 			height="35px"
@@ -20,15 +16,17 @@ export default function UserIcon({
 				strokeLinejoin="round"></g>
 			<g id="SVGRepo_iconCarrier">
 				{" "}
+				<circle
+					cx="12"
+					cy="6"
+					r="4"
+					stroke="#1C274C"
+					strokeWidth="1.5"></circle>{" "}
 				<path
-					className={mainFill ?? "fill-[#292D32]"}
-					opacity="0.4"
-					d="M12 12C14.7614 12 17 9.76142 17 7C17 4.23858 14.7614 2 12 2C9.23858 2 7 4.23858 7 7C7 9.76142 9.23858 12 12 12Z"
-					fill="#292D32"></path>{" "}
-				<path
-					className={subFill ?? "fill-[#292D32]"}
-					d="M12.0002 14.5C6.99015 14.5 2.91016 17.86 2.91016 22C2.91016 22.28 3.13016 22.5 3.41016 22.5H20.5901C20.8701 22.5 21.0901 22.28 21.0901 22C21.0901 17.86 17.0102 14.5 12.0002 14.5Z"
-					fill="#292D32"></path>{" "}
+					d="M19.9975 18C20 17.8358 20 17.669 20 17.5C20 15.0147 16.4183 13 12 13C7.58172 13 4 15.0147 4 17.5C4 19.9853 4 22 12 22C14.231 22 15.8398 21.8433 17 21.5634"
+					stroke="#1C274C"
+					strokeWidth="1.5"
+					strokeLinecap="round"></path>{" "}
 			</g>
 		</svg>
 	);

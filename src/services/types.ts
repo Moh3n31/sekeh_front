@@ -1,5 +1,4 @@
 export interface IconProps {
-  className?:string
-  mainFill?: string;
-  subFill?: string;
+	className?: string;
+	id?: string;
 }

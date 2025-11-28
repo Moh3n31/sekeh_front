@@ -2,7 +2,22 @@
 @import "./chat.css";
 
 @theme {
-	--color-grey-100: #d6d6d6;
+	--color-gray-2: #c1c1c1;
+	--color-gray-3: #868686;
 	--color-black: #1e1e1e;
-	--color-red: #ec5b50;
+	--color-red-1: #ec5b50;
+	--color-red-2: #d1493f;
+	--color-gold: #d0bc51;
+	
+	--color-gray-1: #d6d6d6;
+	--color-powder-blue: #9eadc8;
+	--color-light-green: #b9e28c;
+	--color-lemon-lime: #d6d84f;
+	--color-blackberry-cream: #4d2d52;
+	--color-midnight-violet: #1d1a31;
+
+	--shadow-message-input: -4px 4px 4px rgba(0, 0, 0, 0.05);
+	--shadow-main-port: 5px 5px 20px
+		color-mix(in srgb, #1e1e1e 20%, transparent 100%);
+		--shadow-nav-pointer :3px -3px 0px color-mix(in srgb, var(--color-blackberry-cream) 5%, transparent 100%);
 }
