@@ -16,7 +16,7 @@
 	--color-blackberry-cream: #4d2d52;
 	--color-midnight-violet: #1d1a31;
 
-	--shadow-message-input: -4px 4px 4px rgba(0, 0, 0, 0.05);
+	--shadow-message-input: -4px 4px 4px rgba(0, 0, 0, 0.09);
 	--shadow-main-port: 5px 5px 20px
 		color-mix(in srgb, #1e1e1e 20%, transparent 100%);
 		--shadow-nav-pointer :3px -3px 0px color-mix(in srgb, var(--color-blackberry-cream) 5%, transparent 100%);

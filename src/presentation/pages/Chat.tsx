@@ -12,17 +12,19 @@ import { useEffect, useRef, useState } from "react";
 // import { useApi } from "../components/hooks/useApi";
 import { useFetch } from "../components/hooks/useFetch";
 import { useMutation } from "../components/hooks/useMutation";
+import { useParams } from "react-router";
 
 export default function Chat() {
 	const [chatData, setChatData] = useState<string>("");
 	const textareaRef = useRef<HTMLTextAreaElement>(null);
+	const { chatId } = useParams();
 	const { data: messages, refetch } = useFetch<MessagesFetch>(
-		chatAPI.messages("1")
+		chatAPI.messages(chatId ?? "1")
 	);
 	const { mutate } = useMutation();
 
 	const handleSubmit = async () => {
-		await mutate(chatAPI.sendMessage("1", chatData))
+		await mutate(chatAPI.sendMessage(chatId ?? "1", chatData))
 			.then(() => {
 				setChatData("");
 				refetch();
@@ -44,7 +46,7 @@ export default function Chat() {
 			<div className="flex-1 relative pb-3 flex flex-col gap-7 overflow-y-scroll pr-2">
 				{messages &&
 					messages.messages.map((m) => (
-						<Message message={m} key={m.id} />
+						<Message message={m} key={m.message_id} />
 					))}
 			</div>
 
@@ -65,11 +67,11 @@ export default function Chat() {
 				/>
 				<button
 					type="submit"
-					className="size-12 pt-1 pr-0.5 bg-midnight-violet rounded-2xl outline-0 flex justify-center items-center
-					cursor-pointer active:size-11.5 active:ml-0.5 transition-all duration-100">
+					className="size-10 mb-0.5 pt-0.5 pr-0.5 bg-midnight-violet rounded-full outline-0 flex justify-center items-center
+					cursor-pointer active:shadow-message-input transition-all duration-100">
 					<SendIcon
 						id="sendIcon"
-						className="size-6 [&>g>path]:stroke-white"
+						className="size-5 [&>g>path]:stroke-white"
 					/>
 				</button>
 			</form>

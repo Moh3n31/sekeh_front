@@ -9,7 +9,7 @@ export default function AllRoutes() {
 		<Routes>
 			<Route path="/" element={<Main />}>
 				<Route index element={<Navigate to="chat" />} />
-				<Route path="chat" element={<Chat />} />
+				<Route path="chat/:chatId?" element={<Chat />} />
 				<Route path="marks" element={<Marks />} />
 				<Route path="profile" element={<Profile />} />
 			</Route>

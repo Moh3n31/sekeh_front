@@ -1,7 +1,7 @@
 import type { MutationArgs } from "../presentation/components/hooks/useMutation";
 
 interface MessageObject {
-	id: string;
+	message_id: string;
 	is_user: boolean;
 	time: string;
 	content: string;
@@ -22,7 +22,7 @@ interface ChatsFetch {
 const chatAPI = {
 	history: (userId: string) => `users/${userId}/chats`,
 	messages: (chatId: string) => `chats/${chatId}/messages`,
-	newChat: (userId: string) => ({
+	newChat: (userId: string): MutationArgs => ({
 		url: `users/${userId}/chats`,
 		options: { method: "POST", body: { title: "something" } },
 	}),
