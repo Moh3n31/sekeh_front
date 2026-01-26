@@ -1,5 +1,9 @@
 @import "tailwindcss";
 @import "./chat.css";
+@import "./pallet.css";
+@import "./components.css";
+
+@custom-variant dark (&: where(.dark, .dark *));
 
 @theme {
 	--color-gray-2: #c1c1c1;
@@ -8,7 +12,7 @@
 	--color-red-1: #ec5b50;
 	--color-red-2: #d1493f;
 	--color-gold: #d0bc51;
-	
+
 	--color-gray-1: #d6d6d6;
 	--color-powder-blue: #9eadc8;
 	--color-light-green: #b9e28c;
@@ -16,8 +20,25 @@
 	--color-blackberry-cream: #4d2d52;
 	--color-midnight-violet: #1d1a31;
 
+	--color-alice-blue: #ecf4f7;
+	--color-charcoal: #39404b;
+	--color-burgundy: #910023;
+
 	--shadow-message-input: -4px 4px 4px rgba(0, 0, 0, 0.09);
 	--shadow-main-port: 5px 5px 20px
 		color-mix(in srgb, #1e1e1e 20%, transparent 100%);
-		--shadow-nav-pointer :3px -3px 0px color-mix(in srgb, var(--color-blackberry-cream) 5%, transparent 100%);
+	--shadow-nav-pointer: 3px -3px 0px
+		color-mix(in srgb, var(--color-blackberry-cream) 5%, transparent 100%);
+		
+	--animate-slide-in-left: slideRight 0.3s ease-in-out;
+	--animate-slide-out-left: slideRight 0.3s reverse ease-in-out;
+}
+
+@keyframes slideRight {
+	0% {
+		transform: translateX(-100%);
+	}
+	100% {
+		transform: translateX(0);
+	}
 }
