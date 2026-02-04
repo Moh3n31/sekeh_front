@@ -1,9 +1,9 @@
 import { Link } from "react-router";
 import type { HistoryObject } from "../../../services/chat";
 import NewChatIcon from "../../../assets/icons/NewChatIcon";
-import BalloonIcon from "../../../assets/icons/BalloonIcon";
 import EditDialog from "../../chats/EditDialog";
 import DeleteDialog from "../../chats/DeleteDialog";
+import BinIcon from "../../../assets/icons/BinIcon";
 
 export default function HistoryCard({ card }: { card: HistoryObject }) {
 	return (
@@ -33,7 +33,7 @@ export default function HistoryCard({ card }: { card: HistoryObject }) {
 							popoverTarget="delete-dialog"
 							className="border-2 border-primary-red rounded-full hover:bg-primary-red transition-all duration-100 p-0.5 size-7 cursor-pointer
 						hover:*:[&>g>path]:stroke-white">
-							<BalloonIcon className="size-full [&>g>path]:stroke-primary-red" />
+							<BinIcon className="size-full [&>g>path]:stroke-primary-red" />
 						</button>
 					</div>
 					<p className="font-medium text-[12px] text-text-muted">{card.date}</p>

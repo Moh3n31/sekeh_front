@@ -1,7 +1,9 @@
 // Data & Services
-import BalloonIcon from "../../../assets/icons/BalloonIcon";
 import BookmarkIcon from "../../../assets/icons/BookmarkIcon";
 import CopyIcon from "../../../assets/icons/CopyIcon";
+import DislikeIcon from "../../../assets/icons/DislikeIcon";
+import LikeIcon from "../../../assets/icons/LikeIcon";
+import LoadingIcon from "../../../assets/icons/LoadingIcon";
 import type { MessageObject } from "../../../services/chat";
 interface MessageProps {
 	message: MessageObject;
@@ -28,8 +30,8 @@ export default function Message({ message, isPending }: MessageProps) {
 				<span
 					className={`size-6 shrink-0 rounded-full flex items-center justify-center 
 					${isPending ? "animate-spin" : ""}`}>
-					<BalloonIcon
-						className={isPending ? "size-6 rounded-full" : "hidden"}
+					<LoadingIcon
+						className={isPending ? "size-6 p-0 rounded-full [&>g>path]:stroke-text-muted" : "hidden"}
 					/>
 				</span>
 			)}
@@ -78,14 +80,14 @@ export default function Message({ message, isPending }: MessageProps) {
 							<button
 								onClick={handleLike}
 								className="size-7 p-1 border-2 border-transparent hover:border-border rounded-full transition-all duration-150 cursor-pointer">
-								<CopyIcon className="[&>g>path]:stroke-text-muted/60 size-full" />
+								<LikeIcon className="[&>g>path]:fill-text-muted/60 size-full" />
 							</button>
 						)}
 						{!message.is_user && (
 							<button
 								onClick={handleDislike}
 								className="size-7 p-1 border-2 border-transparent hover:border-border rounded-full transition-all duration-150 cursor-pointer">
-								<CopyIcon className="[&>g>path]:stroke-text-muted/60 size-full" />
+								<DislikeIcon className="[&>g>path]:fill-text-muted/60 size-full" />
 							</button>
 						)}
 					</menu>

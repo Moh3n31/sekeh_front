@@ -1,13 +1,10 @@
 // Hooks
 import { NavLink, useLocation } from "react-router"; //useNavigate, Link
-//Assets
-import BoxIcon from "../../assets/icons/BoxIcon";
-import ChatIcon from "../../assets/icons/ChatIcon";
-import UserIcon from "../../assets/icons/UserIcon";
-//Types & data
-import type { IconProps } from "../../services/types";
-import BalloonIcon from "../../assets/icons/BalloonIcon";
+//Components
 import LogoutDialog from "../profile/LogoutDialog";
+import LogoutIcon from "../../assets/icons/LogoutIcon";
+//Types & data
+import { menuItems } from "./navbarRouts";
 // import { chatAPI, type ChatsFetch } from "../../services/chat"; //newChat
 // import { useApi } from "../components/hooks/useApi";
 // import { useFetch } from "../components/hooks/useFetch";
@@ -16,11 +13,6 @@ import LogoutDialog from "../profile/LogoutDialog";
 // const fetchHistoryQuery = fetchHistory("1");
 // const newChatQuery = newChat("1");
 
-interface MenuItems {
-	path: string;
-	label: string;
-	icon: React.ComponentType<IconProps>;
-}
 export default function NavbarDesktop() {
 	// const { mutate } = useMutation();
 	// const navigate = useNavigate();
@@ -38,24 +30,6 @@ export default function NavbarDesktop() {
 	// 		})
 	// 		.catch((e) => console.log(e));
 	// };
-
-	const menuItems: MenuItems[] = [
-		{
-			label: "Profile",
-			path: "profile",
-			icon: UserIcon,
-		},
-		{
-			label: "Marked",
-			path: "marks",
-			icon: BoxIcon,
-		},
-		{
-			label: "Chats",
-			path: "chats",
-			icon: ChatIcon,
-		},
-	];
 
 	return (
 		<div className="px-2 pt-19 pb-10 w-45 flex flex-col justify-between h-full bg-background shrink-0 max-md:hidden">
@@ -93,7 +67,7 @@ export default function NavbarDesktop() {
 				popoverTarget="logout-dialog"
 				className="group cursor-pointer py-1 px-3 rounded-lg flex gap-7 items-center w-full
 			hover:bg-primary-action border-2 border-primary-action transition-all duration-150">
-				<BalloonIcon className="size-5 group-hover:[&>g>*]:stroke-background [&>g>*]:stroke-primary-action" />
+				<LogoutIcon className="size-5 group-hover:[&>g>path]:stroke-background [&>g>path]:stroke-primary-action" />
 				<span className="font-semibold group-hover:text-background text-primary-action">
 					Log out
 				</span>

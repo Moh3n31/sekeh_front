@@ -8,6 +8,7 @@ import Login from "./pages/Login";
 import AuthLayout from "./layout/AuthLayout";
 import EnterEmail from "./pages/EnterEmail";
 import Signup from "./pages/Signup";
+import ContactUs from "./pages/ContactUs";
 
 export default function AllRoutes() {
 	return (
@@ -23,6 +24,7 @@ export default function AllRoutes() {
 				<Route path="chats/:chatId" element={<Chat />} />
 				<Route path="marks" element={<Marks />} />
 				<Route path="profile" element={<Profile />} />
+				<Route path="contact-us" element={<ContactUs />} />
 			</Route>
 		</Routes>
 	);

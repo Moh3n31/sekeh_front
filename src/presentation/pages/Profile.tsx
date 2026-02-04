@@ -1,5 +1,6 @@
-import BalloonIcon from "../../assets/icons/BalloonIcon";
+import BinIcon from "../../assets/icons/BinIcon";
 import NewChatIcon from "../../assets/icons/NewChatIcon";
+import PasswordIcon from "../../assets/icons/PasswordIcon";
 import ChangePasswordDialog from "../profile/ChangePasswordDialog";
 import DeleteAcountDialog from "../profile/DeleteAcountDialog";
 import ProfileDialog from "../profile/ProfileDialog";
@@ -18,19 +19,23 @@ export default function Profile() {
 					<p className="text-white hidden group-hover:block pl-2">
 						Edit Profile
 					</p>
-					<NewChatIcon className="h-full group-hover:bg-primary-action transition-all duration-150
-					[&>g>path]:first:stroke-primary-action [&>g>path]:last:fill-primary-action" />
+					<NewChatIcon
+						className="h-full group-hover:bg-primary-action transition-all duration-150
+					[&>g>path]:first:stroke-primary-action [&>g>path]:last:fill-primary-action"
+					/>
 				</button>
 				<button
 					popoverTarget="change-password-dialog"
 					className="group border-2 border-primary-action rounded-full hover:bg-primary-action overflow-hidden
 					transition-all duration-150 p-2 h-10 w-10 hover:w-50 flex justify-between items-center
-					hover:*:[&>g>path]:first:stroke-white hover:*:[&>g>path]:last:fill-white">
+					hover:*:[&>g>path]:first:stroke-white hover:*:[&>g>path]:not-first:fill-white">
 					<p className="text-white hidden group-hover:block pl-2">
 						Change Password
 					</p>
-					<NewChatIcon className="h-full group-hover:bg-primary-action transition-all duration-150
-					[&>g>path]:first:stroke-primary-action [&>g>path]:last:fill-primary-action" />
+					<PasswordIcon
+						className="h-full group-hover:bg-primary-action transition-all duration-150
+					[&>g>path]:first:stroke-primary-action [&>g>path]:not-first:fill-primary-action"
+					/>
 				</button>
 				<button
 					popoverTarget="delete-acount-dialog"
@@ -40,8 +45,10 @@ export default function Profile() {
 					<p className="text-white hidden group-hover:block pl-2">
 						Delete Account
 					</p>
-					<BalloonIcon className="h-full group-hover:bg-primary-red transition-all duration-150
-					[&>g>path]:stroke-primary-red " />
+					<BinIcon
+						className="h-full group-hover:bg-primary-red transition-all duration-150
+					[&>g>path]:stroke-primary-red "
+					/>
 				</button>
 			</menu>
 

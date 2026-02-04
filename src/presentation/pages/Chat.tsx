@@ -23,9 +23,9 @@ export default function Chat() {
 		messages.slice(0, -1),
 	);
 	const [lastMessage, setLastMessage] = useState<MessageObject>(
-		messages[messages.length - 1],
+		messages[messages.length - 2],
 	);
-	const [isPending, setIsPending] = useState<boolean>(false);
+	const [isPending, setIsPending] = useState<boolean>(true);
 	const textareaRef = useRef<HTMLTextAreaElement>(null);
 	// const { chatId } = useParams();
 	// const { data: messages, refetch } = useFetch<MessagesFetch>(
