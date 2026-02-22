@@ -1,7 +1,8 @@
 import { useRef } from "react";
 import Dialog from "../components/shared/Dialog";
+import BinIcon from "../../assets/icons/BinIcon";
 
-export default function DeleteDialog({ id }: { id: string }) {
+export default function DeleteDialog({ id }: { id: number }) {
 	const cancelButton = useRef(null);
 
 	function handleDelete() {
@@ -14,6 +15,13 @@ export default function DeleteDialog({ id }: { id: string }) {
 
 	return (
 		<Dialog
+			trigger={
+				<div
+					className="border-2 border-primary-red rounded-full hover:bg-primary-red transition-all duration-100 p-0.5 size-7 cursor-pointer
+					hover:*:[&>g>path]:stroke-white">
+					<BinIcon className="size-full [&>g>path]:stroke-primary-red" />
+				</div>
+			}
 			id="delete-dialog"
 			title="Are you sure?"
 			footer={

@@ -1,11 +1,43 @@
 import { Link, useNavigate } from "react-router";
+import { useCustomMutation } from "../components/hooks/useCostumMutation";
+import { authAPI } from "../../services/authentication";
+import { useState } from "react";
+import LoadingIcon from "../../assets/icons/LoadingIcon";
+
+interface Form {
+	username: string;
+	password: string;
+	confirm: string;
+}
 
 export default function Signup() {
+	const [fomrData, setFormData] = useState<Form>({
+		username: "",
+		password: "",
+		confirm: "",
+	});
 	const navigate = useNavigate();
+	const { mutate, isPending } = useCustomMutation(authAPI.register);
 
-	function handleSubmit() {
-		navigate("/");
-	}
+	const handleSubmit = () => {
+		mutate(fomrData, {
+			onSuccess: () => navigate("/chat"),
+			onError: (err) => alert(err.message),
+		});
+	};
+
+	const validate = !!(
+		fomrData.username &&
+		fomrData.password &&
+		fomrData.confirm === fomrData.password
+	);
+
+	const handleChange = <K extends keyof Form>(key: K, value: Form[K]) => {
+		setFormData((prev) => ({
+			...prev,
+			[key]: value,
+		}));
+	};
 
 	return (
 		<div className="flex flex-col gap-10 justify-center h-full">
@@ -20,6 +52,8 @@ export default function Signup() {
 				<div className="flex flex-col gap-2">
 					<label className="font-semibold">Username</label>
 					<input
+						value={fomrData.username}
+						onChange={(e) => handleChange("username", e.target.value)}
 						className="px-2 border-2 border-border rounded-md h-10 placeholder:text-text-muted text-[16px]
             outline-0 focus:border-accent transition-all duration-150"
 					/>
@@ -27,6 +61,8 @@ export default function Signup() {
 				<div className="flex flex-col gap-2">
 					<label className="font-semibold">Password</label>
 					<input
+						value={fomrData.password}
+						onChange={(e) => handleChange("password", e.target.value)}
 						className="px-2 border-2 border-border rounded-md h-10 placeholder:text-text-muted text-[16px]
             outline-0 focus:border-accent transition-all duration-150"
 					/>
@@ -34,17 +70,21 @@ export default function Signup() {
 				<div className="flex flex-col gap-2">
 					<label className="font-semibold">Confirm Password</label>
 					<input
+						value={fomrData.confirm}
+						onChange={(e) => handleChange("confirm", e.target.value)}
 						className="px-2 border-2 border-border rounded-md h-10 placeholder:text-text-muted text-[16px]
             outline-0 focus:border-accent transition-all duration-150"
 					/>
 				</div>
 			</form>
 			<button
+				disabled={!validate}
 				type="submit"
 				form="login-form"
-				className="px-5 py-2 rounded-full bg-primary-action active:bg-primary-text
-        text-white cursor-pointer font-semibold text-xl transition-all duration-150">
-				Continue
+				className="px-5 h-12 rounded-full bg-primary-action active:bg-primary-text
+        text-white cursor-pointer font-semibold text-xl transition-all duration-150
+				disabled:pointer-events-none disabled:opacity-40 flex justify-center items-center">
+				{isPending ? <LoadingIcon color="background" className="animate-spin" /> : "Continue"}
 			</button>
 			<footer className="flex flex-col items-center">
 				<p className="text-primary-action">Already have an account?</p>

@@ -1,5 +1,6 @@
 import { useNavigate } from "react-router";
 import Dialog from "../components/shared/Dialog";
+import LogoutIcon from "../../assets/icons/LogoutIcon";
 
 export default function LogoutDialog() {
 	const navigate = useNavigate();
@@ -9,6 +10,16 @@ export default function LogoutDialog() {
 	}
 	return (
 		<Dialog
+			trigger={
+				<div
+					className="group cursor-pointer py-1 px-3 rounded-lg flex gap-7 items-center w-full
+					hover:bg-primary-action border-2 border-primary-action transition-all duration-150">
+					<LogoutIcon className="size-5 group-hover:[&>g>path]:stroke-background [&>g>path]:stroke-primary-action" />
+					<span className="font-semibold group-hover:text-background text-primary-action">
+						Log out
+					</span>
+				</div>
+			}
 			id="logout-dialog"
 			title="Leaving Already?"
 			footer={

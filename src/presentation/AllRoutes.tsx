@@ -6,7 +6,7 @@ import Profile from "./pages/Profile";
 import ChatHistory from "./pages/ChatHistory";
 import Login from "./pages/Login";
 import AuthLayout from "./layout/AuthLayout";
-import EnterEmail from "./pages/EnterEmail";
+// import EnterEmail from "./pages/EnterEmail";
 import Signup from "./pages/Signup";
 import ContactUs from "./pages/ContactUs";
 
@@ -15,7 +15,7 @@ export default function AllRoutes() {
 		<Routes>
 			<Route path="auth" element={<AuthLayout />}>
 				<Route path="login" element={<Login />} />
-				<Route path="enter-email" element={<EnterEmail />} />
+				{/* <Route path="enter-email" element={<EnterEmail />} /> */}
 				<Route path="signup" element={<Signup />} />
 			</Route>
 			<Route path="/" element={<Layout />}>

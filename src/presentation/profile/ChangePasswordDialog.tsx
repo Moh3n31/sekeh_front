@@ -1,8 +1,28 @@
+import PasswordIcon from "../../assets/icons/PasswordIcon";
 import Dialog from "../components/shared/Dialog";
 
 export default function ChangePasswordDialog() {
 	return (
 		<Dialog
+			trigger={
+				<div
+					className="group flex items-center justify-end h-10 w-10 hover:w-47
+					bg-surface hover:bg-primary-action border-2 border-primary-action rounded-full 
+					transition-all duration-200 ease-in-out overflow-hidden">
+					<div className="flex items-center justify-center gap-2 min-w-max px-2">
+						<span
+							className="max-w-0 opacity-0 group-hover:max-w-xs group-hover:opacity-100 
+							group-hover:pr-2 text-white transition-all duration-200 ease-in-out whitespace-nowrap font-medium">
+							Change Password
+						</span>
+						<PasswordIcon
+							className="w-5 h-5 transition-colors duration-200
+							[&>g>path]:first:stroke-primary-action [&>g>path]:not-first:fill-primary-action 
+							group-hover:[&>g>path]:first:stroke-white group-hover:[&>g>path]:not-first:fill-white"
+						/>
+					</div>
+				</div>
+			}
 			id="change-password-dialog"
 			title="Change Password"
 			footer={

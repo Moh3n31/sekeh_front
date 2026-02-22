@@ -1,22 +1,8 @@
-import type { MutationArgs } from "../presentation/components/hooks/useMutation";
-
 interface MessageObject {
 	message_id: string;
 	is_user: boolean;
 	time: string;
 	content: string;
-}
-interface MessagesFetch {
-	chat: ChatObject;
-	messages: MessageObject[];
-}
-
-interface ChatObject {
-	chat_id: string;
-	title: string;
-}
-interface ChatsFetch {
-	chats: ChatObject[];
 }
 interface HistoryObject {
 	id: string;
@@ -180,24 +166,31 @@ export const messages: MessageObject[] = [
 	},
 ];
 
+import { api, type ApiResponse } from "./api";
+
+interface ChatObject {
+	chat_id: number;
+	title: string;
+	date: string;
+	desc: string;
+}
+interface AllChatsReturn {
+	chats: ChatObject[];
+}
+interface ChatReturn {
+	chat: ChatObject;
+}
+
 const chatAPI = {
-	history: (userId: string) => `users/${userId}/chats`,
-	messages: (chatId: string) => `chats/${chatId}/messages`,
-	newChat: (userId: string): MutationArgs => ({
-		url: `users/${userId}/chats`,
-		options: { method: "POST", body: { title: "something" } },
-	}),
-	sendMessage: (chatId: string, content: string): MutationArgs => ({
-		url: `chats/${chatId}/messages`,
-		options: { method: "POST", body: { content: content } },
-	}),
+	chatHistory: () => api.get<ApiResponse<AllChatsReturn>>("/chats"),
+	newChat: () => api.post<ApiResponse<ChatReturn>>("/chats"),
+	deleteChat: (chat_id: string) =>
+		api.delete<ApiResponse<string>>("chats/" + chat_id),
+	editTitle: ({ chat_id, payload }: { chat_id: string; payload: string }) =>
+		api.patch<ApiResponse<ChatReturn>>(`chats/${chat_id}/title`, {
+			title: payload,
+		}),
 };
 
-export type {
-	MessageObject,
-	MessagesFetch,
-	ChatObject,
-	ChatsFetch,
-	HistoryObject,
-};
+export type { MessageObject, ChatObject };
 export { chatAPI };

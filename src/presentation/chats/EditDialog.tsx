@@ -1,8 +1,9 @@
 import { useRef, useState } from "react";
 import Dialog from "../components/shared/Dialog";
 import useToast from "../components/hooks/useToast";
+import NewChatIcon from "../../assets/icons/NewChatIcon";
 
-export default function EditDialog({ id }: { id: string }) {
+export default function EditDialog({ id }: { id: number }) {
 	const [formData, setFormData] = useState<string>("");
 	const cancelButton = useRef(null);
 	const popToast = useToast();
@@ -21,6 +22,13 @@ export default function EditDialog({ id }: { id: string }) {
 
 	return (
 		<Dialog
+			trigger={
+				<div
+					className="border-2 border-primary-action rounded-full hover:bg-primary-action transition-all duration-100 p-1 size-7 cursor-pointer
+					hover:*:[&>g>path]:first:stroke-white hover:*:[&>g>path]:last:fill-white">
+					<NewChatIcon className="size-full [&>g>path]:first:stroke-primary-action [&>g>path]:last:fill-primary-action" />
+				</div>
+			}
 			id="edit-dialog"
 			title="Edit Chat Title"
 			footer={
