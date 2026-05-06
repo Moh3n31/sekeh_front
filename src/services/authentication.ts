@@ -23,7 +23,7 @@ export const authAPI = {
 		api.post<ApiResponse<SignupReturn>>("/auth/register", payload),
 	login: (payload: AuthVariables) =>
 		api.post<ApiResponse<LoginReturn>>("/auth/login", payload),
-	logout: () => api.post<ApiResponse<string>>("auth/logout"),
+	logout: () => api.post<ApiResponse<string>>("/auth/logout"),
 };
 
 export type { AuthVariables };

@@ -10,7 +10,7 @@ interface Form {
 }
 
 export default function Login() {
-	const [fomrData, setFormData] = useState<Form>({
+	const [formData, setFormData] = useState<Form>({
 		username: "",
 		password: "",
 	});
@@ -18,9 +18,9 @@ export default function Login() {
 	const { mutate, isPending } = useCustomMutation(authAPI.login);
 
 	const handleSubmit = () => {
-		mutate(fomrData, {
+		mutate(formData, {
 			onSuccess: (res) => {
-				const { access_token, refresh_token } = res.data.data;
+				const { access_token, refresh_token } = res.data;
 				localStorage.setItem("access_token", access_token);
 				localStorage.setItem("refresh_token", refresh_token);
 
@@ -30,7 +30,7 @@ export default function Login() {
 		});
 	};
 
-	const validate = !!(fomrData.username && fomrData.password);
+	const validate = !!(formData.username && formData.password);
 
 	const handleChange = <K extends keyof Form>(key: K, value: Form[K]) => {
 		setFormData((prev) => ({
@@ -52,7 +52,7 @@ export default function Login() {
 				<div className="flex flex-col gap-2">
 					<label className="font-semibold">Username</label>
 					<input
-						value={fomrData.username}
+						value={formData.username}
 						onChange={(e) => handleChange("username", e.target.value)}
 						className="px-2 border-2 border-border rounded-md h-10 placeholder:text-text-muted text-[16px]
             outline-0 focus:border-accent transition-all duration-150"
@@ -62,7 +62,7 @@ export default function Login() {
 				<div className="flex flex-col gap-2">
 					<label className="font-semibold">Password</label>
 					<input
-						value={fomrData.password}
+						value={formData.password}
 						onChange={(e) => handleChange("password", e.target.value)}
 						className="px-2 border-2 border-border rounded-md h-10 placeholder:text-text-muted text-[16px]
             outline-0 focus:border-accent transition-all duration-150"
@@ -73,14 +73,11 @@ export default function Login() {
 				disabled={!validate}
 				type="submit"
 				form="login-form"
-				className="px-5 h-12 rounded-full bg-primary-action active:bg-primary-text
+				className={`px-5 h-12 rounded-full bg-primary-action active:bg-primary-text
 				text-white cursor-pointer font-semibold text-xl transition-all duration-150
-				disabled:pointer-events-none disabled:opacity-40 flex justify-center items-center">
-				{isPending ? (
-					<LoadingIcon color="background" className="animate-spin" />
-				) : (
-					"Login"
-				)}
+				disabled:pointer-events-none disabled:opacity-40 flex justify-center items-center
+				${isPending ? "pointer-events-none" : ""}`}>
+				{isPending ? <LoadingIcon color="white" /> : "Login"}
 			</button>
 			<footer className="flex flex-col items-center">
 				<p className="text-primary-action">Don't have an account?</p>

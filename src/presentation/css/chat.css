@@ -1,9 +1,0 @@
-@layer components {
-	.history-scrollbar {
-		@apply 
-    [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-track]:bg-transparent
-    [&::-webkit-scrollbar-thumb]:border-2! [&::-webkit-scrollbar-thumb]:border-powder-blue/90!
-    [&::-webkit-scrollbar-thumb]:bg-midnight-violet [&::-webkit-scrollbar-thumb]:rounded-full
-    [&::-webkit-scrollbar-thumb:hover]:bg-blackberry-cream;
-	}
-}

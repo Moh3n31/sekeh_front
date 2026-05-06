@@ -1,66 +1,54 @@
 //Data & Services
-import {
-	// chatAPI,
-	// sendMessage,
-	// 	type MessagesFetch,
-	messages,
-	type MessageObject,
-} from "../../services/chat";
+import { chatAPI } from "../../services/chat";
 // Components
 import { Link } from "react-router";
 import SendIcon from "../../assets/icons/SendIcon";
 import Message from "../components/shared/Message";
 // Hooks
+import { useChatStream } from "../components/hooks/useChatStream";
 import { useEffect, useRef, useState } from "react";
-// import { useApi } from "../components/hooks/useApi";
-// import { useFetch } from "../components/hooks/useFetch";
-// import { useMutation } from "../components/hooks/useMutation";
-// import { useParams } from "react-router";
+import { useParams } from "react-router";
+import { useCustomQuery } from "../components/hooks/useCostumQuery";
+import StopIcon from "../../assets/icons/StopIcon";
 
 export default function Chat() {
+	const { chatId } = useParams();
+
+	const { data } = useCustomQuery({
+		key: ["chatMessages", chatId],
+		func: () => chatAPI.allMessages(chatId ?? ""),
+	});
+	const history = data?.data.messages ?? [];
+	const [pendingUserMessage, setPendingUserMessage] = useState<string | null>(
+		null,
+	);
+
 	const [inputData, setInputData] = useState<string>("");
-	const [chatData, setChatData] = useState<MessageObject[]>(
-		messages.slice(0, -1),
-	);
-	const [lastMessage, setLastMessage] = useState<MessageObject>(
-		messages[messages.length - 1],
-	);
-	const [isPending, setIsPending] = useState<boolean>(false);
 	const textareaRef = useRef<HTMLTextAreaElement>(null);
-	// const { chatId } = useParams();
-	// const { data: messages, refetch } = useFetch<MessagesFetch>(
-	// 	chatAPI.messages(chatId ?? "1")
-	// );
-	// const { mutate } = useMutation();
+	const containerRef = useRef<HTMLDivElement | null>(null);
+	const bottomRef = useRef<HTMLDivElement | null>(null);
 
-	// const handleSubmit = async () => {
-	// 	await mutate(chatAPI.sendMessage(chatId ?? "1", inputData))
-	// 		.then(() => {
-	// 			setInputData("");
-	// 			refetch();
-	// 		})
-	// 		.catch((e) => console.log(e));
-	// };
+	const { sendMessage, abort, isPending, isStreaming, assistantStreamingText } =
+		useChatStream(chatId ?? "");
 
-	function handleSubmit() {
-		setChatData((prev) => {
-			const temp = [...prev];
-			temp.push(lastMessage);
-			return temp;
-		});
-		const payload: MessageObject = {
-			content: inputData,
-			is_user: true,
-			message_id: "new-message" + inputData,
-			time: "",
-		};
-		setIsPending(true);
-		setLastMessage(payload);
+	async function handleSubmit() {
+		const userContent = inputData.trim();
+		if (!userContent) return;
+
+		setPendingUserMessage(userContent);
 		setInputData("");
-		setTimeout(() => {
-			setIsPending(false);
-		}, 2000);
+
+		await sendMessage(userContent);
+
+		setPendingUserMessage(null);
 	}
+
+	useEffect(() => {
+		bottomRef.current?.scrollIntoView({
+			behavior: "smooth",
+			block: "end",
+		});
+	}, [data]); // UPDATE REQUIRED: also include another dep so that it gets called when submited as well.
 
 	useEffect(() => {
 		const el = textareaRef.current;
@@ -78,7 +66,6 @@ export default function Chat() {
 					to={".."}
 					className="group text-lg flex items-center justify-center gap-1 transition-all duration-150
 					border-2 border-primary-action rounded-lg px-3 py-0.5 hover:bg-primary-action bg-surface">
-					{/* <span className="font-bold text-lg text-primary-action">{"<"}</span> */}
 					<p
 						className="text-primary-action text-[14px] font-semibold
 					group-hover:text-surface transition-all duration-150">
@@ -87,10 +74,62 @@ export default function Chat() {
 				</Link>
 			</menu>
 
-			<div className="md:pt-10 max-md:pt-5 pb-5 flex flex-col gap-10 overflow-y-auto md:px-75 px-5 scrollbar-gray h-full">
-				{chatData &&
-					chatData.map((m) => <Message message={m} key={m.message_id} />)}
-				<Message message={lastMessage} isPending={isPending} />
+			<div
+				ref={containerRef}
+				className="md:pt-10 max-md:pt-5 pb-5 flex flex-col gap-10 overflow-y-auto md:px-[20%] px-5 scrollbar-gray h-full">
+				{history.length === 0 && !pendingUserMessage && (
+					<Message
+						message={{
+							message_id: "welcome-message",
+							role: "assistant",
+							content:
+								"سلام!\n\nمن **دستیار کاریابی هوشمند** شما هستم.\n\nرزومه خودت رو برام بفرست تا ببینم چی کار میتونم بکنم.",
+							time: new Date().toISOString(),
+						}}
+						isPending={false}
+					/>
+				)}
+
+				{history &&
+					history.map((m) => <Message message={m} key={m.message_id} />)}
+
+				{pendingUserMessage && (
+					<Message
+						message={{
+							message_id: "user-pending",
+							role: "user",
+							content: pendingUserMessage,
+							time: new Date().toISOString(),
+						}}
+						isPending={isPending}
+					/>
+				)}
+
+				{!isPending && isStreaming && !assistantStreamingText && (
+					<Message
+						message={{
+							message_id: "assistant-pending",
+							role: "assistant",
+							content: "بذار ببینم چی می‌تونم پیدا کنم...",
+							time: new Date().toISOString(),
+						}}
+						isPending={true}
+					/>
+				)}
+
+				{assistantStreamingText && (
+					<Message
+						message={{
+							message_id: "assistant-streaming",
+							role: "assistant",
+							content: assistantStreamingText,
+							time: new Date().toISOString(),
+						}}
+						isPending={isStreaming}
+					/>
+				)}
+
+				<div ref={bottomRef} />
 			</div>
 
 			<form
@@ -101,6 +140,12 @@ export default function Chat() {
 				className="md:mx-75 mx-5 mb-5 mt-2 rounded-xl shadow-lg shadow-border transition-all duration-150 bg-background
 				border-2 border-transparent has-focus:border-accent flex items-start gap-5 p-3">
 				<textarea
+					onKeyDown={(e) => {
+						if (e.key === "Enter" && !e.shiftKey) {
+							e.preventDefault();
+							handleSubmit();
+						}
+					}}
 					ref={textareaRef}
 					rows={1}
 					onChange={(e) => setInputData(e.target.value)}
@@ -110,13 +155,20 @@ export default function Chat() {
 					placeholder:font-medium placeholder:text-text-muted text-primary-text"
 				/>
 				<button
-					type="submit"
-					className=" bg-accent hover:bg-accent-hover rounded-full outline-0
-					cursor-pointer transition-all duration-150">
-					<SendIcon
-						id="sendIcon"
-						className="size-3.5 [&>g>path]:stroke-white mt-3 mb-2.5 mr-3 ml-2.5"
-					/>
+					type={isStreaming ? "button" : "submit"}
+					onClick={() => {
+						if (isStreaming) abort();
+					}}
+					className=" bg-accent hover:bg-accent-hover rounded-full outline-0 size-9 shrink-0
+						cursor-pointer transition-all duration-150 flex items-center justify-center">
+					{isStreaming ? (
+						<StopIcon className="size-4 [&>g>path]:stroke-2 [&>g>path]:stroke-white" />
+					) : (
+						<SendIcon
+							id="sendIcon"
+							className="size-4 [&>g>path]:stroke-white mt-0.5 mr-px"
+						/>
+					)}
 				</button>
 			</form>
 		</div>

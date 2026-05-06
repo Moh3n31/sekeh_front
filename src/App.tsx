@@ -6,7 +6,9 @@ export default function App() {
 	return (
 		<BrowserRouter>
 			<QueryClientProvider client={queryClient}>
-				<AllRoutes />
+				<div className="">
+					<AllRoutes />
+				</div>
 			</QueryClientProvider>
 		</BrowserRouter>
 	);

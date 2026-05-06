@@ -1,27 +1,23 @@
 import NewChatIcon from "../../assets/icons/NewChatIcon";
 import Dialog from "../components/shared/Dialog";
+import GrowableButton from "../components/shared/GrowableButton";
 
 export default function ProfileDialog() {
 	return (
 		<Dialog
 			trigger={
-				<div
-					className="group flex items-center justify-end h-10 w-10 hover:w-35
-					bg-surface hover:bg-primary-action border-2 border-primary-action rounded-full 
-					transition-all duration-200 ease-in-out overflow-hidden">
-					<div className="flex items-center justify-center gap-2 min-w-max px-2">
-						<span
-							className="max-w-0 opacity-0 group-hover:max-w-xs group-hover:opacity-100 
-							group-hover:pr-2 text-white transition-all duration-200 ease-in-out whitespace-nowrap font-medium">
-							Edit Profile
-						</span>
+				<GrowableButton
+					fullWidth="35"
+					variant="primary"
+					label="Edit Profile"
+					icon={
 						<NewChatIcon
 							className="w-5 h-5 transition-colors duration-200
 							[&>g>path]:first:stroke-primary-action [&>g>path]:last:fill-primary-action 
 							group-hover:[&>g>path]:first:stroke-white group-hover:[&>g>path]:last:fill-white"
 						/>
-					</div>
-				</div>
+					}
+				/>
 			}
 			id="profile-dialog"
 			title="Edit Profile"

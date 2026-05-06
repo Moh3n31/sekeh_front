@@ -16,7 +16,8 @@ export function useCustomQuery<T>({
 		queryFn: func,
 
 		retry: 1,
-		staleTime: 1000 * 60 * 5,
 		refetchOnWindowFocus: false,
+		staleTime: 1000 * 10,
+		refetchOnMount: true,
 	});
 }

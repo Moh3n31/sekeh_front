@@ -20,10 +20,13 @@ export default function Signup() {
 	const { mutate, isPending } = useCustomMutation(authAPI.register);
 
 	const handleSubmit = () => {
-		mutate(fomrData, {
-			onSuccess: () => navigate("/chat"),
-			onError: (err) => alert(err.message),
-		});
+		mutate(
+			{ password: fomrData.password, username: fomrData.username },
+			{
+				onSuccess: () => navigate("/chats"),
+				onError: (err) => alert(err.message),
+			},
+		);
 	};
 
 	const validate = !!(
@@ -81,10 +84,11 @@ export default function Signup() {
 				disabled={!validate}
 				type="submit"
 				form="login-form"
-				className="px-5 h-12 rounded-full bg-primary-action active:bg-primary-text
+				className={`px-5 h-12 rounded-full bg-primary-action active:bg-primary-text
         text-white cursor-pointer font-semibold text-xl transition-all duration-150
-				disabled:pointer-events-none disabled:opacity-40 flex justify-center items-center">
-				{isPending ? <LoadingIcon color="background" className="animate-spin" /> : "Continue"}
+				disabled:pointer-events-none disabled:opacity-40 flex justify-center items-center
+				${isPending ? "pointer-events-none" : ""}`}>
+				{isPending ? <LoadingIcon color="white" /> : "Continue"}
 			</button>
 			<footer className="flex flex-col items-center">
 				<p className="text-primary-action">Already have an account?</p>

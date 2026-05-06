@@ -6,6 +6,7 @@ interface DialogProps {
 	title: string;
 	children: ReactNode;
 	footer: ReactNode;
+	triggerClass?: string;
 }
 
 export default function Dialog({
@@ -14,10 +15,13 @@ export default function Dialog({
 	title,
 	children,
 	footer,
+	triggerClass,
 }: DialogProps) {
 	return (
 		<>
-			<button popoverTarget={id} className="inline-block cursor-pointer">
+			<button
+				popoverTarget={id}
+				className={`cursor-pointer ${triggerClass}`}>
 				{trigger}
 			</button>
 
@@ -40,9 +44,7 @@ export default function Dialog({
 
 					<main className="flex-1 overflow-y-auto p-5">{children}</main>
 
-					<footer className="p-5 flex justify-end gap-3">
-						{footer}
-					</footer>
+					<footer className="p-5 flex justify-end gap-3">{footer}</footer>
 				</div>
 			</div>
 		</>

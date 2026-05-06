@@ -1,23 +1,33 @@
 import { useRef, useState } from "react";
 import Dialog from "../components/shared/Dialog";
-import useToast from "../components/hooks/useToast";
 import NewChatIcon from "../../assets/icons/NewChatIcon";
+import { useCustomMutation } from "../components/hooks/useCostumMutation";
+import { chatAPI } from "../../services/chat";
+import LoadingIcon from "../../assets/icons/LoadingIcon";
+import { useQueryClient } from "@tanstack/react-query";
 
 export default function EditDialog({ id }: { id: number }) {
+	const { mutate, isPending } = useCustomMutation(chatAPI.editTitle);
+	const queryClient = useQueryClient();
 	const [formData, setFormData] = useState<string>("");
 	const cancelButton = useRef(null);
-	const popToast = useToast();
 
 	function handleEdit() {
-		const payload = { id: id, title: formData };
-		console.log("Edited: ", payload);
+		mutate(
+			{ chat_id: id, payload: formData },
+			{
+				onSuccess: () => {
+					console.log("Deleted: ", id);
+					if (cancelButton.current) {
+						const btn = cancelButton.current as HTMLButtonElement;
+						btn.click();
+					}
 
-		popToast({ id: "1", message: "message", type: "success" });
-
-		if (cancelButton.current) {
-			const btn = cancelButton.current as HTMLButtonElement;
-			btn.click();
-		}
+					queryClient.invalidateQueries({ queryKey: ["chatHistory"] });
+				},
+				onError: (err) => alert(err.message),
+			},
+		);
 	}
 
 	return (
@@ -36,9 +46,13 @@ export default function EditDialog({ id }: { id: number }) {
 					<button
 						type="submit"
 						form="edit-chat-form"
-						className="py-1 px-3 border-2 border-accent text-accent rounded-md font-semibold cursor-pointer
-              hover:bg-accent hover:text-white transition-all duration-150">
-						Submit
+						className={`py-1 px-3 border-2 border-accent text-accent rounded-md font-semibold cursor-pointer
+            hover:bg-accent hover:text-white transition-all duration-150 w-20 flex items-center justify-center ${isPending ? "pointer-events-none" : ""}`}>
+						{isPending ? (
+							<LoadingIcon className={`[&>g>path]:stroke-accent!`} />
+						) : (
+							"Submit"
+						)}
 					</button>
 					<button
 						ref={cancelButton}

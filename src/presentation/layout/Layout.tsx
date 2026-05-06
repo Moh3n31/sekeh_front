@@ -11,7 +11,7 @@ export default function Layout() {
 					<NavbarMobile />
 					<div className="flex items-center justify-start gap-2">
 						<span className="size-7 rounded-full border-5 border-accent-hover"></span>
-						<p className="font-semibold text-4xl text-accent-hover -mt-1">Sekeh</p>
+						<p className="font-semibold text-4xl text-accent-hover -mt-1">Job Assistant</p>
 					</div>
 				</header>
 				<main className="overflow-hidden">
