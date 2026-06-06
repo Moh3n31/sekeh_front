@@ -1,5 +1,5 @@
-import type { ToastProps } from "../shared/Toast";
-import Toast from "../shared/Toast";
+import type { ToastProps } from "../shared/ToastContainet";
+import Toast from "../shared/ToastContainet";
 
 function popToast({ id, message, type }: ToastProps) {
 	const container = document.getElementById("main-container");

@@ -1,4 +1,5 @@
 import axios from "axios";
+import { toast } from "./toast";
 
 interface ApiResponse<T> {
 	status: "200" | "201";
@@ -49,19 +50,36 @@ api.interceptors.response.use(
 
 			try {
 				const refreshResponse = await getNewToken();
+
 				const { accessToken, refreshToken } = refreshResponse.data;
 
 				localStorage.setItem("access_token", accessToken);
+
 				localStorage.setItem("refresh_token", refreshToken);
 
 				originalRequest.headers.Authorization = `Bearer ${accessToken}`;
+
 				return api(originalRequest);
 			} catch (err) {
 				localStorage.clear();
-				window.location.href = "/auth/login";
+
+				toast.error("Your session has expired. Please sign in again.");
+
+				setTimeout(() => {
+					window.location.href = "/auth/login";
+				}, 1000);
+
 				return Promise.reject(err);
 			}
 		}
+
+		const message =
+			error.response?.data?.message ||
+			error.response?.data?.error ||
+			"Something went wrong. Please try again.";
+
+		toast.error(message);
+
 		return Promise.reject(error);
 	},
 );

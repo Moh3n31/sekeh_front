@@ -15,6 +15,7 @@ export default function ChatHistory() {
 			<menu className="absolute top-25 right-5 flex flex-col items-end gap-3 z-3">
 				<NewChatDialog />
 			</menu>
+
 			{isPending || (data?.data && data?.data?.chats.length !== 0) ? (
 				<main className="grid grid-cols-5 max-[1100px]:grid-cols-3 max-md:grid-cols-1 gap-5 ">
 					{isPending
