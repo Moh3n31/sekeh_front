@@ -39,30 +39,27 @@ export default function EditDialog({ id }: { id: number }) {
 					<NewChatIcon className="size-full [&>g>path]:first:stroke-primary-action [&>g>path]:last:fill-primary-action" />
 				</div>
 			}
-			id="edit-dialog"
 			title="Edit Chat Title"
 			footer={
-				<>
-					<button
-						type="submit"
-						form="edit-chat-form"
-						className={`py-1 px-3 border-2 border-accent text-accent rounded-md font-semibold cursor-pointer
+				<button
+					type="submit"
+					form="edit-chat-form"
+					className={`py-1 px-3 border-2 border-accent text-accent rounded-md font-semibold cursor-pointer
             hover:bg-accent hover:text-white transition-all duration-150 w-20 flex items-center justify-center ${isPending ? "pointer-events-none" : ""}`}>
-						{isPending ? (
-							<LoadingIcon className={`[&>g>path]:stroke-accent!`} />
-						) : (
-							"Submit"
-						)}
-					</button>
-					<button
-						ref={cancelButton}
-						popoverTarget="edit-dialog"
-						popoverTargetAction="hide"
-						className="py-1 px-3 border-2 border-primary-action text-primary-action rounded-md font-semibold cursor-pointer
-              hover:bg-primary-action hover:text-white transition-all duration-150">
-						Cancel
-					</button>
-				</>
+					{isPending ? (
+						<LoadingIcon className={`[&>g>path]:stroke-accent!`} />
+					) : (
+						"Submit"
+					)}
+				</button>
+			}
+			closeButton={
+				<button
+					ref={cancelButton}
+					className="py-1 px-3 border-2 border-primary-action text-primary-action rounded-md font-semibold cursor-pointer
+          hover:bg-primary-action hover:text-white transition-all duration-150">
+					Cancel
+				</button>
 			}>
 			<form
 				onSubmit={(e) => {

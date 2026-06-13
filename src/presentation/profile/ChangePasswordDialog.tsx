@@ -19,23 +19,20 @@ export default function ChangePasswordDialog() {
 					}
 				/>
 			}
-			id="change-password-dialog"
 			title="Change Password"
 			footer={
-				<>
-					<button
-						className="py-1 px-3 border-2 border-accent text-accent rounded-md font-semibold cursor-pointer
-                hover:bg-accent hover:text-white transition-all duration-150">
-						Submit
-					</button>
-					<button
-						popoverTarget="change-password-dialog"
-						popoverTargetAction="hide"
-						className="py-1 px-3 border-2 border-primary-action text-primary-action rounded-md font-semibold cursor-pointer
-                hover:bg-primary-action hover:text-white transition-all duration-150">
-						Cancel
-					</button>
-				</>
+				<button
+					className="py-1 px-3 border-2 border-accent text-accent rounded-md font-semibold cursor-pointer
+					hover:bg-accent hover:text-white transition-all duration-150">
+					Submit
+				</button>
+			}
+			closeButton={
+				<button
+					className="py-1 px-3 border-2 border-primary-action text-primary-action rounded-md font-semibold cursor-pointer
+					hover:bg-primary-action hover:text-white transition-all duration-150">
+					Cancel
+				</button>
 			}>
 			<div className="flex flex-col items-center gap-5 w-80">
 				<div className="flex flex-col gap-2 w-full">

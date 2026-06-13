@@ -19,23 +19,20 @@ export default function ProfileDialog() {
 					}
 				/>
 			}
-			id="profile-dialog"
 			title="Edit Profile"
 			footer={
-				<>
-					<button
-						className="py-1 px-3 border-2 border-accent text-accent rounded-md font-semibold cursor-pointer
+				<button
+					className="py-1 px-3 border-2 border-accent text-accent rounded-md font-semibold cursor-pointer
                 hover:bg-accent hover:text-white transition-all duration-150">
-						Submit
-					</button>
-					<button
-						popoverTarget="profile-dialog"
-						popoverTargetAction="hide"
-						className="py-1 px-3 border-2 border-primary-action text-primary-action rounded-md font-semibold cursor-pointer
+					Submit
+				</button>
+			}
+			closeButton={
+				<button
+					className="py-1 px-3 border-2 border-primary-action text-primary-action rounded-md font-semibold cursor-pointer
                 hover:bg-primary-action hover:text-white transition-all duration-150">
-						Cancel
-					</button>
-				</>
+					Cancel
+				</button>
 			}>
 			<div className="flex flex-col items-center gap-10">
 				<section className="relative w-fit">

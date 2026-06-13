@@ -46,28 +46,27 @@ export default function NewChatDialog() {
 			}
 		/>
 		// 	}
-		// 	id="new-chat-dialog"
 		// 	title="Enter A Title"
 		// 	footer={
-		// 		<>
-		// 			<button
-		// 				type="submit"
-		// 				form="new-chat-form"
-		// 				className={`w-20 py-1 px-3 border-2 border-accent text-accent rounded-md font-semibold cursor-pointer
-		//         hover:bg-accent hover:text-white transition-all duration-150 flex justify-center items-center
-		// 				${isPending ? "pointer-events-none" : ""}`}>
-		// 				{isPending ? <LoadingIcon color="accent" /> : "Submit"}
-		// 			</button>
-		// 			<button
-		// 				ref={cancelButton}
-		// 				popoverTarget="new-chat-dialog"
-		// 				popoverTargetAction="hide"
-		// 				className="py-1 px-3 border-2 border-primary-action text-primary-action rounded-md font-semibold cursor-pointer
-		//           hover:bg-primary-action hover:text-white transition-all duration-150">
-		// 				Cancel
-		// 			</button>
-		// 		</>
-		// 	}>
+		// 		<button
+		// 			type="submit"
+		// 			form="new-chat-form"
+		// 			className={`w-20 py-1 px-3 border-2 border-accent text-accent rounded-md font-semibold cursor-pointer
+		//      hover:bg-accent hover:text-white transition-all duration-150 flex justify-center items-center
+		// 			${isPending ? "pointer-events-none" : ""}`}>
+		// 			{isPending ? <LoadingIcon color="accent" /> : "Submit"}
+		// 		</button>
+		// 	}
+		// closeButton={
+		// 		<button
+		// 			ref={cancelButton}
+		// 			popoverTarget="new-chat-dialog"
+		// 			popoverTargetAction="hide"
+		// 			className="py-1 px-3 border-2 border-primary-action text-primary-action rounded-md font-semibold cursor-pointer
+		//      hover:bg-primary-action hover:text-white transition-all duration-150">
+		// 			Cancel
+		// 		</button>
+		// }>
 		// 	<form
 		// 		id="new-chat-form"
 		// 		onSubmit={(e) => {
