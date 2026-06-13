@@ -1,181 +1,218 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useCallback } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 
 type MetaEvent = {
-	chat: { chat_id: number; title: string };
-	user_message_id: number;
-	type: "chat" | "analyze" | "error";
-	title_changed: boolean;
+  chat: { chat_id: number; title: string };
+  user_message_id: number;
+  type: "chat" | "analyze" | "error";
+  title_changed: boolean;
 };
 
-type DeltaEvent = { text: string };
+type ContentEvent = { delta: string };
+
+export type Job = {
+  title: string;
+  company_name: string;
+  match_percent: number;
+  requirements: string[];
+  job_url: string;
+  source_site: string;
+  company_reviews: { score: number; count: number };
+};
+
+type JobsEvent = { items: Job[] };
 type DoneEvent = { bot_message_id: number };
 type StreamErrorEvent = { message: string };
 
 type SSEEvent =
-	| { event: "meta"; data: MetaEvent }
-	| { event: "delta"; data: DeltaEvent }
-	| { event: "done"; data: DoneEvent }
-	| { event: "error"; data: StreamErrorEvent };
+  | { event: "meta"; data: MetaEvent }
+  | { event: "content"; data: ContentEvent }
+  | { event: "jobs"; data: JobsEvent }
+  | { event: "done"; data: DoneEvent }
+  | { event: "error"; data: StreamErrorEvent };
 
 interface UseChatStreamReturn {
-	sendMessage: (content: string) => Promise<void>;
-	abort: () => void;
-	isPending: boolean;
-	isStreaming: boolean;
-	streamError: string | null;
-	assistantStreamingText: string;
+  sendMessage: (content: string) => Promise<void>;
+  abort: () => void;
+  isPending: boolean;
+  isStreaming: boolean;
+  streamError: string | null;
+  assistantStreamingText: string;
+  jobs: Job[];
 }
 
 export function useChatStream(id: number | string): UseChatStreamReturn {
-	const queryClient = useQueryClient();
+  const queryClient = useQueryClient();
 
-	const [isPending, setIsPending] = useState(false);
-	const [isStreaming, setIsStreaming] = useState(false);
-	const [streamError, setStreamError] = useState<string | null>(null);
-	const [assistantStreamingText, setAssistantStreamingText] = useState("");
+  const [isPending, setIsPending] = useState(false);
+  const [isStreaming, setIsStreaming] = useState(false);
+  const [streamError, setStreamError] = useState<string | null>(null);
+  const [assistantStreamingText, setAssistantStreamingText] = useState("");
+  const [jobs, setJobs] = useState<Job[]>([]);
 
-	const controllerRef = useRef<AbortController | null>(null);
-	const hasStartedStreamingRef = useRef(false);
+  const controllerRef = useRef<AbortController | null>(null);
+  const readerRef = useRef<ReadableStreamDefaultReader<Uint8Array> | null>(null);
 
-	const abort = () => {
-		controllerRef.current?.abort();
-		setIsStreaming(false);
-		setIsPending(false);
-		setAssistantStreamingText("");
-		hasStartedStreamingRef.current = false;
-	};
+  const resetState = useCallback((clearText = false) => {
+    setIsStreaming(false);
+    setIsPending(false);
+    if (clearText) {
+      setAssistantStreamingText("");
+      setJobs([]);
+    }
+  }, []);
 
-	const sendMessage = async (content: string) => {
-		if (!content.trim()) return;
+  const abort = useCallback(() => {
+    readerRef.current?.cancel();
+    readerRef.current = null;
+    controllerRef.current?.abort();
+    controllerRef.current = null;
+    resetState(true);
+  }, [resetState]);
 
-		abort(); // cancel any previous stream
+  const sendMessage = async (content: string) => {
+    if (!content.trim()) return;
 
-		setIsPending(true);
-		setStreamError(null);
-		setAssistantStreamingText("");
+    // Cancel any in-flight stream before starting a new one
+    if (controllerRef.current) {
+      readerRef.current?.cancel();
+      readerRef.current = null;
+      controllerRef.current.abort();
+      controllerRef.current = null;
+    }
 
-		const controller = new AbortController();
-		controllerRef.current = controller;
+    setIsPending(true);
+    setStreamError(null);
+    setAssistantStreamingText("");
+    setJobs([]);
 
-		try {
-			const res = await fetch(
-				`${import.meta.env.VITE_API_URL}api/chats/${id}/messages`,
-				{
-					method: "POST",
-					headers: {
-						Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-						"Content-Type": "application/json",
-						Accept: "text/event-stream",
-					},
-					body: JSON.stringify({ content }),
-					signal: controller.signal,
-				},
-			);
+    const controller = new AbortController();
+    controllerRef.current = controller;
 
-			if (!res.ok) {
-				const errorJson = await res.json();
-				throw new Error(errorJson.error || "Failed to send message");
-			}
+    try {
+      const res = await fetch(
+        `${import.meta.env.VITE_API_URL}api/chats/${id}/messages`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+            "Content-Type": "application/json",
+            Accept: "text/event-stream",
+          },
+          body: JSON.stringify({ content }),
+          signal: controller.signal,
+        }
+      );
 
-			if (!res.body) throw new Error("No response body");
+      if (!res.ok) {
+        const errorJson = await res.json();
+        throw new Error(errorJson.error || "Failed to send message");
+      }
 
-			setIsPending(false);
-			setIsStreaming(true);
+      if (!res.body) throw new Error("No response body");
 
-			const reader = res.body.getReader();
-			const decoder = new TextDecoder();
-			let buffer = "";
+      setIsPending(false);
+      setIsStreaming(true);
 
-			while (true) {
-				const { value, done } = await reader.read();
-				if (done) break;
+      const reader = res.body.getReader();
+      readerRef.current = reader;
+      const decoder = new TextDecoder();
+      let buffer = "";
 
-				buffer += decoder.decode(value, { stream: true });
+      try {
+        while (true) {
+          const { value, done } = await reader.read();
 
-				const events = buffer.split("\n\n");
-				buffer = events.pop() || "";
+          if (done) {
+            // Flush any remaining bytes in the decoder
+            buffer += decoder.decode(undefined, { stream: false });
+            break;
+          }
 
-				for (const raw of events) {
-					const lines = raw.split("\n");
-					let eventType = "";
-					let dataStr = "";
+          buffer += decoder.decode(value, { stream: true });
 
-					for (const line of lines) {
-						if (line.startsWith("event:")) {
-							eventType = line.slice(6).trim();
-						}
-						if (line.startsWith("data:")) {
-							dataStr += line.slice(5) + "\n";
-						}
-					}
+          const events = buffer.split("\n\n");
+          buffer = events.pop() ?? "";
 
-					if (!eventType || !dataStr) continue;
+          for (const raw of events) {
+            const lines = raw.split("\n");
+            let eventType = "";
+            let dataStr = "";
 
-					let parsed: any;
-					try {
-						parsed = JSON.parse(dataStr);
-					} catch {
-						// reset buffer on malformed JSON
-						continue;
-					}
+            for (const line of lines) {
+              if (line.startsWith("event:")) {
+                eventType = line.slice(6).trim();
+              } else if (line.startsWith("data:")) {
+                dataStr += line.slice(5);
+              }
+            }
 
-					switch (eventType) {
-						case "meta": {
-							// meta event received before streaming starts
-							break;
-						}
+            if (!eventType || !dataStr) continue;
 
-						case "content": {
-							const delta: DeltaEvent = parsed;
+            let parsed: unknown;
+            try {
+              parsed = JSON.parse(dataStr.trim());
+            } catch {
+              continue;
+            }
 
-							if (!hasStartedStreamingRef.current) {
-								hasStartedStreamingRef.current = true;
-							}
+            switch (eventType) {
+              case "meta": {
+                // Available for consumers who need chat metadata (e.g. title changes)
+                break;
+              }
 
-							setAssistantStreamingText((prev) => prev + delta.text);
-							break;
-						}
+              case "content": {
+                // Payload shape: { delta: "..." }
+                const { delta } = parsed as ContentEvent;
+                setAssistantStreamingText((prev) => prev + delta);
+                break;
+              }
 
-						case "done": {
-							setIsStreaming(false);
-							hasStartedStreamingRef.current = false;
+              case "jobs": {
+                // Arrives once before/after the content stream with matched listings
+                const { items } = parsed as JobsEvent;
+                setJobs(items);
+                break;
+              }
 
-							queryClient.invalidateQueries({ queryKey: ["chatMessages", id] });
+              case "done": {
+                setAssistantStreamingText("");
+                resetState(false);
+                queryClient.invalidateQueries({ queryKey: ["chatMessages", id] });
+                break;
+              }
 
-							break;
-						}
+              case "error": {
+                const err = parsed as StreamErrorEvent;
+                setStreamError(err.message);
+                resetState(true);
+                break;
+              }
+            }
+          }
+        }
+      } finally {
+        readerRef.current = null;
+      }
 
-						case "error": {
-							const err: StreamErrorEvent = parsed;
-							setStreamError(err.message);
-							setIsStreaming(false);
-							hasStartedStreamingRef.current = false;
-							break;
-						}
-					}
-				}
-			}
+      resetState(false);
+    } catch (err: unknown) {
+      if (err instanceof Error && err.name === "AbortError") return;
 
-			setIsStreaming(false);
-			hasStartedStreamingRef.current = false;
-		} catch (err: any) {
-			if (err.name === "AbortError") return;
+      const message = err instanceof Error ? err.message : "Stream failed";
+      setStreamError(message);
+      resetState(true);
+    }
+  };
 
-			setStreamError(err.message || "Stream failed");
-			setIsPending(false);
-			setIsStreaming(false);
-			hasStartedStreamingRef.current = false;
-			setAssistantStreamingText("");
-		}
-	};
-
-	return {
-		sendMessage,
-		abort,
-		isPending,
-		isStreaming,
-		streamError,
-		assistantStreamingText,
-	};
+  return {
+    sendMessage,
+    abort,
+    isPending,
+    isStreaming,
+    streamError,
+    assistantStreamingText,
+    jobs,
+  };
 }

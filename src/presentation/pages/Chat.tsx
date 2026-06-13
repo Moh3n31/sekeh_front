@@ -4,6 +4,7 @@ import { chatAPI } from "../../services/chat";
 import { Link } from "react-router";
 import SendIcon from "../../assets/icons/SendIcon";
 import Message from "../components/shared/Message";
+import JobCard from "../components/shared/JobCard";
 // Hooks
 import { useChatStream } from "../components/hooks/useChatStream";
 import { useEffect, useRef, useState } from "react";
@@ -28,8 +29,14 @@ export default function Chat() {
 	const containerRef = useRef<HTMLDivElement | null>(null);
 	const bottomRef = useRef<HTMLDivElement | null>(null);
 
-	const { sendMessage, abort, isPending, isStreaming, assistantStreamingText } =
-		useChatStream(chatId ?? "");
+	const {
+		sendMessage,
+		abort,
+		isPending,
+		isStreaming,
+		assistantStreamingText,
+		jobs,
+	} = useChatStream(chatId ?? "");
 
 	async function handleSubmit() {
 		const userContent = inputData.trim();
@@ -43,12 +50,13 @@ export default function Chat() {
 		setPendingUserMessage(null);
 	}
 
+	// Scroll to bottom whenever any visible content changes
 	useEffect(() => {
 		bottomRef.current?.scrollIntoView({
 			behavior: "smooth",
 			block: "end",
 		});
-	}, [data]); // UPDATE REQUIRED: also include another dep so that it gets called when submited as well.
+	}, [data, pendingUserMessage, assistantStreamingText, jobs]);
 
 	useEffect(() => {
 		const el = textareaRef.current;
@@ -58,6 +66,8 @@ export default function Chat() {
 		const maxHeight = parseFloat(getComputedStyle(el).lineHeight) * 5;
 		el.style.height = Math.min(el.scrollHeight, maxHeight) + "px";
 	}, [inputData]);
+
+	const showJobs = jobs.length > 0 && !isStreaming && !isPending;
 
 	return (
 		<div className="flex flex-col relative h-full">
@@ -90,8 +100,9 @@ export default function Chat() {
 					/>
 				)}
 
-				{history &&
-					history.map((m) => <Message message={m} key={m.message_id} />)}
+				{history.map((m) => (
+					<Message message={m} key={m.message_id} isPending={false} />
+				))}
 
 				{pendingUserMessage && (
 					<Message
@@ -105,7 +116,8 @@ export default function Chat() {
 					/>
 				)}
 
-				{!isPending && isStreaming && !assistantStreamingText && (
+				{/* Thinking placeholder: waiting for the first content chunk */}
+				{isPending || (isStreaming && !assistantStreamingText) ? (
 					<Message
 						message={{
 							message_id: "assistant-pending",
@@ -115,8 +127,9 @@ export default function Chat() {
 						}}
 						isPending={true}
 					/>
-				)}
+				) : null}
 
+				{/* Live streaming text */}
 				{assistantStreamingText && (
 					<Message
 						message={{
@@ -127,6 +140,20 @@ export default function Chat() {
 						}}
 						isPending={isStreaming}
 					/>
+				)}
+
+				{/* Job results — shown after streaming finishes */}
+				{showJobs && (
+					<div className="flex flex-col gap-3">
+						<p className="text-sm font-semibold text-text-muted">
+							{jobs.length} موقعیت شغلی پیدا شد
+						</p>
+						<div className="grid grid-cols-1 gap-4">
+							{jobs.map((job) => (
+								<JobCard key={job.job_url} {...job} />
+							))}
+						</div>
+					</div>
 				)}
 
 				<div ref={bottomRef} />
@@ -159,7 +186,7 @@ export default function Chat() {
 					onClick={() => {
 						if (isStreaming) abort();
 					}}
-					className=" bg-accent hover:bg-accent-hover rounded-full outline-0 size-9 shrink-0
+					className="bg-accent hover:bg-accent-hover rounded-full outline-0 size-9 shrink-0
 						cursor-pointer transition-all duration-150 flex items-center justify-center">
 					{isStreaming ? (
 						<StopIcon className="size-4 [&>g>path]:stroke-2 [&>g>path]:stroke-white" />
