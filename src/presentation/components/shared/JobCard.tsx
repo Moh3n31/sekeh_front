@@ -1,15 +1,9 @@
 import { useState } from "react";
 import BookmarkIcon from "../../../assets/icons/BookmarkIcon";
 import MatchCircle from "./MatchCircle";
+import type { Job } from "../hooks/useChatStream";
 
-interface JobCardProps {
-	title: string;
-	company_name: string;
-	match_percent: number;
-	requirements: string[];
-	job_url: string;
-	source_site: string;
-	company_reviews: { score: number; count: number };
+interface JobCardProps extends Job {
 	bookmarked?: boolean;
 }
 
@@ -70,7 +64,11 @@ interface DetailsViewProps {
 	company_reviews: { score: number; count: number };
 }
 
-function DetailsView({ company_name, source_site, company_reviews }: DetailsViewProps) {
+function DetailsView({
+	company_name,
+	source_site,
+	company_reviews,
+}: DetailsViewProps) {
 	return (
 		<div className="flex flex-col gap-1.5 h-full">
 			<h3 className="text-lg font-medium text-text-muted">Details:</h3>
@@ -105,7 +103,13 @@ interface OverViewProps {
 	source_site: string;
 }
 
-function OverView({ title, match_percent, requirements, company_name, source_site }: OverViewProps) {
+function OverView({
+	title,
+	match_percent,
+	requirements,
+	company_name,
+	source_site,
+}: OverViewProps) {
 	return (
 		<div className="flex flex-col h-full justify-between gap-2.5">
 			<div className="flex items-center gap-4">

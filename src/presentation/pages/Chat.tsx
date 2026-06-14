@@ -101,7 +101,10 @@ export default function Chat() {
 				)}
 
 				{history.map((m) => (
-					<Message message={m} key={m.message_id} isPending={false} />
+					<>
+						<Message message={m} key={m.message_id} isPending={false} />
+						{m.job_cards && m.job_cards.map((j) => <JobCard {...j} />)}
+					</>
 				))}
 
 				{pendingUserMessage && (
