@@ -2,12 +2,15 @@ import { useState } from "react";
 import BookmarkIcon from "../../../assets/icons/BookmarkIcon";
 import MatchCircle from "./MatchCircle";
 import type { Job } from "../hooks/useChatStream";
+import { useCustomMutation } from "../hooks/useCostumMutation";
+import { MarkAPI } from "../../../services/mark";
 
 interface JobCardProps extends Job {
 	bookmarked?: boolean;
 }
 
 export default function JobCard(props: JobCardProps) {
+	const { mutate: mark } = useCustomMutation(MarkAPI.markCard);
 	const [showDetails, setShowDetails] = useState(false);
 	const [saved, setSaved] = useState(props.bookmarked ?? false);
 
@@ -44,7 +47,12 @@ export default function JobCard(props: JobCardProps) {
 					Open
 				</button>
 
-				<button onClick={() => setSaved((prev) => !prev)} className="cursor-pointer">
+				<button
+					onClick={() => {
+						setSaved((prev) => !prev);
+						mark(props);
+					}}
+					className="cursor-pointer">
 					<BookmarkIcon
 						className={`size-6 [&>g>path]:stroke-primary-action ${
 							saved && "[&>g>path]:fill-primary-action/60"
