@@ -5,7 +5,6 @@ interface MessageProps {
 	isPending?: boolean;
 }
 // Components
-// import BookmarkIcon from "../../../assets/icons/BookmarkIcon";
 import CopyIcon from "../../../assets/icons/CopyIcon";
 import DislikeIcon from "../../../assets/icons/DislikeIcon";
 import LikeIcon from "../../../assets/icons/LikeIcon";
@@ -61,9 +60,6 @@ function AiMessage({ message, isPending }: MessageProps) {
 	function handleDislike() {
 		console.log("Disliked: ", message.message_id);
 	}
-	// function handleMark() {
-	// 	console.log("Marked: ", message.message_id);
-	// }
 
 	return (
 		<div className={`h-auto flex items-start gap-3 justify-start`}>
@@ -98,11 +94,6 @@ function AiMessage({ message, isPending }: MessageProps) {
 						})}
 					</span>
 					<menu className="flex items-center">
-						{/* <button
-							onClick={handleMark}
-							className="size-7 p-1 border-2 border-transparent hover:border-border rounded-full transition-all duration-150 cursor-pointer">
-							<BookmarkIcon className="[&>g>path]:stroke-text-muted/60 size-full" />
-						</button> */}
 						<button
 							onClick={() => navigator.clipboard.writeText(message.content)}
 							className="size-7 p-1 border-2 border-transparent hover:border-border rounded-full transition-all duration-150 cursor-pointer">

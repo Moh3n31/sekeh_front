@@ -101,10 +101,12 @@ export default function Chat() {
 				)}
 
 				{history.map((m) => (
-					<>
+					<div className="flex flex-col gap-3">
 						<Message message={m} key={m.message_id} isPending={false} />
-						{m.job_cards && m.job_cards.map((j) => <JobCard {...j} />)}
-					</>
+						<div className="grid grid-cols-3 gap-2">
+							{m.job_cards && m.job_cards.map((j) => <JobCard {...j} />)}
+						</div>
+					</div>
 				))}
 
 				{pendingUserMessage && (
@@ -151,7 +153,7 @@ export default function Chat() {
 						<p className="text-sm font-semibold text-text-muted">
 							{jobs.length} موقعیت شغلی پیدا شد
 						</p>
-						<div className="grid grid-cols-1 gap-4">
+						<div className="grid grid-cols-3 gap-2">
 							{jobs.map((job) => (
 								<JobCard key={job.job_url} {...job} />
 							))}

@@ -71,8 +71,8 @@ function DetailsView({
 }: DetailsViewProps) {
 	return (
 		<div className="flex flex-col gap-1.5 h-full">
-			<h3 className="text-lg font-medium text-text-muted">Details:</h3>
-			<div className="flex flex-col gap-2.5 text-base text-primary-text">
+			<h3 className="text-[16px] font-medium text-text-muted">Details:</h3>
+			<div className="flex flex-col gap-2.5 text-base text-primary-text text-[14px]">
 				<div className="flex gap-3">
 					<span className="text-text-muted">Company:</span>
 					<span className="font-semibold">{company_name}</span>
@@ -117,7 +117,7 @@ function OverView({
 					<MatchCircle percentage={match_percent} />
 				</div>
 				<div className="flex flex-col gap-0.5">
-					<h2 className="text-lg font-bold text-primary-text">{title}</h2>
+					<h2 className="text-[16px] font-bold text-primary-text">{title}</h2>
 					<p className="text-base text-text-muted">
 						{company_name} · {source_site}
 					</p>
@@ -125,8 +125,8 @@ function OverView({
 			</div>
 
 			<div>
-				<p className="text-base text-text-muted">Requirements:</p>
-				<ul className="list-disc flex flex-col gap-1 pl-8 text-base text-primary-text">
+				<p className="text-base text-text-muted text-[14px]">Requirements:</p>
+				<ul className="list-disc flex flex-col gap-1 pl-8 text-[14px] text-primary-text ">
 					{requirements.map((requirement) => (
 						<li key={requirement}>{requirement}</li>
 					))}
