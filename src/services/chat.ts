@@ -27,26 +27,6 @@ interface MessagesReturn {
 	messages: MessageObject[];
 }
 
-export const messages: MessageObject[] = [
-	{
-		message_id: "string",
-		time: "string",
-		content: "string",
-		role: "assistant",
-		job_cards: [
-			{
-				title: "string",
-				company_name: "string",
-				match_percent: 0,
-				requirements: ["string", "string"],
-				job_url: "string",
-				source_site: "string",
-				company_reviews: { score: 0, count: 0 },
-			},
-		],
-	},
-];
-
 const chatAPI = {
 	chatHistory: () => api.get<ApiResponse<AllChatsReturn>>("/chats"),
 	newChat: () => api.post<ApiResponse<ChatReturn>>("/chats"),

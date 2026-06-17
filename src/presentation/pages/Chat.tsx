@@ -1,5 +1,5 @@
 //Data & Services
-import { chatAPI, messages } from "../../services/chat";
+import { chatAPI } from "../../services/chat";
 // Components
 import { Link } from "react-router";
 import SendIcon from "../../assets/icons/SendIcon";
@@ -100,7 +100,7 @@ export default function Chat() {
 					/>
 				)}
 
-				{messages.map((m) => (
+				{history.map((m) => (
 					<div className="flex flex-col gap-3">
 						<Message message={m} key={m.message_id} isPending={false} />
 						<div className="grid grid-cols-3 gap-2">
