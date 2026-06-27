@@ -32,7 +32,7 @@ export default function JobCard(props: JobCardProps) {
 				/>
 			)}
 
-			<menu className="flex items-center justify-between gap-4 h-9 text-[12px]">
+			<menu className="flex items-center justify-between gap-4 h-8 text-[11px]">
 				<button
 					onClick={() => setShowDetails((prev) => !prev)}
 					className="cursor-pointer w-full h-full rounded-full text-background bg-primary-action transition">
@@ -54,7 +54,7 @@ export default function JobCard(props: JobCardProps) {
 					}}
 					className="cursor-pointer">
 					<BookmarkIcon
-						className={`size-6 [&>g>path]:stroke-primary-action ${
+						className={`size-5 [&>g>path]:stroke-primary-action ${
 							saved && "[&>g>path]:fill-primary-action/60"
 						}`}
 					/>
@@ -76,8 +76,8 @@ function DetailsView({
 	company_reviews,
 }: DetailsViewProps) {
 	return (
-		<div className="flex flex-col h-full justify-start gap-2.5 text-primary-text text-[14px]">
-			<h3 className="text-[16px] font-medium text-text-muted">Details:</h3>
+		<div className="flex flex-col h-full justify-start gap-2.5 text-primary-text text-[12px]">
+			<h3 className="text-[14px] font-medium text-text-muted">Details:</h3>
 
 			<div className="flex gap-3">
 				<span className="text-text-muted">Company:</span>
@@ -122,16 +122,16 @@ function OverView({
 					<MatchCircle percentage={match_percent} />
 				</div>
 				<div className="flex flex-col gap-0.5">
-					<h2 className="text-[16px] font-bold text-primary-text">{title}</h2>
-					<p className="text-[14px] text-text-muted">
+					<h2 className="text-[14px] font-bold text-primary-text">{title}</h2>
+					<p className="text-[12px] text-text-muted">
 						{company_name} · {source_site}
 					</p>
 				</div>
 			</div>
 
-			<div className="h-full">
-				<p className="text-text-muted text-[14px]">Requirements:</p>
-				<ul className="list-disc flex flex-col gap-1 pl-8 text-[14px] max-h-24 text-primary-text overflow-y-auto">
+			<div className="h-full text-[12px]">
+				<p className="text-text-muted">Requirements:</p>
+				<ul className="list-disc flex flex-col gap-1 pl-8 max-h-24 text-primary-text overflow-y-auto">
 					{requirements.map((requirement) => (
 						<li key={requirement}>{requirement}</li>
 					))}
