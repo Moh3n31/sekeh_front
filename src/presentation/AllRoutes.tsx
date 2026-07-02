@@ -12,6 +12,10 @@ import ContactUs from "./pages/ContactUs";
 import NotFound from "./pages/NotFound";
 import Landing from "./pages/Landing";
 import Resume from "./pages/Resume";
+import AdminLayout from "./admin/AdminLayout";
+import AdminDashboard from "./admin/AdminDashboard";
+import AdminUsers from "./admin/AdminUsers";
+import AdminJobs from "./admin/AdminJobs";
 
 export default function AllRoutes() {
 	return (
@@ -31,6 +35,13 @@ export default function AllRoutes() {
 				<Route path="profile" element={<Profile />} />
 				<Route path="resume" element={<Resume />} />
 				<Route path="contact-us" element={<ContactUs />} />
+			</Route>
+
+			<Route path="admin" element={<AdminLayout />}>
+				<Route index element={<Navigate to="dashboard" />} />
+				<Route path="dashboard" element={<AdminDashboard />} />
+				<Route path="users" element={<AdminUsers />} />
+				<Route path="jobs" element={<AdminJobs />} />
 			</Route>
 
 			<Route path="*" element={<NotFound />} />

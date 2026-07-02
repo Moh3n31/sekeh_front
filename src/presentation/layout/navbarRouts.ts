@@ -3,6 +3,7 @@ import {
 	File,
 	MessageCircle,
 	Phone,
+	Settings,
 	User,
 	type LucideIcon,
 } from "lucide-react";
@@ -38,5 +39,11 @@ export const menuItems: MenuItems[] = [
 		label: "ارتباط با ما",
 		path: "contact-us",
 		icon: Phone,
+	},
+	{
+		label: "Admin",
+		path: "admin",
+		icon: Settings,
+		// adminOnly: true,
 	},
 ];
