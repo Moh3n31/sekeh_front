@@ -71,7 +71,7 @@ export default function Chat() {
 
 	return (
 		<div className="flex flex-col relative h-full">
-			<menu className="md:absolute md:top-5 md:left-5 max-md:pt-5 max-md:pb-1 max-md:pl-3 flex flex-col gap-1 items-start">
+			<menu className="md:absolute md:top-5 md:start-5 max-md:pt-5 max-md:pb-1 max-md:ps-3 flex flex-col gap-1 items-start">
 				<Link
 					to={".."}
 					className="group text-lg flex items-center justify-center gap-1 transition-all duration-150
@@ -198,7 +198,7 @@ export default function Chat() {
 					) : (
 						<SendIcon
 							id="sendIcon"
-							className="size-4 [&>g>path]:stroke-white mt-0.5 mr-px"
+							className="size-4 [&>g>path]:stroke-white mt-0.5 me-px"
 						/>
 					)}
 				</button>

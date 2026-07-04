@@ -35,7 +35,7 @@ export default function Landing() {
 	}
 
 	return (
-		<div dir="rtl" className="bg-surface min-h-screen" id="landing-container">
+		<div className="bg-surface min-h-screen" id="landing-container">
 			{/* Header */}
 			<header className="bg-background/80 backdrop-blur-sm sticky top-0 z-50 border-b border-border px-4 md:px-8 py-4 flex items-center justify-between">
 				<button
@@ -179,7 +179,7 @@ export default function Landing() {
 						{landingContent.how_it_works.title}
 					</h2>
 					<div className="relative">
-						<div className="hidden md:block absolute top-1/2 left-0 right-0 h-0.5 bg-border -translate-y-1/2"></div>
+						<div className="hidden md:block absolute top-1/2 start-0 end-0 h-0.5 bg-border -translate-y-1/2"></div>
 						<div className="grid md:grid-cols-3 gap-8 relative">
 							{landingContent.how_it_works.steps.map((step, idx) => (
 								<div

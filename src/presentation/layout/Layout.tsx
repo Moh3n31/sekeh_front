@@ -17,13 +17,10 @@ export default function Layout() {
 	}, [location.pathname, navigate]);
 
 	return (
-		<div
-			dir="rtl"
-			className="h-screen w-screen bg-surface flex"
-			id="main-container">
+		<div className="h-screen w-screen bg-surface flex" id="main-container">
 			<NavbarDesktop />
 			<div className="grid grid-rows-[68px_calc(100vh-68px)] h-full w-full">
-				<header className="bg-background h-full md:pr-5 max-md:px-3 flex items-center max-md:gap-7">
+				<header className="bg-background h-full md:pe-5 max-md:px-3 flex items-center max-md:gap-7">
 					<NavbarMobile />
 					<div className="flex items-center justify-start gap-2">
 						<span className="size-7 rounded-full border-5 border-accent-hover"></span>

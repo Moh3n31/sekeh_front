@@ -32,7 +32,7 @@ export default function GrowableButton({
 			<div className="flex items-center justify-center gap-2 min-w-max px-2">
 				<span
 					className="max-w-0 opacity-0 group-hover:max-w-xs group-hover:opacity-100 
-					group-hover:pr-2 text-white transition-all duration-200 ease-in-out whitespace-nowrap font-medium">
+					group-hover:pe-2 text-white transition-all duration-200 ease-in-out whitespace-nowrap font-medium">
 					{label}
 				</span>
 				{icon}

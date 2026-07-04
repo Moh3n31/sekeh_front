@@ -20,13 +20,13 @@ export default function Profile() {
 	return (
 		<div className="relative md:p-7 max-md:py-5 max-md:px-6 flex flex-col gap-10 w-full">
 			{/* Profile Actions */}
-			<menu className="absolute top-4 right-5 flex flex-col items-end gap-3">
+			<menu className="absolute top-4 end-5 flex flex-col items-end gap-3">
 				<ProfileDialog refetch={refetch} />
 				<ChangePasswordDialog />
 				<DeleteAcountDialog />
 			</menu>
 
-			<header className="flex gap-5 items-center -ml-1">
+			<header className="flex gap-5 items-center -ms-1">
 				<div className="flex items-center justify-center rounded-full size-27 shrink-0 bg-linear-30 from-accent-hover to-match">
 					<div className="bg-background size-25 rounded-full"></div>
 				</div>

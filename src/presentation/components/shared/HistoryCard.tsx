@@ -6,8 +6,8 @@ import DeleteDialog from "../../chats/DeleteDialog";
 export default function HistoryCard({ card }: { card: ChatObject }) {
 	return (
 		<div className="group relative rounded-lg shadow-md shadow-border h-70 w-full">
-			<span className="absolute z-0 top-0 right-0 bg-linear-30 from-background/30 to-background/50 size-full rounded-lg transition-all duration-150 opacity-100 group-hover:opacity-0"></span>
-			<span className="absolute z-0 top-0 right-0 bg-linear-30 from-accent/30 to-primary-green/30 size-full rounded-lg transition-all duration-150 opacity-0 group-hover:opacity-100"></span>
+			<span className="absolute z-0 top-0 end-0 bg-linear-30 from-background/30 to-background/50 size-full rounded-lg transition-all duration-150 opacity-100 group-hover:opacity-0"></span>
+			<span className="absolute z-0 top-0 end-0 bg-linear-30 from-accent/30 to-primary-green/30 size-full rounded-lg transition-all duration-150 opacity-0 group-hover:opacity-100"></span>
 			<div
 				className="absolute z-2! transition-all duration-150 border-border group-hover:border-accent-hover
         rounded-lg border-2 flex flex-col justify-between size-full bg-transparent">

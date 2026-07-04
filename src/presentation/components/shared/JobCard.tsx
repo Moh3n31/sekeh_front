@@ -138,7 +138,7 @@ function OverView({
 
 			<div className="h-full text-[12px]">
 				<p className="text-text-muted">Requirements:</p>
-				<ul className="list-disc flex flex-col gap-1 pl-8 max-h-24 text-primary-text overflow-y-auto">
+				<ul className="list-disc flex flex-col gap-1 ps-8 max-h-24 text-primary-text overflow-y-auto">
 					{requirements.map((requirement) => (
 						<li key={requirement}>{requirement}</li>
 					))}

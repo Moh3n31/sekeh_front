@@ -8,7 +8,9 @@ export default function App() {
 	return (
 		<BrowserRouter>
 			<QueryClientProvider client={queryClient}>
-				<AllRoutes />
+				<div dir="rtl">
+					<AllRoutes />
+				</div>
 				<ToastContainer />
 			</QueryClientProvider>
 		</BrowserRouter>

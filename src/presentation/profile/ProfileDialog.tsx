@@ -71,7 +71,7 @@ export default function ProfileDialog({ refetch }: { refetch: () => void }) {
 						<div className="bg-background size-25 rounded-full"></div>
 					</div>
 					<button
-						className="absolute bottom-0 right-0 bg-primary-action size-7 p-1.5 text-white font-semibold text-lg
+						className="absolute bottom-0 end-0 bg-primary-action size-7 p-1.5 text-white font-semibold text-lg
           flex items-center justify-center rounded-full">
 						<NewChatIcon className="size-full [&>g>path]:first:stroke-white [&>g>path]:last:fill-white" />
 					</button>

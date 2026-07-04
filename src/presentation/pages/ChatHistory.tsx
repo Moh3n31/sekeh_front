@@ -12,7 +12,7 @@ export default function ChatHistory() {
 
 	return (
 		<div className="p-7 overflow-y-auto overflow-x-hidden w-full h-full scrollbar-gray">
-			<menu className="absolute top-25 right-5 flex flex-col items-end gap-3 z-3">
+			<menu className="absolute top-25 end-5 flex flex-col items-end gap-3 z-3">
 				<NewChatDialog />
 			</menu>
 

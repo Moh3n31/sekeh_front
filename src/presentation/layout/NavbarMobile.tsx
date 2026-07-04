@@ -15,7 +15,7 @@ export default function NavbarMobile() {
 			<label htmlFor="navbar-menu">
 				<MenuIcon className="[&>g>path]:stroke-white bg-accent p-1 size-7 rounded-full" />
 			</label>
-			<section className="fixed w-1/2 h-full top-17 left-0 animate-slide-in-left hidden peer-checked:block z-20">
+			<section className="fixed w-1/2 h-full top-17 start-0 animate-slide-in-left hidden peer-checked:block z-20">
 				<nav className="flex flex-col items-start gap-5 w-full h-full bg-background p-2">
 					{menuItems.map(({ icon: Icon, path, label }) => {
 						const isThisPage = location.pathname.includes(path);
@@ -48,7 +48,7 @@ export default function NavbarMobile() {
 			</section>
 			<label
 				htmlFor="navbar-menu"
-				className="backdrop-blur-[2px] fixed w-full h-full top-17 left-0 z-19 hidden peer-checked:block"></label>
+				className="backdrop-blur-[2px] fixed w-full h-full top-17 start-0 z-19 hidden peer-checked:block"></label>
 		</div>
 	);
 }
