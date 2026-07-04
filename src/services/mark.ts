@@ -13,7 +13,7 @@ const MarkAPI = {
 			`${nameSpace}/toggle`,
 			payload,
 		),
-	allMarked: () => api.get<ApiResponse<MarkedObject>>(`${nameSpace}`),
+	allMarked: () => api.get<ApiResponse<MarkedObject[]>>(`${nameSpace}`),
 };
 
 export type { MarkedObject };

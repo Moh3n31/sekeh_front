@@ -9,6 +9,7 @@ import AuthLayout from "./layout/AuthLayout";
 // import EnterEmail from "./pages/EnterEmail";
 import Signup from "./pages/Signup";
 import ContactUs from "./pages/ContactUs";
+import NotFound from "./pages/NotFound";
 
 export default function AllRoutes() {
 	return (
@@ -26,6 +27,8 @@ export default function AllRoutes() {
 				<Route path="profile" element={<Profile />} />
 				<Route path="contact-us" element={<ContactUs />} />
 			</Route>
+
+			<Route path="*" element={<NotFound />} />
 		</Routes>
 	);
 }

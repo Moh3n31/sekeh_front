@@ -12,3 +12,10 @@ export const removeTokens = () => {
 	localStorage.removeItem("access_token");
 	localStorage.removeItem("refresh_token");
 };
+
+export const checkTokens = (): boolean => {
+	return !!(
+		localStorage.getItem("access_token") &&
+		localStorage.getItem("refresh_token")
+	);
+};
