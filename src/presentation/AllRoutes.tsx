@@ -10,10 +10,13 @@ import AuthLayout from "./layout/AuthLayout";
 import Signup from "./pages/Signup";
 import ContactUs from "./pages/ContactUs";
 import NotFound from "./pages/NotFound";
+import Landing from "./pages/Landing";
 
 export default function AllRoutes() {
 	return (
 		<Routes>
+			<Route path="/" index element={<Landing />} />
+
 			<Route path="auth" element={<AuthLayout />}>
 				<Route path="login" element={<Login />} />
 				{/* <Route path="enter-email" element={<EnterEmail />} /> */}
