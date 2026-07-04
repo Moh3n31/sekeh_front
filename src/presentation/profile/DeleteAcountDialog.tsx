@@ -1,9 +1,22 @@
 import BinIcon from "../../assets/icons/BinIcon";
 import BrokenHeartIcon from "../../assets/icons/BrokenHeartIcon";
+import { authAPI } from "../../services/authentication";
+import { removeTokens } from "../../utils/authTokens";
+import { useCustomMutation } from "../components/hooks/useCostumMutation";
 import Dialog from "../components/shared/Dialog";
 import GrowableButton from "../components/shared/GrowableButton";
 
 export default function DeleteAcountDialog() {
+	const { deleteProfile } = authAPI;
+	const { mutate } = useCustomMutation(deleteProfile);
+
+	function handleDeleteAcount() {
+		mutate(null, {
+			onSuccess: removeTokens,
+			onError: (err) => alert(err.message),
+		});
+	}
+
 	return (
 		<Dialog
 			trigger={
@@ -22,6 +35,7 @@ export default function DeleteAcountDialog() {
 			title="Are you sure?"
 			footer={
 				<button
+					onClick={handleDeleteAcount}
 					className="group py-1 px-3 border-2 border-primary-red text-primary-red rounded-md font-semibold cursor-pointer
 						hover:bg-primary-red hover:text-white transition-all duration-150 flex gap-2 items-center">
 					<span>Delete</span>

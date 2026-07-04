@@ -1,19 +1,18 @@
-import { useNavigate } from "react-router";
 import Dialog from "../components/shared/Dialog";
 import LogoutIcon from "../../assets/icons/LogoutIcon";
 import { useCustomMutation } from "../components/hooks/useCostumMutation";
 import { authAPI } from "../../services/authentication";
 import type { Exceptions } from "../../services/api";
 import LoadingIcon from "../../assets/icons/LoadingIcon";
+import { removeTokens } from "../../utils/authTokens";
 
 export default function LogoutDialog() {
 	const { mutate, isPending } = useCustomMutation(authAPI.logout);
-	const navigate = useNavigate();
 
 	function handleLogout() {
 		mutate({
 			onSuccess: () => {
-				navigate("auth/login");
+				removeTokens();
 			},
 			onError: (err: Exceptions) => alert(err.error),
 		});

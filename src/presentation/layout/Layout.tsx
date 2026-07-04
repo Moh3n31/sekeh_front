@@ -4,7 +4,7 @@ import NavbarMobile from "./NavbarMobile";
 
 export default function Layout() {
 	return (
-		<div className="h-screen w-screen bg-surface flex" id="main-container">
+		<div dir="rtl" className="h-screen w-screen bg-surface flex" id="main-container">
 			<NavbarDesktop />
 			<div className="grid grid-rows-[68px_calc(100vh-68px)] h-full w-full">
 				<header className="bg-background h-full md:pr-5 max-md:px-3 flex items-center max-md:gap-7">

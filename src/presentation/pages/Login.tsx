@@ -3,6 +3,8 @@ import LoadingIcon from "../../assets/icons/LoadingIcon";
 import { useState } from "react";
 import { useCustomMutation } from "../components/hooks/useCostumMutation";
 import { authAPI } from "../../services/authentication";
+import useProfile from "../../services/profileStorage";
+import { addTokens } from "../../utils/authTokens";
 
 interface Form {
 	username: string;
@@ -14,15 +16,16 @@ export default function Login() {
 		username: "",
 		password: "",
 	});
+	const { setProfile } = useProfile();
 	const navigate = useNavigate();
 	const { mutate, isPending } = useCustomMutation(authAPI.login);
 
 	const handleSubmit = () => {
 		mutate(formData, {
 			onSuccess: (res) => {
-				const { access_token, refresh_token } = res.data;
-				localStorage.setItem("access_token", access_token);
-				localStorage.setItem("refresh_token", refresh_token);
+				const { access_token, refresh_token, user } = res.data;
+				addTokens({ access: access_token, refresh: refresh_token });
+				setProfile(user);
 
 				navigate("/chats");
 			},

@@ -4,6 +4,7 @@ import MatchCircle from "./MatchCircle";
 import type { Job } from "../hooks/useChatStream";
 import { useCustomMutation } from "../hooks/useCostumMutation";
 import { MarkAPI } from "../../../services/mark";
+import { toast } from "../../../services/toast";
 
 interface JobCardProps extends Job {
 	bookmarked?: boolean;
@@ -13,6 +14,17 @@ export default function JobCard(props: JobCardProps) {
 	const { mutate: mark } = useCustomMutation(MarkAPI.markCard);
 	const [showDetails, setShowDetails] = useState(false);
 	const [saved, setSaved] = useState(props.bookmarked ?? false);
+
+	const handleMark = () => {
+		const prev = saved;
+		mark(props, {
+			onSuccess: () => {
+				setSaved(!prev);
+				if (prev) toast.success("Removed successfully!");
+				else toast.success("Marked successfully!");
+			},
+		});
+	};
 
 	return (
 		<div className="h-67 w-full flex flex-col justify-between gap-2.5 rounded-lg border px-2.5 py-2 bg-background border-border">
@@ -47,12 +59,7 @@ export default function JobCard(props: JobCardProps) {
 					Open
 				</button>
 
-				<button
-					onClick={() => {
-						setSaved((prev) => !prev);
-						mark(props);
-					}}
-					className="cursor-pointer">
+				<button onClick={handleMark} className="cursor-pointer">
 					<BookmarkIcon
 						className={`size-5 [&>g>path]:stroke-primary-action ${
 							saved && "[&>g>path]:fill-primary-action/60"

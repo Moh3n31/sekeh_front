@@ -42,10 +42,11 @@ export default function Dialog({
 					max-md:w-full max-md:h-full max-md:max-h-none max-md:m-0
 					border-2 border-border rounded-lg bg-background shadow-2xl p-0
 					backdrop:fixed backdrop:inset-0 backdrop:z-999!
-					backdrop:backdrop-blur-xs backdrop:bg-accent/5
+					backdrop:bg-accent/10
 					backdrop:transition-opacity backdrop:duration-300
 					backdrop:opacity-0 open:backdrop:opacity-100
 				">
+				{/* + backdrop:backdrop-blur-xs */}
 				<div className="flex flex-col h-full overflow-hidden">
 					<header className="flex items-center justify-between p-5 border-b border-border font-semibold text-lg">
 						{title}
