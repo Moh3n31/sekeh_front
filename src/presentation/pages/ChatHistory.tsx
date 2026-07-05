@@ -32,7 +32,7 @@ export default function ChatHistory() {
 				</main>
 			) : (
 				<div className="flex items-center justify-center h-full">
-					<p className="text-text-muted">You have 0 chats.</p>
+					<p className="text-text-muted">یک چت جدید ایجاد کنید.</p>
 				</div>
 			)}
 		</div>

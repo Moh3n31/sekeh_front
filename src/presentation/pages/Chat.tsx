@@ -79,7 +79,7 @@ export default function Chat() {
 					<p
 						className="text-primary-action text-[14px] font-semibold
 					group-hover:text-surface transition-all duration-150">
-						Go Back
+						بازگشت
 					</p>
 				</Link>
 			</menu>
@@ -182,7 +182,7 @@ export default function Chat() {
 					rows={1}
 					onChange={(e) => setInputData(e.target.value)}
 					value={inputData}
-					placeholder="Describe yourself..."
+					placeholder="درمورد خودت بنویس..."
 					className="resize-none overflow-hidden h-auto w-full outline-0 text-[17px]
 					placeholder:font-medium placeholder:text-text-muted text-primary-text"
 				/>

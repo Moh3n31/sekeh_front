@@ -30,14 +30,14 @@ export default function ChangePasswordDialog() {
 	}
 
 	function handleSubmit() {
-		if (!doesMatch) return toast.error("Passwords don't match.");
-		if (!isValid) return toast.error("Fill the form completely.");
+		if (!doesMatch) return toast.error("تایید رمز عبور جدید صحیح نمی‌باشد.");
+		if (!isValid) return toast.error("لطفا فرم را کامل پر کنید.");
 		
 		mutate(
 			{ current_password: form.current, new_password: form.new },
 			{
 				onSuccess: () =>
-					toast.success("Your password has been updated successfully"),
+					toast.success("رمز عبور شما با موفقیت بروزرسانی شد."),
 				onError: (e) => toast.error(e.message),
 			},
 		);
@@ -52,7 +52,7 @@ export default function ChangePasswordDialog() {
 				<GrowableButton
 					fullWidth="47"
 					variant="primary"
-					label="Change Password"
+					label="تغییر رمز عبور"
 					icon={
 						<PasswordIcon
 							className="w-5 h-5 transition-colors duration-200
@@ -62,20 +62,20 @@ export default function ChangePasswordDialog() {
 					}
 				/>
 			}
-			title="Change Password"
+			title="تغییر رمز عبور"
 			footer={
 				<button
 					onClick={handleSubmit}
 					className="py-1 px-3 border-2 border-accent text-accent rounded-md font-semibold cursor-pointer
 					hover:bg-accent hover:text-white transition-all duration-150">
-					Submit
+					ثبت
 				</button>
 			}
 			closeButton={
 				<button
 					className="py-1 px-3 border-2 border-primary-action text-primary-action rounded-md font-semibold cursor-pointer
 					hover:bg-primary-action hover:text-white transition-all duration-150">
-					Cancel
+					بازگشت
 				</button>
 			}>
 			<form
@@ -83,7 +83,7 @@ export default function ChangePasswordDialog() {
 				className="flex flex-col items-center gap-5 w-80">
 				<div className="flex flex-col gap-2 w-full">
 					<label className="text-[16px] text-primary-action">
-						Old Passwrod
+						رمز عبور قبلی
 					</label>
 					<input
 						value={form.current}
@@ -95,7 +95,7 @@ export default function ChangePasswordDialog() {
 
 				<div className="flex flex-col gap-2 w-full">
 					<label className="text-[16px] text-primary-action">
-						New Password
+						رمز عبور جدید
 					</label>
 					<input
 						value={form.new}
@@ -107,7 +107,7 @@ export default function ChangePasswordDialog() {
 
 				<div className="flex flex-col gap-2 w-full">
 					<label className="text-[16px] text-primary-action">
-						Confirm Password
+						تایید رمز عبور
 					</label>
 					<input
 						value={form.confirm}

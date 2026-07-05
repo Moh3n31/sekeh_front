@@ -4,6 +4,7 @@ import DeleteAcountDialog from "../profile/DeleteAcountDialog";
 import ProfileDialog from "../profile/ProfileDialog";
 import { authAPI } from "../../services/authentication";
 import { useCustomQuery } from "../components/hooks/useCostumQuery";
+import { Sparkles } from "lucide-react";
 
 export default function Profile() {
 	const { getProfile } = authAPI;
@@ -26,9 +27,11 @@ export default function Profile() {
 				<DeleteAcountDialog />
 			</menu>
 
-			<header className="flex gap-5 items-center -ms-1">
+			<header className="flex max-md:flex-col gap-5 md:items-center max-md:items-start -ms-1">
 				<div className="flex items-center justify-center rounded-full size-27 shrink-0 bg-linear-30 from-accent-hover to-match">
-					<div className="bg-background size-25 rounded-full"></div>
+					<div className="bg-background flex items-center justify-center size-25 rounded-full">
+						<Sparkles className="size-15 text-accent-soft"/>
+					</div>
 				</div>
 				<p className="font-semibold text-4xl text-primary-text w-3/4">
 					{profile?.username}

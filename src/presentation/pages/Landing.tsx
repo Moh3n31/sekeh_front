@@ -15,6 +15,7 @@ import {
 	Zap,
 	Star,
 } from "lucide-react";
+import Title from "../components/shared/Title";
 
 export default function Landing() {
 	const { getLanding } = landingAPI;
@@ -47,7 +48,8 @@ export default function Landing() {
 					{landingContent.hero.secondary_cta}
 				</button>
 
-				<div className="flex items-center gap-3">
+				<Title subColor="primary-text" mianColor="accent" />
+				{/* <div className="flex items-center gap-3">
 					<div className="relative">
 						<div className="absolute inset-0 bg-accent rounded-full blur-xl opacity-20 animate-pulse"></div>
 						<div className="relative size-10 rounded-full bg-linear-to-br from-accent to-accent-hover flex items-center justify-center">
@@ -57,7 +59,7 @@ export default function Landing() {
 					<p className="font-bold text-2xl text-primary-text tracking-tight">
 						Job<span className="text-accent">Assistant</span>
 					</p>
-				</div>
+				</div> */}
 			</header>
 
 			<main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-24">

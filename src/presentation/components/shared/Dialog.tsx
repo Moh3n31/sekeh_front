@@ -35,19 +35,19 @@ export default function Dialog({
 					if (e.target === dialogRef.current) close();
 				}}
 				className="
-					fixed inset-0 m-auto z-50
+					fixed inset-0 md:m-auto z-50
 					translate-y-5 opacity-0 transition-[transform,opacity,display] duration-300 allow-discrete
 					open:translate-y-0 open:opacity-100
-					w-[calc(100%-2rem)] md:max-w-130 h-fit max-h-[90vh]
-					max-md:w-full max-md:h-full max-md:max-h-none max-md:m-0
-					border-2 border-border rounded-lg bg-background shadow-2xl p-0
+					md:w-[calc(100%-2rem)] md:max-w-130 h-fit md:max-h-[90vh]
+					max-md:w-screen max-md:max-h-1/2 max-md:mt-auto max-md:mx-auto
+					border-2 border-border md:rounded-lg max-md:rounded-t-lg bg-background shadow-2xl p-0
 					backdrop:fixed backdrop:inset-0 backdrop:z-999!
 					backdrop:bg-accent/10
 					backdrop:transition-opacity backdrop:duration-300
 					backdrop:opacity-0 open:backdrop:opacity-100
 				">
 				{/* + backdrop:backdrop-blur-xs */}
-				<div className="flex flex-col h-full overflow-hidden">
+				<div className="flex flex-col w-full h-full overflow-hidden">
 					<header className="flex items-center justify-between p-5 border-b border-border font-semibold text-lg">
 						{title}
 						<button

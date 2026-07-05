@@ -23,7 +23,7 @@ export default function DeleteAcountDialog() {
 				<GrowableButton
 					fullWidth="43"
 					variant="destructable"
-					label="Delete Account"
+					label="حذف حساب"
 					icon={
 						<BinIcon
 							className="w-5 h-5 transition-colors duration-200
@@ -32,13 +32,13 @@ export default function DeleteAcountDialog() {
 					}
 				/>
 			}
-			title="Are you sure?"
+			title="حذف حساب کاربری"
 			footer={
 				<button
 					onClick={handleDeleteAcount}
 					className="group py-1 px-3 border-2 border-primary-red text-primary-red rounded-md font-semibold cursor-pointer
 						hover:bg-primary-red hover:text-white transition-all duration-150 flex gap-2 items-center">
-					<span>Delete</span>
+					<span>حذف</span>
 					<BrokenHeartIcon
 						className="size-5 [&>g>path]:first:fill-primary-red [&>g>path]:last:stroke-primary-red
 						group-hover:[&>g>path]:first:fill-white group-hover:[&>g>path]:last:stroke-white transition-all duration-150"
@@ -49,14 +49,13 @@ export default function DeleteAcountDialog() {
 				<button
 					className="py-1 px-3 border-2 border-primary-action text-primary-action rounded-md font-semibold cursor-pointer
               hover:bg-primary-action hover:text-white transition-all duration-150">
-					Cancel
+					بازگشت
 				</button>
 			}>
-			<p className="text-primary-action w-90">
-				Deleting your account is a{" "}
-				<span className="font-semibold">permenant action</span> and{" "}
-				<span className="font-semibold">can not</span> be reversed once
-				confirmed
+			<p className="text-primary-action">
+				حذف حساب کاربری یک عملیات{" "}
+				<span className="font-semibold">بدون برگشت</span> است و در صورت تایید
+				تمامی اطلاعات شما <span className="font-semibold">حذف خواهند شد</span>.
 			</p>
 		</Dialog>
 	);

@@ -5,6 +5,7 @@ import { useCustomMutation } from "../components/hooks/useCostumMutation";
 import { authAPI } from "../../services/authentication";
 import useProfile from "../../services/profileStorage";
 import { addTokens } from "../../utils/authTokens";
+import { toast } from "../../services/toast";
 
 interface Form {
 	username: string;
@@ -29,7 +30,7 @@ export default function Login() {
 
 				navigate("/chats");
 			},
-			onError: (err) => alert(err.message),
+			onError: (err) => toast.error(err.message),
 		});
 	};
 
@@ -44,7 +45,7 @@ export default function Login() {
 
 	return (
 		<div className="flex flex-col gap-10 justify-center h-full">
-			<p className="text-4xl font-bold text-primary-text text-center">Login</p>
+			<p className="text-4xl font-bold text-primary-text text-center">ورود</p>
 			<form
 				id="login-form"
 				onSubmit={(e) => {
@@ -53,18 +54,19 @@ export default function Login() {
 				}}
 				className="text-primary-text flex flex-col gap-7">
 				<div className="flex flex-col gap-2">
-					<label className="font-semibold">Username</label>
+					<label className="font-semibold">نام کاربری</label>
 					<input
 						value={formData.username}
 						onChange={(e) => handleChange("username", e.target.value)}
 						className="px-2 border-2 border-border rounded-md h-10 placeholder:text-text-muted text-[16px]
             outline-0 focus:border-accent transition-all duration-150"
-						placeholder="username or email"
+						placeholder="نام کاربری یا ایمیل"
 					/>
 				</div>
 				<div className="flex flex-col gap-2">
-					<label className="font-semibold">Password</label>
+					<label className="font-semibold">رمز عبور</label>
 					<input
+						type="password"
 						value={formData.password}
 						onChange={(e) => handleChange("password", e.target.value)}
 						className="px-2 border-2 border-border rounded-md h-10 placeholder:text-text-muted text-[16px]
@@ -80,12 +82,12 @@ export default function Login() {
 				text-white cursor-pointer font-semibold text-xl transition-all duration-150
 				disabled:pointer-events-none disabled:opacity-40 flex justify-center items-center
 				${isPending ? "pointer-events-none" : ""}`}>
-				{isPending ? <LoadingIcon color="white" /> : "Login"}
+				{isPending ? <LoadingIcon color="white" /> : "ورود"}
 			</button>
 			<footer className="flex flex-col items-center">
-				<p className="text-primary-action">Don't have an account?</p>
+				<p className="text-primary-action">قبلا حساب کاربری نساخته‌اید؟</p>
 				<Link to="../signup" className="font-semibold text-accent">
-					Signup
+					ثبت نام
 				</Link>
 			</footer>
 		</div>

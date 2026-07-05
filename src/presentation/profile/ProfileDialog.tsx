@@ -66,7 +66,7 @@ export default function ProfileDialog({ refetch }: { refetch: () => void }) {
 			<form
 				onSubmit={(e) => e.preventDefault()}
 				className="flex flex-col items-center gap-10">
-				<section className="relative w-fit">
+				{/* <section className="relative w-fit">
 					<div className="flex items-center justify-center rounded-full size-27 shrink-0 bg-linear-30 from-accent-hover to-match">
 						<div className="bg-background size-25 rounded-full"></div>
 					</div>
@@ -75,7 +75,7 @@ export default function ProfileDialog({ refetch }: { refetch: () => void }) {
           flex items-center justify-center rounded-full">
 						<NewChatIcon className="size-full [&>g>path]:first:stroke-white [&>g>path]:last:fill-white" />
 					</button>
-				</section>
+				</section> */}
 
 				<section className="grid grid-cols-2 w-full gap-5">
 					<div className="flex flex-col gap-2">

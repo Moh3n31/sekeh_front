@@ -41,7 +41,9 @@ export default function ToastContainer() {
 	};
 
 	return (
-		<div className="pointer-events-none fixed end-4 bottom-4 z-1000 flex w-full max-w-sm flex-col gap-3">
+		<div
+			dir="rtl"
+			className="pointer-events-none fixed end-4 bottom-4 z-1000 flex w-full max-w-sm flex-col gap-3">
 			<AnimatePresence>
 				{toasts.map((toast) => (
 					<motion.div
@@ -64,7 +66,7 @@ export default function ToastContainer() {
 						className={`pointer-events-auto rounded-xl border-2 px-4 py-3 backdrop-blur-md ${getStyles(
 							toast.type,
 						)}`}>
-						<p className="text-sm font-medium">{toast.message}</p>
+						<p className="text-sm text-start font-medium">{toast.message}</p>
 					</motion.div>
 				))}
 			</AnimatePresence>

@@ -20,8 +20,8 @@ export default function JobCard(props: JobCardProps) {
 		mark(props, {
 			onSuccess: () => {
 				setSaved(!prev);
-				if (prev) toast.success("Removed successfully!");
-				else toast.success("Marked successfully!");
+				if (prev) toast.success("با موفقیت حذف شد.");
+				else toast.success("با موفقیت ذخیره شد.");
 			},
 		});
 	};
@@ -48,7 +48,7 @@ export default function JobCard(props: JobCardProps) {
 				<button
 					onClick={() => setShowDetails((prev) => !prev)}
 					className="cursor-pointer w-full h-full rounded-full text-background bg-primary-action transition">
-					{showDetails ? "Back" : "Details"}
+					{showDetails ? "بازگشت" : "جزییات"}
 				</button>
 
 				<button
@@ -56,7 +56,7 @@ export default function JobCard(props: JobCardProps) {
 						window.open(props.job_url, "_blank", "noopener,noreferrer")
 					}
 					className="cursor-pointer w-full h-full rounded-full border-2 text-primary-action bg-transparent transition">
-					Open
+					لینک
 				</button>
 
 				<button onClick={handleMark} className="cursor-pointer">
@@ -84,22 +84,22 @@ function DetailsView({
 }: DetailsViewProps) {
 	return (
 		<div className="flex flex-col h-full justify-start gap-2.5 text-primary-text text-[12px]">
-			<h3 className="text-[14px] font-medium text-text-muted">Details:</h3>
+			<h3 className="text-[14px] font-medium text-text-muted">جزییات:</h3>
 
 			<div className="flex gap-3">
-				<span className="text-text-muted">Company:</span>
+				<span className="text-text-muted">شرکت:</span>
 				<span className="font-semibold">{company_name}</span>
 			</div>
 			<div className="flex gap-3">
-				<span className="text-text-muted">Source:</span>
+				<span className="text-text-muted">منبع:</span>
 				<span className="font-semibold">{source_site}</span>
 			</div>
 			<div className="flex gap-3">
-				<span className="text-text-muted">Reviews:</span>
+				<span className="text-text-muted">نظرات:</span>
 				<span className="font-semibold">
 					{company_reviews.score.toFixed(1)} ⭐{" "}
 					<span className="text-text-muted font-normal">
-						({company_reviews.count} reviews)
+						({company_reviews.count} شرکت کننده)
 					</span>
 				</span>
 			</div>
@@ -137,7 +137,7 @@ function OverView({
 			</div>
 
 			<div className="h-full text-[12px]">
-				<p className="text-text-muted">Requirements:</p>
+				<p className="text-text-muted">نیازمندی‌ها:</p>
 				<ul className="list-disc flex flex-col gap-1 ps-8 max-h-24 text-primary-text overflow-y-auto">
 					{requirements.map((requirement) => (
 						<li key={requirement}>{requirement}</li>

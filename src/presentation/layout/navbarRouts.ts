@@ -12,22 +12,22 @@ interface MenuItems {
 
 export const menuItems: MenuItems[] = [
 	{
-		label: "Profile",
+		label: "پروفایل",
 		path: "profile",
 		icon: UserIcon,
 	},
 	{
-		label: "Marked",
+		label: "ذخیره‌ها",
 		path: "marks",
 		icon: BoxIcon,
 	},
 	{
-		label: "Chats",
+		label: "چت‌ها",
 		path: "chats",
 		icon: ChatIcon,
 	},
 	{
-		label: "Contact Us",
+		label: "ارتباط با ما",
 		path: "contact-us",
 		icon: PhoneIcon,
 	},
