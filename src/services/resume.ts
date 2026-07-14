@@ -15,14 +15,14 @@ interface ResumeItem {
 
 const resumeAPI = {
 	createResume: (form: ResumeForm) =>
-		api.post<ApiResponse<ResumeItem>>("/resume", form),
+		api.post<ApiResponse<null>>("/resume", form),
 	updateResume: (id: number | string, form: ResumeForm) =>
-		api.put<ApiResponse<ResumeItem>>(`/resume/${id}`, form),
+		api.put<ApiResponse<null>>(`/resume/${id}`, form),
 	getResumes: () => api.get<ApiResponse<ResumeItem[]>>("/resume"),
 	getResumeById: (id: number | string) =>
 		api.get<ApiResponse<ResumeItem>>(`/resume/${id}`),
 	deleteResume: (id: number | string) =>
-		api.delete<ApiResponse<string>>(`/resume/${id}`),
+		api.delete<ApiResponse<null>>(`/resume/${id}`),
 };
 
 export type { ResumeForm, ResumeItem };

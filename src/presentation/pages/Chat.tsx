@@ -10,6 +10,7 @@ import { useEffect, useRef, useState } from "react";
 import { useParams } from "react-router";
 import { useCustomQuery } from "../components/hooks/useCostumQuery";
 import { Send, Square } from "lucide-react";
+import ResumeModal from "../components/resume/ResumeModal";
 
 export default function Chat() {
 	const { chatId } = useParams();
@@ -66,23 +67,10 @@ export default function Chat() {
 		el.style.height = Math.min(el.scrollHeight, maxHeight) + "px";
 	}, [inputData]);
 
-	useEffect(() => {
-		const handleResumePaste = (event: Event) => {
-			const customEvent = event as CustomEvent<{ resumeContent?: string }>;
-			const resumeContent = customEvent.detail?.resumeContent;
-
-			if (!resumeContent) return;
-
-			setInputData((prev) => (prev ? `${prev}\n\n${resumeContent}` : resumeContent));
-			textareaRef.current?.focus();
-		};
-
-		window.addEventListener("resume:paste-to-chat", handleResumePaste);
-
-		return () => {
-			window.removeEventListener("resume:paste-to-chat", handleResumePaste);
-		};
-	}, []);
+	const handleResumeSelect = (content: string) => {
+		setInputData((prev) => (prev ? `${prev}\n\n${content}` : content));
+		requestAnimationFrame(() => textareaRef.current?.focus());
+	};
 
 	const showJobs = jobs.length > 0 && !isStreaming && !isPending;
 
@@ -186,40 +174,43 @@ export default function Chat() {
 					e.preventDefault();
 					handleSubmit();
 				}}
-				className="md:mx-75 mx-5 mb-5 mt-2 rounded-xl shadow-lg shadow-border transition-all duration-150 bg-background
-				border-2 border-transparent has-focus:border-accent flex items-start gap-5 p-3">
-				<textarea
-					onKeyDown={(e) => {
-						if (e.key === "Enter" && !e.shiftKey) {
-							e.preventDefault();
-							handleSubmit();
-						}
-					}}
-					ref={textareaRef}
-					rows={1}
-					onChange={(e) => setInputData(e.target.value)}
-					value={inputData}
-					placeholder="درمورد خودت بنویس..."
-					className="resize-none overflow-hidden h-auto w-full outline-0 text-[17px]
-					placeholder:font-medium placeholder:text-text-muted text-primary-text"
-				/>
-				<button
-					type={isStreaming ? "button" : "submit"}
-					onClick={() => {
-						if (isStreaming) abort();
-					}}
-					className="bg-accent hover:bg-accent-hover rounded-full outline-0 size-9 shrink-0
-						cursor-pointer transition-all duration-150 flex items-center justify-center">
-					{isStreaming ? (
-						<Square strokeWidth={1.5} className="size-4 text-white" />
-					) : (
-						<Send
-							id="sendIcon"
-							strokeWidth={1.5}
-							className="size-4 text-white mt-0.5 me-px"
-						/>
-					)}
-				</button>
+				className="md:mx-75 mx-5 mb-5 mt-2 rounded-xl border border-border bg-background p-3 shadow-lg shadow-border transition-all duration-150">
+				<div className="flex items-end gap-2.5">
+					<textarea
+						onKeyDown={(e) => {
+							if (e.key === "Enter" && !e.shiftKey) {
+								e.preventDefault();
+								handleSubmit();
+							}
+						}}
+						ref={textareaRef}
+						rows={1}
+						onChange={(e) => setInputData(e.target.value)}
+						value={inputData}
+						placeholder="درمورد خودت بنویس..."
+						className="h-auto min-h-10 w-full resize-none overflow-hidden rounded-lg px-2 py-2 outline-0 text-[17px] placeholder:font-medium placeholder:text-text-muted text-primary-text"
+					/>
+
+					<div className="flex shrink-0 items-center gap-2">
+						<ResumeModal onSelectResume={handleResumeSelect} />
+						<button
+							type={isStreaming ? "button" : "submit"}
+							onClick={() => {
+								if (isStreaming) abort();
+							}}
+							className="flex size-10 items-center justify-center rounded-full bg-accent transition-all duration-150 hover:bg-accent-hover cursor-pointer">
+							{isStreaming ? (
+								<Square strokeWidth={1.5} className="size-4 text-white" />
+							) : (
+								<Send
+									id="sendIcon"
+									strokeWidth={1.5}
+									className="size-4 text-white mt-0.5 me-px -rotate-90"
+								/>
+							)}
+						</button>
+					</div>
+				</div>
 			</form>
 		</div>
 	);
