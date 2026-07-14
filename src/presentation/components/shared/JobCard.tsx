@@ -1,10 +1,10 @@
 import { useState } from "react";
-import BookmarkIcon from "../../../assets/icons/BookmarkIcon";
 import MatchCircle from "./MatchCircle";
 import type { Job } from "../hooks/useChatStream";
 import { useCustomMutation } from "../hooks/useCostumMutation";
 import { MarkAPI } from "../../../services/mark";
 import { toast } from "../../../services/toast";
+import { Bookmark } from "lucide-react";
 
 interface JobCardProps extends Job {
 	bookmarked?: boolean;
@@ -60,9 +60,10 @@ export default function JobCard(props: JobCardProps) {
 				</button>
 
 				<button onClick={handleMark} className="cursor-pointer">
-					<BookmarkIcon
-						className={`size-5 [&>g>path]:stroke-primary-action ${
-							saved && "[&>g>path]:fill-primary-action/60"
+					<Bookmark
+						strokeWidth={1.5}
+						className={`size-5 text-primary-action ${
+							saved && "fill-primary-action/60"
 						}`}
 					/>
 				</button>

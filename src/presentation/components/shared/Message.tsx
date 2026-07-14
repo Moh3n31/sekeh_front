@@ -1,14 +1,11 @@
 // Data & Services
+import { Copy, LoaderCircle, ThumbsDown, ThumbsUp } from "lucide-react";
 import type { MessageObject } from "../../../services/chat";
 interface MessageProps {
 	message: MessageObject;
 	isPending?: boolean;
 }
 // Components
-import CopyIcon from "../../../assets/icons/CopyIcon";
-import DislikeIcon from "../../../assets/icons/DislikeIcon";
-import LikeIcon from "../../../assets/icons/LikeIcon";
-import LoadingIcon from "../../../assets/icons/LoadingIcon";
 import ReactMarkdown from "react-markdown";
 import rehypeHighlight from "rehype-highlight";
 
@@ -18,11 +15,9 @@ function UserMessage({ message, isPending }: MessageProps) {
 			<span
 				className={`size-6 shrink-0 rounded-full flex items-center justify-center 
 					${isPending ? "animate-spin" : ""}`}>
-				<LoadingIcon
+				<LoaderCircle
 					className={
-						isPending
-							? "size-6 p-0 rounded-full [&>g>path]:stroke-text-muted"
-							: "hidden"
+						isPending ? "size-6 p-0 rounded-full text-text-muted" : "hidden"
 					}
 				/>
 			</span>
@@ -44,7 +39,10 @@ function UserMessage({ message, isPending }: MessageProps) {
 						<button
 							onClick={() => navigator.clipboard.writeText(message.content)}
 							className="size-7 p-1 border-2 border-transparent hover:border-border rounded-full transition-all duration-150 cursor-pointer">
-							<CopyIcon className="[&>g>path]:stroke-text-muted/60 size-full" />
+							<Copy
+								strokeWidth={1.5}
+								className="text-text-muted/60 size-full"
+							/>
 						</button>
 					</menu>
 				</div>
@@ -97,17 +95,26 @@ function AiMessage({ message, isPending }: MessageProps) {
 						<button
 							onClick={() => navigator.clipboard.writeText(message.content)}
 							className="size-7 p-1 border-2 border-transparent hover:border-border rounded-full transition-all duration-150 cursor-pointer">
-							<CopyIcon className="[&>g>path]:stroke-text-muted/60 size-full" />
+							<Copy
+								strokeWidth={1.5}
+								className="text-text-muted/60 size-full"
+							/>
 						</button>
 						<button
 							onClick={handleLike}
 							className="size-7 p-1 border-2 border-transparent hover:border-border rounded-full transition-all duration-150 cursor-pointer">
-							<LikeIcon className="[&>g>path]:fill-text-muted/60 size-full" />
+							<ThumbsUp
+								strokeWidth={1.5}
+								className="text-text-muted/60 size-full"
+							/>
 						</button>
 						<button
 							onClick={handleDislike}
 							className="size-7 p-1 border-2 border-transparent hover:border-border rounded-full transition-all duration-150 cursor-pointer">
-							<DislikeIcon className="[&>g>path]:fill-text-muted/60 size-full" />
+							<ThumbsDown
+								strokeWidth={1.5}
+								className="text-text-muted/60 size-full"
+							/>
 						</button>
 					</menu>
 				</div>

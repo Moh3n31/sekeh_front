@@ -1,10 +1,8 @@
-import BinIcon from "../../assets/icons/BinIcon";
-import BrokenHeartIcon from "../../assets/icons/BrokenHeartIcon";
+import { BanIcon, HeartCrack } from "lucide-react";
 import { authAPI } from "../../services/authentication";
 import { removeTokens } from "../../utils/authTokens";
 import { useCustomMutation } from "../components/hooks/useCostumMutation";
 import Dialog from "../components/shared/Dialog";
-import GrowableButton from "../components/shared/GrowableButton";
 
 export default function DeleteAcountDialog() {
 	const { deleteProfile } = authAPI;
@@ -20,17 +18,13 @@ export default function DeleteAcountDialog() {
 	return (
 		<Dialog
 			trigger={
-				<GrowableButton
-					fullWidth="43"
-					variant="destructable"
-					label="حذف حساب"
-					icon={
-						<BinIcon
-							className="w-5 h-5 transition-colors duration-200
-							[&>g>path]:stroke-primary-red group-hover:[&>g>path]:stroke-white"
-						/>
-					}
-				/>
+				<div className="flex gap-2 cursor-pointer items-center bg-primary-red py-1.5 px-3 rounded-full">
+					<BanIcon
+						strokeWidth={1.5}
+						className="size-5 transition-colors duration-200 text-white"
+					/>
+					<span className="align-middle text-white pb-2">حذف حساب</span>
+				</div>
 			}
 			title="حذف حساب کاربری"
 			footer={
@@ -39,9 +33,9 @@ export default function DeleteAcountDialog() {
 					className="group py-1 px-3 border-2 border-primary-red text-primary-red rounded-md font-semibold cursor-pointer
 						hover:bg-primary-red hover:text-white transition-all duration-150 flex gap-2 items-center">
 					<span>حذف</span>
-					<BrokenHeartIcon
-						className="size-5 [&>g>path]:first:fill-primary-red [&>g>path]:last:stroke-primary-red
-						group-hover:[&>g>path]:first:fill-white group-hover:[&>g>path]:last:stroke-white transition-all duration-150"
+					<HeartCrack
+						strokeWidth={1.5}
+						className="size-5 text-primary-red group-hover:text-white transition-all duration-150"
 					/>
 				</button>
 			}

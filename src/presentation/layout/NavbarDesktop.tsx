@@ -24,9 +24,7 @@ export default function NavbarDesktop() {
 							id={`${path}-icon`}>
 							<Icon
 								className={`size-5 ${
-									isThisPage
-										? "[&>g>*]:stroke-background"
-										: "[&>g>*]:stroke-primary-action"
+									isThisPage ? "text-background" : "text-primary-action"
 								}`}
 							/>
 							<span

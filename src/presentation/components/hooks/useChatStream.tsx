@@ -1,13 +1,6 @@
 import { useState, useRef, useCallback } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 
-type MetaEvent = {
-  chat: { chat_id: number; title: string };
-  user_message_id: number;
-  type: "chat" | "analyze" | "error";
-  title_changed: boolean;
-};
-
 type ContentEvent = { delta: string };
 
 export type Job = {
@@ -21,15 +14,9 @@ export type Job = {
 };
 
 type JobsEvent = { items: Job[] };
-type DoneEvent = { bot_message_id: number };
 type StreamErrorEvent = { message: string };
 
-type SSEEvent =
-  | { event: "meta"; data: MetaEvent }
-  | { event: "content"; data: ContentEvent }
-  | { event: "jobs"; data: JobsEvent }
-  | { event: "done"; data: DoneEvent }
-  | { event: "error"; data: StreamErrorEvent };
+
 
 interface UseChatStreamReturn {
   sendMessage: (content: string) => Promise<void>;

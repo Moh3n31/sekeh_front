@@ -11,6 +11,7 @@ import Signup from "./pages/Signup";
 import ContactUs from "./pages/ContactUs";
 import NotFound from "./pages/NotFound";
 import Landing from "./pages/Landing";
+import Resume from "./pages/Resume";
 
 export default function AllRoutes() {
 	return (
@@ -28,6 +29,7 @@ export default function AllRoutes() {
 				<Route path="chats/:chatId" element={<Chat />} />
 				<Route path="marks" element={<Marks />} />
 				<Route path="profile" element={<Profile />} />
+				<Route path="resume" element={<Resume />} />
 				<Route path="contact-us" element={<ContactUs />} />
 			</Route>
 

@@ -2,7 +2,6 @@
 import { chatAPI } from "../../services/chat";
 // Components
 import { Link } from "react-router";
-import SendIcon from "../../assets/icons/SendIcon";
 import Message from "../components/shared/Message";
 import JobCard from "../components/shared/JobCard";
 // Hooks
@@ -10,7 +9,7 @@ import { useChatStream } from "../components/hooks/useChatStream";
 import { useEffect, useRef, useState } from "react";
 import { useParams } from "react-router";
 import { useCustomQuery } from "../components/hooks/useCostumQuery";
-import StopIcon from "../../assets/icons/StopIcon";
+import { Send, Square } from "lucide-react";
 
 export default function Chat() {
 	const { chatId } = useParams();
@@ -66,6 +65,24 @@ export default function Chat() {
 		const maxHeight = parseFloat(getComputedStyle(el).lineHeight) * 5;
 		el.style.height = Math.min(el.scrollHeight, maxHeight) + "px";
 	}, [inputData]);
+
+	useEffect(() => {
+		const handleResumePaste = (event: Event) => {
+			const customEvent = event as CustomEvent<{ resumeContent?: string }>;
+			const resumeContent = customEvent.detail?.resumeContent;
+
+			if (!resumeContent) return;
+
+			setInputData((prev) => (prev ? `${prev}\n\n${resumeContent}` : resumeContent));
+			textareaRef.current?.focus();
+		};
+
+		window.addEventListener("resume:paste-to-chat", handleResumePaste);
+
+		return () => {
+			window.removeEventListener("resume:paste-to-chat", handleResumePaste);
+		};
+	}, []);
 
 	const showJobs = jobs.length > 0 && !isStreaming && !isPending;
 
@@ -194,11 +211,12 @@ export default function Chat() {
 					className="bg-accent hover:bg-accent-hover rounded-full outline-0 size-9 shrink-0
 						cursor-pointer transition-all duration-150 flex items-center justify-center">
 					{isStreaming ? (
-						<StopIcon className="size-4 [&>g>path]:stroke-2 [&>g>path]:stroke-white" />
+						<Square strokeWidth={1.5} className="size-4 text-white" />
 					) : (
-						<SendIcon
+						<Send
 							id="sendIcon"
-							className="size-4 [&>g>path]:stroke-white mt-0.5 me-px"
+							strokeWidth={1.5}
+							className="size-4 text-white mt-0.5 me-px"
 						/>
 					)}
 				</button>

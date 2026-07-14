@@ -1,10 +1,9 @@
 import { useState } from "react";
-import PasswordIcon from "../../assets/icons/PasswordIcon";
 import { authAPI } from "../../services/authentication";
 import { useCustomMutation } from "../components/hooks/useCostumMutation";
 import Dialog from "../components/shared/Dialog";
-import GrowableButton from "../components/shared/GrowableButton";
 import { toast } from "../../services/toast";
+import { KeyRound } from "lucide-react";
 
 interface PasswordForm {
 	current: string;
@@ -32,12 +31,11 @@ export default function ChangePasswordDialog() {
 	function handleSubmit() {
 		if (!doesMatch) return toast.error("تایید رمز عبور جدید صحیح نمی‌باشد.");
 		if (!isValid) return toast.error("لطفا فرم را کامل پر کنید.");
-		
+
 		mutate(
 			{ current_password: form.current, new_password: form.new },
 			{
-				onSuccess: () =>
-					toast.success("رمز عبور شما با موفقیت بروزرسانی شد."),
+				onSuccess: () => toast.success("رمز عبور شما با موفقیت بروزرسانی شد."),
 				onError: (e) => toast.error(e.message),
 			},
 		);
@@ -49,18 +47,13 @@ export default function ChangePasswordDialog() {
 	return (
 		<Dialog
 			trigger={
-				<GrowableButton
-					fullWidth="47"
-					variant="primary"
-					label="تغییر رمز عبور"
-					icon={
-						<PasswordIcon
-							className="w-5 h-5 transition-colors duration-200
-							[&>g>path]:first:stroke-primary-action [&>g>path]:not-first:fill-primary-action
-							group-hover:[&>g>path]:first:stroke-white group-hover:[&>g>path]:not-first:fill-white"
-						/>
-					}
-				/>
+				<div className="flex gap-2 cursor-pointer items-center bg-primary-action py-1.5 px-3 rounded-full">
+					<KeyRound
+						strokeWidth={1.5}
+						className="size-5 transition-colors duration-200 text-white"
+					/>
+					<span className="align-middle text-white pb-2">تغییر رمز عبور</span>
+				</div>
 			}
 			title="تغییر رمز عبور"
 			footer={

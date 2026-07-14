@@ -2,7 +2,7 @@ import { Link, useNavigate } from "react-router";
 import { useCustomMutation } from "../components/hooks/useCostumMutation";
 import { authAPI } from "../../services/authentication";
 import { useState } from "react";
-import LoadingIcon from "../../assets/icons/LoadingIcon";
+import { LoaderCircle } from "lucide-react";
 
 interface Form {
 	username: string;
@@ -44,7 +44,9 @@ export default function Signup() {
 
 	return (
 		<div className="flex flex-col gap-10 justify-center h-full">
-			<p className="text-4xl font-bold text-primary-text text-center">ثبت نام</p>
+			<p className="text-4xl font-bold text-primary-text text-center">
+				ثبت نام
+			</p>
 			<form
 				id="login-form"
 				onSubmit={(e) => {
@@ -88,7 +90,7 @@ export default function Signup() {
         text-white cursor-pointer font-semibold text-xl transition-all duration-150
 				disabled:pointer-events-none disabled:opacity-40 flex justify-center items-center
 				${isPending ? "pointer-events-none" : ""}`}>
-				{isPending ? <LoadingIcon color="white" /> : "ادامه"}
+				{isPending ? <LoaderCircle color="white" /> : "ادامه"}
 			</button>
 			<footer className="flex flex-col items-center">
 				<p className="text-primary-action">قبلا حساب کاربری ساخته‌اید؟</p>

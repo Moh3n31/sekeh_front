@@ -1,11 +1,10 @@
 import { useState } from "react";
-import NewChatIcon from "../../assets/icons/NewChatIcon";
 import { authAPI, type UserInfo } from "../../services/authentication";
 import { useCustomMutation } from "../components/hooks/useCostumMutation";
 import Dialog from "../components/shared/Dialog";
-import GrowableButton from "../components/shared/GrowableButton";
 import useProfile from "../../services/profileStorage";
 import { toast } from "../../services/toast";
+import { PenBoxIcon } from "lucide-react";
 
 export default function ProfileDialog({ refetch }: { refetch: () => void }) {
 	const { profile } = useProfile();
@@ -32,18 +31,13 @@ export default function ProfileDialog({ refetch }: { refetch: () => void }) {
 	return (
 		<Dialog
 			trigger={
-				<GrowableButton
-					fullWidth="35"
-					variant="primary"
-					label="ویرایش پروفایل"
-					icon={
-						<NewChatIcon
-							className="w-5 h-5 transition-colors duration-200
-							[&>g>path]:first:stroke-primary-action [&>g>path]:last:fill-primary-action 
-							group-hover:[&>g>path]:first:stroke-white group-hover:[&>g>path]:last:fill-white"
-						/>
-					}
-				/>
+				<div className="flex gap-2 cursor-pointer items-center bg-primary-action py-1.5 px-3 rounded-full w-full">
+					<PenBoxIcon
+						strokeWidth={1.5}
+						className="size-5 transition-colors duration-200 text-white"
+					/>
+					<span className="align-middle text-white pb-2">ویرایش پروفایل</span>
+				</div>
 			}
 			title="ویرایش پروفایل"
 			footer={

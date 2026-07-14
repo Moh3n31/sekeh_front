@@ -2,9 +2,9 @@
 import { NavLink, useLocation } from "react-router";
 // Components
 import LogoutDialog from "../profile/LogoutDialog";
-import MenuIcon from "../../assets/icons/MenuIcon";
 //Types & data
 import { menuItems } from "./navbarRouts";
+import { Menu } from "lucide-react";
 
 export default function NavbarMobile() {
 	const location = useLocation();
@@ -13,7 +13,10 @@ export default function NavbarMobile() {
 		<div className=" md:hidden">
 			<input type="checkbox" id="navbar-menu" className="peer hidden" />
 			<label htmlFor="navbar-menu">
-				<MenuIcon className="[&>g>path]:stroke-white bg-accent p-1 size-7 rounded-full" />
+				<Menu
+					strokeWidth={1.5}
+					className="text-white bg-accent p-1 size-7 rounded-full"
+				/>
 			</label>
 			<section className="fixed w-1/2 h-full top-17 start-0 animate-slide-in-left hidden peer-checked:block z-20">
 				<nav className="flex flex-col items-start gap-5 w-full h-full bg-background p-2">

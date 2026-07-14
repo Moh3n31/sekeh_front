@@ -1,10 +1,10 @@
 import { useRef, useState } from "react";
 // import Dialog from "../components/shared/Dialog";
 import { useNavigate } from "react-router";
-import NewChatIcon from "../../assets/icons/NewChatIcon";
 import { useCustomMutation } from "../components/hooks/useCostumMutation";
 import { chatAPI } from "../../services/chat";
 import GrowableButton from "../components/shared/GrowableButton";
+import { PenBox } from "lucide-react";
 // import LoadingIcon from "../../assets/icons/LoadingIcon";
 
 export default function NewChatDialog() {
@@ -36,9 +36,10 @@ export default function NewChatDialog() {
 		<GrowableButton
 			fullWidth="33"
 			onClick={handleNewChat}
-			label="New Chat"
+			label="چت جدید"
 			icon={
-				<NewChatIcon
+				<PenBox
+					strokeWidth={1.5}
 					className="w-5 h-5 transition-colors duration-200
 						[&>g>path]:first:stroke-primary-action [&>g>path]:last:fill-primary-action
 						group-hover:[&>g>path]:first:stroke-white group-hover:[&>g>path]:last:fill-white"

@@ -1,11 +1,11 @@
 import { Link, useNavigate } from "react-router";
-import LoadingIcon from "../../assets/icons/LoadingIcon";
 import { useState } from "react";
 import { useCustomMutation } from "../components/hooks/useCostumMutation";
 import { authAPI } from "../../services/authentication";
 import useProfile from "../../services/profileStorage";
 import { addTokens } from "../../utils/authTokens";
 import { toast } from "../../services/toast";
+import { LoaderCircle } from "lucide-react";
 
 interface Form {
 	username: string;
@@ -82,7 +82,7 @@ export default function Login() {
 				text-white cursor-pointer font-semibold text-xl transition-all duration-150
 				disabled:pointer-events-none disabled:opacity-40 flex justify-center items-center
 				${isPending ? "pointer-events-none" : ""}`}>
-				{isPending ? <LoadingIcon color="white" /> : "ورود"}
+				{isPending ? <LoaderCircle color="white" /> : "ورود"}
 			</button>
 			<footer className="flex flex-col items-center">
 				<p className="text-primary-action">قبلا حساب کاربری نساخته‌اید؟</p>

@@ -1,11 +1,10 @@
 import Dialog from "../components/shared/Dialog";
-import LogoutIcon from "../../assets/icons/LogoutIcon";
 import { useCustomMutation } from "../components/hooks/useCostumMutation";
 import { authAPI } from "../../services/authentication";
 import type { Exceptions } from "../../services/api";
-import LoadingIcon from "../../assets/icons/LoadingIcon";
 import { removeTokens } from "../../utils/authTokens";
 import { useNavigate } from "react-router";
+import { DoorOpen, LoaderCircle } from "lucide-react";
 
 export default function LogoutDialog() {
 	const { mutate, isPending } = useCustomMutation(authAPI.logout);
@@ -29,7 +28,10 @@ export default function LogoutDialog() {
 					className="group cursor-pointer py-1 px-3 rounded-lg flex gap-7 items-center w-full
 					hover:bg-primary-action border-2 border-primary-action transition-all duration-150
 					max-md:bg-primary-action">
-					<LogoutIcon className="size-5 group-hover:[&>g>path]:stroke-background [&>g>path]:stroke-primary-action max-md:[&>g>path]:stroke-background" />
+					<DoorOpen
+						strokeWidth={1.5}
+						className="size-5 group-hover:text-background text-primary-action max-md:text-background"
+					/>
 					<p className="font-semibold group-hover:text-background text-primary-action max-md:text-background text-[14px]">
 						<span className="max-md:hidden">خروج از حساب</span>
 						<span className="md:hidden">خروج</span>
@@ -43,7 +45,7 @@ export default function LogoutDialog() {
 					className={`group py-1 px-3 border-2 border-primary-red text-primary-red rounded-md font-semibold cursor-pointer
 						hover:bg-primary-red hover:text-white transition-all duration-150 w-25 flex items-center justify-center
 						${isPending ? "pointer-events-none" : ""}`}>
-					{isPending ? <LoadingIcon color="primary-red" /> : "خروج"}
+					{isPending ? <LoaderCircle color="primary-red" /> : "خروج"}
 				</button>
 			}
 			closeButton={
