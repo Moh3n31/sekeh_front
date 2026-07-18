@@ -33,8 +33,8 @@ export default function NavbarMobile() {
 								<Icon
 									className={`md:size-5 max-md:size-6 ${
 										isThisPage
-											? "[&>g>*]:stroke-background"
-											: "[&>g>*]:stroke-primary-action"
+											? "text-background"
+											: "text-primary-action"
 									}`}
 								/>
 								<span

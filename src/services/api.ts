@@ -63,7 +63,7 @@ api.interceptors.response.use(
 			} catch (err) {
 				localStorage.clear();
 
-				toast.error("Your session has expired. Please sign in again.");
+				toast.error("لطفا مجددا وارد حساب کاربری خود شوید.");
 
 				setTimeout(() => {
 					window.location.href = "/auth/login";
@@ -73,12 +73,9 @@ api.interceptors.response.use(
 			}
 		}
 
-		const message =
-			error.response?.data?.message ||
-			error.response?.data?.error ||
-			"Something went wrong. Please try again.";
+		const message = error.data?.message || error.data?.error || null;
 
-		toast.error(message);
+		if (message) toast.error(message);
 
 		return Promise.reject(error);
 	},

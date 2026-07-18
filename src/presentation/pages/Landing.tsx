@@ -40,26 +40,17 @@ export default function Landing() {
 			{/* Header */}
 			<header className="bg-background/80 backdrop-blur-sm sticky top-0 z-50 border-b border-border px-4 md:px-8 py-4 flex items-center justify-between">
 				<button
-					className="bg-accent text-white px-6 py-2.5 rounded-full text-sm font-medium
+					className="bg-accent text-white md:px-6 md:py-2.5 rounded-full text-sm font-medium
           hover:bg-accent-hover transition-all duration-300 hover:scale-105 hover:shadow-lg
-          flex items-center gap-2 cursor-pointer"
+          flex items-center gap-2 cursor-pointer max-md:size-8 max-md:justify-center"
 					onClick={() => navigate("/chats")}>
 					<MessageCircle size={18} />
-					{landingContent.hero.secondary_cta}
+					<span className="max-md:hidden">
+						{landingContent.hero.secondary_cta}
+					</span>
 				</button>
 
 				<Title subColor="primary-text" mianColor="accent" />
-				{/* <div className="flex items-center gap-3">
-					<div className="relative">
-						<div className="absolute inset-0 bg-accent rounded-full blur-xl opacity-20 animate-pulse"></div>
-						<div className="relative size-10 rounded-full bg-linear-to-br from-accent to-accent-hover flex items-center justify-center">
-							<Sparkles size={20} className="text-white" />
-						</div>
-					</div>
-					<p className="font-bold text-2xl text-primary-text tracking-tight">
-						Job<span className="text-accent">Assistant</span>
-					</p>
-				</div> */}
 			</header>
 
 			<main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-24">

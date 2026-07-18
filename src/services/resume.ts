@@ -1,6 +1,6 @@
 import { api, type ApiResponse } from "./api";
 
-interface ResumeForm {
+interface ResumeFormObject {
 	title: string;
 	content: string;
 }
@@ -14,16 +14,16 @@ interface ResumeItem {
 }
 
 const resumeAPI = {
-	createResume: (form: ResumeForm) =>
-		api.post<ApiResponse<null>>("/resume", form),
-	updateResume: (id: number | string, form: ResumeForm) =>
-		api.put<ApiResponse<null>>(`/resume/${id}`, form),
-	getResumes: () => api.get<ApiResponse<ResumeItem[]>>("/resume"),
+	createResume: (form: ResumeFormObject) =>
+		api.post<ApiResponse<null>>("/resumes", form),
+	updateResume: (id: number | string, form: ResumeFormObject) =>
+		api.put<ApiResponse<null>>(`/resumes/${id}`, form),
+	getResumes: () => api.get<ApiResponse<ResumeItem[]>>("/resumes"),
 	getResumeById: (id: number | string) =>
-		api.get<ApiResponse<ResumeItem>>(`/resume/${id}`),
+		api.get<ApiResponse<ResumeItem>>(`/resumes/${id}`),
 	deleteResume: (id: number | string) =>
-		api.delete<ApiResponse<null>>(`/resume/${id}`),
+		api.delete<ApiResponse<null>>(`/resumes/${id}`),
 };
 
-export type { ResumeForm, ResumeItem };
+export type { ResumeFormObject, ResumeItem };
 export { resumeAPI };

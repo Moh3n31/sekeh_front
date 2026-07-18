@@ -10,7 +10,7 @@ export type Job = {
   requirements: string[];
   job_url: string;
   source_site: string;
-  company_reviews: { score: number; count: number };
+  company_reviews: { rating: number; count: number };
 };
 
 type JobsEvent = { items: Job[] };

@@ -1,16 +1,17 @@
 //Data & Services
 import { chatAPI } from "../../services/chat";
+import { resumeAPI } from "../../services/resume";
 // Components
 import { Link } from "react-router";
 import Message from "../components/shared/Message";
-import JobCard from "../components/shared/JobCard";
 // Hooks
 import { useChatStream } from "../components/hooks/useChatStream";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type FormEvent } from "react";
 import { useParams } from "react-router";
 import { useCustomQuery } from "../components/hooks/useCostumQuery";
 import { Send, Square } from "lucide-react";
 import ResumeModal from "../components/resume/ResumeModal";
+import { getRequiredError, sanitizeText } from "../../utils/formValidation";
 
 export default function Chat() {
 	const { chatId } = useParams();
@@ -25,6 +26,7 @@ export default function Chat() {
 	);
 
 	const [inputData, setInputData] = useState<string>("");
+	const [error, setError] = useState("");
 	const textareaRef = useRef<HTMLTextAreaElement>(null);
 	const containerRef = useRef<HTMLDivElement | null>(null);
 	const bottomRef = useRef<HTMLDivElement | null>(null);
@@ -39,9 +41,19 @@ export default function Chat() {
 	} = useChatStream(chatId ?? "");
 
 	async function handleSubmit() {
-		const userContent = inputData.trim();
-		if (!userContent) return;
+		const userContent = sanitizeText(inputData);
+		const nextError = getRequiredError(userContent, "پیام");
+		if (nextError) {
+			setError(nextError);
+			return;
+		}
 
+		if (userContent.length > 400) {
+			setError("پیام نباید بیشتر از 400 کاراکتر باشد.");
+			return;
+		}
+
+		setError("");
 		setPendingUserMessage(userContent);
 		setInputData("");
 
@@ -67,18 +79,23 @@ export default function Chat() {
 		el.style.height = Math.min(el.scrollHeight, maxHeight) + "px";
 	}, [inputData]);
 
-	const handleResumeSelect = (content: string) => {
-		setInputData((prev) => (prev ? `${prev}\n\n${content}` : content));
-		requestAnimationFrame(() => textareaRef.current?.focus());
+	const handleResumeSelect = async (resumeId: number | string) => {
+		try {
+			const response = await resumeAPI.getResumeById(resumeId);
+			const content = response.data.content;
+			setInputData((prev) => (prev ? `${prev}\n\n${content}` : content));
+			requestAnimationFrame(() => textareaRef.current?.focus());
+		} catch (error) {
+			console.error(error);
+			setInputData((prev) => prev ?? "");
+		}
 	};
-
-	const showJobs = jobs.length > 0 && !isStreaming && !isPending;
 
 	return (
 		<div className="flex flex-col relative h-full">
 			<menu className="md:absolute md:top-5 md:start-5 max-md:pt-5 max-md:pb-1 max-md:ps-3 flex flex-col gap-1 items-start">
 				<Link
-					to={".."}
+					to={"/chats"}
 					className="group text-lg flex items-center justify-center gap-1 transition-all duration-150
 					border-2 border-primary-action rounded-lg px-3 py-0.5 hover:bg-primary-action bg-surface">
 					<p
@@ -90,6 +107,7 @@ export default function Chat() {
 			</menu>
 
 			<div
+				dir="ltr"
 				ref={containerRef}
 				className="md:pt-10 max-md:pt-5 pb-5 flex flex-col gap-10 overflow-y-auto md:px-[20%] px-5 scrollbar-gray h-full">
 				{history.length === 0 && !pendingUserMessage && (
@@ -99,19 +117,14 @@ export default function Chat() {
 							role: "assistant",
 							content:
 								"سلام!\n\nمن **دستیار کاریابی هوشمند** شما هستم.\n\nرزومه خودت رو برام بفرست تا ببینم چی کار میتونم بکنم.",
-							time: new Date().toISOString(),
+							created_at: new Date().toISOString(),
 						}}
 						isPending={false}
 					/>
 				)}
 
 				{history.map((m) => (
-					<div className="flex flex-col gap-3">
-						<Message message={m} key={m.message_id} isPending={false} />
-						<div className="grid grid-cols-3 gap-2">
-							{m.job_cards && m.job_cards.map((j) => <JobCard {...j} />)}
-						</div>
-					</div>
+					<Message message={m} key={m.message_id} isPending={false} />
 				))}
 
 				{pendingUserMessage && (
@@ -120,7 +133,7 @@ export default function Chat() {
 							message_id: "user-pending",
 							role: "user",
 							content: pendingUserMessage,
-							time: new Date().toISOString(),
+							created_at: new Date().toISOString(),
 						}}
 						isPending={isPending}
 					/>
@@ -133,7 +146,7 @@ export default function Chat() {
 							message_id: "assistant-pending",
 							role: "assistant",
 							content: "بذار ببینم چی می‌تونم پیدا کنم...",
-							time: new Date().toISOString(),
+							created_at: new Date().toISOString(),
 						}}
 						isPending={true}
 					/>
@@ -146,31 +159,17 @@ export default function Chat() {
 							message_id: "assistant-streaming",
 							role: "assistant",
 							content: assistantStreamingText,
-							time: new Date().toISOString(),
+							created_at: new Date().toISOString(),
 						}}
 						isPending={isStreaming}
 					/>
-				)}
-
-				{/* Job results — shown after streaming finishes */}
-				{showJobs && (
-					<div className="flex flex-col gap-3">
-						<p className="text-sm font-semibold text-text-muted">
-							{jobs.length} موقعیت شغلی پیدا شد
-						</p>
-						<div className="grid grid-cols-3 gap-2">
-							{jobs.map((job) => (
-								<JobCard key={job.job_url} {...job} />
-							))}
-						</div>
-					</div>
 				)}
 
 				<div ref={bottomRef} />
 			</div>
 
 			<form
-				onSubmit={(e) => {
+				onSubmit={(e: FormEvent<HTMLFormElement>) => {
 					e.preventDefault();
 					handleSubmit();
 				}}
@@ -185,14 +184,19 @@ export default function Chat() {
 						}}
 						ref={textareaRef}
 						rows={1}
-						onChange={(e) => setInputData(e.target.value)}
+						onChange={(e) => {
+							setInputData(e.target.value);
+							if (error) setError("");
+						}}
 						value={inputData}
 						placeholder="درمورد خودت بنویس..."
+						maxLength={400}
 						className="h-auto min-h-10 w-full resize-none overflow-hidden rounded-lg px-2 py-2 outline-0 text-[17px] placeholder:font-medium placeholder:text-text-muted text-primary-text"
 					/>
 
 					<div className="flex shrink-0 items-center gap-2">
 						<ResumeModal onSelectResume={handleResumeSelect} />
+						{error ? <p className="text-sm text-red-500">{error}</p> : null}
 						<button
 							type={isStreaming ? "button" : "submit"}
 							onClick={() => {

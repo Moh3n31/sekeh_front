@@ -4,7 +4,7 @@ import { resumeAPI, type ResumeItem } from "../../../services/resume";
 import Dialog from "../shared/Dialog";
 
 interface ResumeModalProps {
-	onSelectResume: (content: string) => void;
+	onSelectResume: (id: number | string) => void;
 }
 
 export default function ResumeModal({ onSelectResume }: ResumeModalProps) {
@@ -16,7 +16,7 @@ export default function ResumeModal({ onSelectResume }: ResumeModalProps) {
 	const resumes = (data?.data ?? []) as ResumeItem[];
 
 	const handleSelect = (resume: ResumeItem) => {
-		onSelectResume(resume.content);
+		onSelectResume(resume.id);
 	};
 
 	return (
@@ -28,11 +28,7 @@ export default function ResumeModal({ onSelectResume }: ResumeModalProps) {
 			}
 			title="رزومه‌های من"
 			triggerClass="shrink-0"
-			footer={
-				<button className="px-4 h-10 rounded-full border border-border cursor-pointer">
-					بستن
-				</button>
-			}>
+			footer={<></>}>
 			<div className="flex flex-col gap-3 min-w-[280px]">
 				{isLoading ? (
 					<div className="flex items-center justify-center py-8">
@@ -52,7 +48,9 @@ export default function ResumeModal({ onSelectResume }: ResumeModalProps) {
 								className="rounded-lg border border-border bg-background p-4 text-right transition-all duration-150 hover:border-accent hover:shadow-sm cursor-pointer">
 								<div className="flex items-center gap-2 text-accent">
 									<MessageSquarePlus className="size-4" />
-									<span className="font-semibold text-primary-text">{resume.title}</span>
+									<span className="font-semibold text-primary-text">
+										{resume.title}
+									</span>
 								</div>
 								<p className="mt-2 text-sm text-text-muted line-clamp-3">
 									{resume.content}

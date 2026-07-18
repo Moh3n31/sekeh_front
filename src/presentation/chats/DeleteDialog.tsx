@@ -3,7 +3,7 @@ import Dialog from "../components/shared/Dialog";
 import { useCustomMutation } from "../components/hooks/useCostumMutation";
 import { chatAPI } from "../../services/chat";
 import { useQueryClient } from "@tanstack/react-query";
-import { Delete, LoaderCircle } from "lucide-react";
+import { LoaderCircle, X } from "lucide-react";
 
 export default function DeleteDialog({ id }: { id: number }) {
 	const { mutate, isPending } = useCustomMutation(chatAPI.deleteChat);
@@ -29,12 +29,9 @@ export default function DeleteDialog({ id }: { id: number }) {
 		<Dialog
 			trigger={
 				<div
-					className="border-2 border-primary-red rounded-full hover:bg-primary-red transition-all duration-100 p-0.5 size-7 cursor-pointer
-					hover:*:[&>g>path]:stroke-white">
-					<Delete
-						strokeWidth={1.5}
-						className="size-full [&>g>path]:stroke-primary-red"
-					/>
+					className="border-2 border-primary-red rounded-full hover:bg-primary-red transition-all duration-100 p-1 size-7 cursor-pointer
+					hover:*:text-white">
+					<X strokeWidth={1.5} className="size-full text-primary-red" />
 				</div>
 			}
 			title="حذف چت"
@@ -44,7 +41,11 @@ export default function DeleteDialog({ id }: { id: number }) {
 					className={`py-1 px-3 border-2 border-primary-red text-primary-red rounded-md font-semibold cursor-pointer
 							hover:bg-primary-red hover:text-white transition-all duration-150 w-20 flex items-center justify-center
 							${isPending ? "pointer-events-none" : ""}`}>
-					{isPending ? <LoaderCircle color="primary-red" /> : "حذف"}
+					{isPending ? (
+						<LoaderCircle className="text-primary-red animate-spin" />
+					) : (
+						"حذف"
+					)}
 				</button>
 			}
 			closeButton={

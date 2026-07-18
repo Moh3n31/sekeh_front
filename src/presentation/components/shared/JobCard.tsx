@@ -1,33 +1,40 @@
 import { useState } from "react";
 import MatchCircle from "./MatchCircle";
 import type { Job } from "../hooks/useChatStream";
-import { useCustomMutation } from "../hooks/useCostumMutation";
-import { MarkAPI } from "../../../services/mark";
-import { toast } from "../../../services/toast";
 import { Bookmark } from "lucide-react";
+import { MarkAPI } from "../../../services/mark";
+import { useCustomMutation } from "../hooks/useCostumMutation";
+import { toast } from "../../../services/toast";
+import { useQueryClient } from "@tanstack/react-query";
 
 interface JobCardProps extends Job {
 	bookmarked?: boolean;
+	jobFetchKey?: string;
 }
 
 export default function JobCard(props: JobCardProps) {
-	const { mutate: mark } = useCustomMutation(MarkAPI.markCard);
 	const [showDetails, setShowDetails] = useState(false);
 	const [saved, setSaved] = useState(props.bookmarked ?? false);
+	const { markCard } = MarkAPI;
+	const { mutate: mark } = useCustomMutation(markCard);
+	const queryClient = useQueryClient();
 
 	const handleMark = () => {
-		const prev = saved;
 		mark(props, {
-			onSuccess: () => {
-				setSaved(!prev);
-				if (prev) toast.success("با موفقیت حذف شد.");
+			onSuccess: (data) => {
+				if (!data.data.bookmarked) toast.success("با موفقیت حذف شد.");
 				else toast.success("با موفقیت ذخیره شد.");
+				setSaved((prev) => !prev);
+				if (props.jobFetchKey)
+					queryClient.refetchQueries({ queryKey: [props.jobFetchKey] });
 			},
 		});
 	};
 
 	return (
-		<div className="h-67 w-full flex flex-col justify-between gap-2.5 rounded-lg border px-2.5 py-2 bg-background border-border">
+		<div
+			dir="ltr"
+			className="h-75 w-full flex flex-col justify-between gap-2.5 rounded-lg border px-2.5 py-2 bg-background border-border">
 			{showDetails ? (
 				<DetailsView
 					company_name={props.company_name}
@@ -47,7 +54,9 @@ export default function JobCard(props: JobCardProps) {
 			<menu className="flex items-center justify-between gap-4 h-8 text-[11px]">
 				<button
 					onClick={() => setShowDetails((prev) => !prev)}
-					className="cursor-pointer w-full h-full rounded-full text-background bg-primary-action transition">
+					disabled={!props.company_reviews}
+					className="cursor-pointer w-full h-full rounded-full text-background bg-primary-action transition
+					disabled:opacity-50">
 					{showDetails ? "بازگشت" : "جزییات"}
 				</button>
 
@@ -75,7 +84,7 @@ export default function JobCard(props: JobCardProps) {
 interface DetailsViewProps {
 	company_name: string;
 	source_site: string;
-	company_reviews: { score: number; count: number };
+	company_reviews: { rating: number; count: number };
 }
 
 function DetailsView({
@@ -84,26 +93,34 @@ function DetailsView({
 	company_reviews,
 }: DetailsViewProps) {
 	return (
-		<div className="flex flex-col h-full justify-start gap-2.5 text-primary-text text-[12px]">
-			<h3 className="text-[14px] font-medium text-text-muted">جزییات:</h3>
+		<div className="flex flex-col h-full justify-start gap-2.5 text-primary-text text-[14px] *:not-first:ps-5">
+			<h3 className="text-[16px] font-medium text-text-muted">جزییات :</h3>
 
-			<div className="flex gap-3">
-				<span className="text-text-muted">شرکت:</span>
-				<span className="font-semibold">{company_name}</span>
-			</div>
-			<div className="flex gap-3">
-				<span className="text-text-muted">منبع:</span>
-				<span className="font-semibold">{source_site}</span>
-			</div>
-			<div className="flex gap-3">
-				<span className="text-text-muted">نظرات:</span>
-				<span className="font-semibold">
-					{company_reviews.score.toFixed(1)} ⭐{" "}
-					<span className="text-text-muted font-normal">
-						({company_reviews.count} شرکت کننده)
+			{company_name && (
+				<div className="flex gap-3">
+					<span className="text-text-muted">شرکت :</span>
+					<span className="font-semibold">{company_name}</span>
+				</div>
+			)}
+			{source_site && (
+				<div className="flex gap-3">
+					<span className="text-text-muted">منبع :</span>
+					<span className="font-semibold">{source_site}</span>
+				</div>
+			)}
+			{company_reviews.rating && (
+				<div className="flex gap-3">
+					<span className="text-text-muted">نظرات :</span>
+					<span className="font-semibold">
+						{company_reviews.rating.toFixed(1)} ⭐{" "}
+						{company_reviews.count && (
+							<span className="text-text-muted font-normal">
+								({company_reviews.count} شرکت کننده)
+							</span>
+						)}
 					</span>
-				</span>
-			</div>
+				</div>
+			)}
 		</div>
 	);
 }
@@ -130,16 +147,16 @@ function OverView({
 					<MatchCircle percentage={match_percent} />
 				</div>
 				<div className="flex flex-col gap-0.5">
-					<h2 className="text-[14px] font-bold text-primary-text">{title}</h2>
-					<p className="text-[12px] text-text-muted">
+					<h2 className="text-[16px] font-bold text-primary-text">{title}</h2>
+					<p className="text-[14px] text-text-muted">
 						{company_name} · {source_site}
 					</p>
 				</div>
 			</div>
 
-			<div className="h-full text-[12px]">
-				<p className="text-text-muted">نیازمندی‌ها:</p>
-				<ul className="list-disc flex flex-col gap-1 ps-8 max-h-24 text-primary-text overflow-y-auto">
+			<div className="h-full text-[14px]">
+				<p className="text-text-muted font-medium">نیازمندی‌ها:</p>
+				<ul className="list-disc flex flex-col gap-1 ps-8 max-h-full text-primary-text overflow-y-auto">
 					{requirements.map((requirement) => (
 						<li key={requirement}>{requirement}</li>
 					))}

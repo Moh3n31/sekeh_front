@@ -1,25 +1,25 @@
 import { useState, type FormEvent } from "react";
-import {
-	FileText,
-	LoaderCircle,
-	MessageSquarePlus,
-	Pencil,
-	Plus,
-	SendHorizonal,
-	Trash2,
-} from "lucide-react";
+import { FileText, LoaderCircle, Pencil, Plus } from "lucide-react";
+import ResumeForm from "../components/resume/ResumeForm";
+import DeleteDialog from "../components/resume/DeleteDialog";
 import { useCustomMutation } from "../components/hooks/useCostumMutation";
 import { useCustomQuery } from "../components/hooks/useCostumQuery";
 import { toast } from "../../services/toast";
-import { resumeAPI, type ResumeForm, type ResumeItem } from "../../services/resume";
+import {
+	resumeAPI,
+	type ResumeFormObject,
+	type ResumeItem,
+} from "../../services/resume";
+import { getRequiredError, sanitizeText } from "../../utils/formValidation";
 
 export default function Resume() {
-	const [formData, setFormData] = useState<ResumeForm>({
+	const [formData, setFormData] = useState<ResumeFormObject>({
 		title: "",
 		content: "",
 	});
 	const [editingId, setEditingId] = useState<number | string | null>(null);
 	const [isFormOpen, setIsFormOpen] = useState(false);
+	const [errors, setErrors] = useState<{ title?: string; content?: string }>({});
 
 	const { data, isLoading } = useCustomQuery({
 		key: ["resumes"],
@@ -29,26 +29,27 @@ export default function Resume() {
 
 	const createMutation = useCustomMutation(resumeAPI.createResume, ["resumes"]);
 	const updateMutation = useCustomMutation(
-		(vars: { id: number | string; form: ResumeForm }) =>
+		(vars: { id: number | string; form: ResumeFormObject }) =>
 			resumeAPI.updateResume(vars.id, vars.form),
 		["resumes"],
 	);
-	const deleteMutation = useCustomMutation(resumeAPI.deleteResume, ["resumes"]);
 
-	const validate = !!(formData.title.trim() && formData.content.trim());
+	const validate = !!(sanitizeText(formData.title) && sanitizeText(formData.content));
 
-	const handleChange = <K extends keyof ResumeForm>(
+	const handleChange = <K extends keyof ResumeFormObject>(
 		key: K,
-		value: ResumeForm[K],
+		value: ResumeFormObject[K],
 	) => {
 		setFormData((prev) => ({
 			...prev,
 			[key]: value,
 		}));
+		setErrors((prev) => ({ ...prev, [key]: undefined }));
 	};
 
-	const openNewForm = () => {
+	const openCreateForm = () => {
 		setEditingId(null);
+		setErrors({});
 		setFormData({ title: "", content: "" });
 		setIsFormOpen(true);
 	};
@@ -64,6 +65,7 @@ export default function Resume() {
 			setIsFormOpen(true);
 		} catch (error) {
 			console.error(error);
+			toast.error("امکان بارگذاری رزومه برای ویرایش وجود ندارد.");
 		}
 	};
 
@@ -71,14 +73,18 @@ export default function Resume() {
 		e.preventDefault();
 
 		const payload = {
-			title: formData.title.trim(),
-			content: formData.content.trim(),
+			title: sanitizeText(formData.title),
+			content: sanitizeText(formData.content),
 		};
+		const nextErrors: { title?: string; content?: string } = {};
 
-		if (!payload.title || !payload.content) {
-			toast.error("عنوان و متن رزومه را کامل وارد کنید.");
-			return;
-		}
+		if (!payload.title) nextErrors.title = getRequiredError(formData.title, "عنوان");
+		if (!payload.content) nextErrors.content = getRequiredError(formData.content, "محتوا");
+		if (payload.title.length > 80) nextErrors.title = "عنوان نباید بیشتر از 80 کاراکتر باشد.";
+		if (payload.content.length > 4000) nextErrors.content = "محتوا نباید بیشتر از 4000 کاراکتر باشد.";
+
+		setErrors(nextErrors);
+		if (Object.keys(nextErrors).length > 0) return;
 
 		if (editingId !== null) {
 			updateMutation.mutate(
@@ -88,6 +94,7 @@ export default function Resume() {
 						toast.success("رزومه با موفقیت ویرایش شد.");
 						setIsFormOpen(false);
 						setEditingId(null);
+						setErrors({});
 						setFormData({ title: "", content: "" });
 					},
 					onError: (err: Error) => toast.error(err.message),
@@ -100,28 +107,11 @@ export default function Resume() {
 			onSuccess: () => {
 				toast.success("رزومه جدید با موفقیت ثبت شد.");
 				setIsFormOpen(false);
+				setErrors({});
 				setFormData({ title: "", content: "" });
 			},
 			onError: (err: Error) => toast.error(err.message),
 		});
-	};
-
-	const handleDelete = (id: number | string) => {
-		if (!window.confirm("این رزومه حذف شود؟")) return;
-
-		deleteMutation.mutate(id, {
-			onSuccess: () => toast.success("رزومه حذف شد."),
-			onError: (err: Error) => toast.error(err.message),
-		});
-	};
-
-	const handlePasteToChat = (resume: ResumeItem) => {
-		window.dispatchEvent(
-			new CustomEvent<{ resumeContent: string }>("resume:paste-to-chat", {
-				detail: { resumeContent: resume.content },
-			}),
-		);
-		toast.success("رزومه به چت اضافه شد.");
 	};
 
 	return (
@@ -142,7 +132,7 @@ export default function Resume() {
 				<div className="flex flex-wrap gap-2">
 					<button
 						type="button"
-						onClick={openNewForm}
+						onClick={openCreateForm}
 						className="flex items-center gap-2 px-4 h-10 rounded-full bg-primary-action text-white font-semibold cursor-pointer">
 						<Plus className="size-4" />
 						<span>افزودن رزومه</span>
@@ -167,7 +157,9 @@ export default function Resume() {
 								className="border border-border rounded-lg p-4 flex flex-col gap-3 bg-background">
 								<div className="flex items-start justify-between gap-3">
 									<div>
-										<p className="font-semibold text-primary-text">{resume.title}</p>
+										<p className="font-semibold text-primary-text">
+											{resume.title}
+										</p>
 										<p className="text-sm text-text-muted mt-1 line-clamp-3">
 											{resume.content}
 										</p>
@@ -177,100 +169,34 @@ export default function Resume() {
 								<div className="flex flex-wrap gap-2">
 									<button
 										type="button"
-										onClick={() => handlePasteToChat(resume)}
-										className="flex items-center gap-1 px-3 h-9 rounded-full bg-accent text-white cursor-pointer">
-										<MessageSquarePlus className="size-4" />
-										<p>چسباندن در چت</p>
-									</button>
-									<button
-										type="button"
-										onClick={() => handleEdit(resume)}
+									onClick={() => handleEdit(resume)}
 										className="flex items-center gap-1 px-3 h-9 rounded-full border border-border cursor-pointer">
 										<Pencil className="size-4" />
 										<p>ویرایش</p>
 									</button>
-									<button
-										type="button"
-										onClick={() => handleDelete(resume.id)}
-										className="flex items-center gap-1 px-3 h-9 rounded-full border border-red-400 text-red-500 cursor-pointer">
-										<Trash2 className="size-4" />
-										<p>حذف</p>
-									</button>
+									<DeleteDialog id={resume.id} />
 								</div>
 							</div>
 						))}
 					</div>
 				)}
 			</section>
-
-			{isFormOpen && (
-				<div className="fixed inset-0 z-50 flex items-center justify-center bg-accent/10 p-4">
-					<div className="w-full max-w-2xl rounded-lg border border-border bg-background p-5 shadow-2xl">
-						<div className="flex items-center justify-between gap-3 mb-5">
-							<div>
-								<p className="font-semibold text-xl text-primary-text">
-									{editingId ? "ویرایش رزومه" : "رزومه جدید"}
-								</p>
-								<p className="text-sm text-text-muted">
-									اطلاعات رزومه را وارد کنید.
-								</p>
-							</div>
-							<button
-								type="button"
-								onClick={() => setIsFormOpen(false)}
-								className="text-2xl text-text-muted cursor-pointer">
-								&times;
-							</button>
-						</div>
-
-						<form onSubmit={handleSubmit} className="flex flex-col gap-6">
-							<div className="flex flex-col gap-2">
-								<label className="font-semibold text-primary-text">عنوان</label>
-								<input
-									value={formData.title}
-									onChange={(e) => handleChange("title", e.target.value)}
-									placeholder="مثلاً تجربه شغلی یا مدرک"
-									className="px-2 border-2 border-border rounded-md h-10 placeholder:text-text-muted text-[16px]
-										outline-0 focus:border-accent transition-all duration-150"
-								/>
-							</div>
-
-							<div className="flex flex-col gap-2">
-								<label className="font-semibold text-primary-text">محتوا</label>
-								<textarea
-									value={formData.content}
-									onChange={(e) => handleChange("content", e.target.value)}
-									rows={8}
-									placeholder="توضیحات رزومه خود را اینجا بنویسید..."
-									className="px-2 py-2 border-2 border-border rounded-md placeholder:text-text-muted text-[16px]
-										outline-0 focus:border-accent transition-all duration-150 resize-y"
-								/>
-							</div>
-
-							<div className="flex justify-end gap-3">
-								<button
-									type="button"
-									onClick={() => setIsFormOpen(false)}
-									className="px-4 h-10 rounded-full border border-border cursor-pointer">
-									لغو
-								</button>
-								<button
-									type="submit"
-									disabled={!validate || createMutation.isPending || updateMutation.isPending}
-									className={`px-5 h-10 rounded-full bg-primary-action text-white cursor-pointer font-semibold
-										flex items-center justify-center gap-2 disabled:pointer-events-none disabled:opacity-40`}>
-									{createMutation.isPending || updateMutation.isPending ? (
-										<LoaderCircle className="size-4 animate-spin" />
-									) : (
-										<SendHorizonal className="size-4" />
-									)}
-									<span>{editingId ? "ذخیره تغییرات" : "ثبت رزومه"}</span>
-								</button>
-							</div>
-						</form>
-					</div>
-				</div>
-			)}
+			<ResumeForm
+				open={isFormOpen}
+				onClose={() => {
+					setIsFormOpen(false);
+					setEditingId(null);
+					setErrors({});
+					setFormData({ title: "", content: "" });
+				}}
+				editingId={editingId}
+				formData={formData}
+				onChange={handleChange}
+				onSubmit={handleSubmit}
+				validate={validate}
+				isPending={createMutation.isPending || updateMutation.isPending}
+				errors={errors}
+			/>
 		</div>
 	);
 }

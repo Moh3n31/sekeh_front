@@ -45,7 +45,11 @@ export default function LogoutDialog() {
 					className={`group py-1 px-3 border-2 border-primary-red text-primary-red rounded-md font-semibold cursor-pointer
 						hover:bg-primary-red hover:text-white transition-all duration-150 w-25 flex items-center justify-center
 						${isPending ? "pointer-events-none" : ""}`}>
-					{isPending ? <LoaderCircle color="primary-red" /> : "خروج"}
+					{isPending ? (
+						<LoaderCircle className="text-primary-red animate-spin" />
+					) : (
+						"خروج"
+					)}
 				</button>
 			}
 			closeButton={
@@ -55,7 +59,7 @@ export default function LogoutDialog() {
 					بازگشت
 				</button>
 			}>
-			<div>
+			<div className="max-w-130">
 				<p>
 					با خارج شدن از حساب کاربری، به صفحه لاگین هدایت می‌شوید و برای استفاده
 					مجدد از سایت باید وارد حساب کاربری خود شوید.

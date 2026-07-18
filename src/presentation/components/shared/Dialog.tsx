@@ -1,12 +1,22 @@
-import { useRef, type ReactNode } from "react";
+import {
+	useCallback,
+	useEffect,
+	useRef,
+	useState,
+	type ReactNode,
+} from "react";
 
 interface DialogProps {
-	trigger: ReactNode;
+	trigger?: ReactNode;
 	title: string;
 	children: ReactNode;
-	footer: ReactNode;
+	footer?: ReactNode;
 	triggerClass?: string;
 	closeButton?: ReactNode;
+	open?: boolean;
+	onClose?: () => void;
+	onOpen?: () => void;
+	variant?: "bottom" | "fullscreen";
 }
 
 export default function Dialog({
@@ -16,52 +26,113 @@ export default function Dialog({
 	footer,
 	triggerClass,
 	closeButton,
+	open,
+	onClose,
+	onOpen,
+	variant = "bottom",
 }: DialogProps) {
-	const dialogRef = useRef<HTMLDialogElement>(null);
+	const dialogRef = useRef<HTMLDialogElement | null>(null);
+	const [internalOpen, setInternalOpen] = useState(false);
+	const isFullscreen = variant === "fullscreen";
+	const isControlled = open !== undefined;
+	const isOpen = isControlled ? open : internalOpen;
 
-	const open = () => dialogRef.current?.showModal();
-	const close = () => dialogRef.current?.close();
+	const openDialog = useCallback(() => {
+		if (!isControlled) {
+			setInternalOpen(true);
+		}
+		onOpen?.();
+	}, [isControlled, onOpen]);
+
+	const closeDialog = useCallback(() => {
+		dialogRef.current?.close();
+		if (!isControlled) {
+			setInternalOpen(false);
+		}
+		onClose?.();
+	}, [isControlled, onClose]);
+
+	useEffect(() => {
+		if (!dialogRef.current) return;
+
+		if (isOpen && !dialogRef.current.open) {
+			dialogRef.current.showModal();
+		}
+		if (!isOpen && dialogRef.current.open) {
+			dialogRef.current.close();
+		}
+	}, [isOpen]);
+
+	useEffect(() => {
+		if (!isOpen) return;
+
+		const handleKeyDown = (event: KeyboardEvent) => {
+			if (event.key === "Escape") {
+				event.preventDefault();
+				closeDialog();
+			}
+		};
+
+		document.addEventListener("keydown", handleKeyDown);
+		const previousOverflow = document.body.style.overflow;
+		document.body.style.overflow = "hidden";
+
+		return () => {
+			document.removeEventListener("keydown", handleKeyDown);
+			document.body.style.overflow = previousOverflow;
+		};
+	}, [isOpen, closeDialog]);
+
+	const handleDialogClose = () => {
+		if (!isControlled) {
+			setInternalOpen(false);
+		}
+		onClose?.();
+	};
 
 	return (
 		<>
-			<button onClick={open} className={`cursor-pointer ${triggerClass}`}>
-				{trigger}
-			</button>
+			{trigger && (
+				<button
+					type="button"
+					onClick={openDialog}
+					className={`cursor-pointer ${triggerClass}`}>
+					{trigger}
+				</button>
+			)}
 
 			<dialog
 				ref={dialogRef}
-				onClose={close}
+				className={`
+					fixed inset-0 z-50 md:m-auto overflow-hidden border-2 border-border bg-background shadow-2xl p-0
+					backdrop:bg-accent/10 backdrop:backdrop-blur-[1px]
+					md:max-h-[75vh] md:min-w-1/3 md:w-fit md:max-w-3/5 md:rounded-lg max-md:rounded-t-lg
+					${
+						isFullscreen
+							? "max-md:w-screen max-md:h-screen max-md:max-h-screen max-md:rounded-none"
+							: "max-md:w-full max-md:max-h-[90vh] mt-auto"
+					}`}
+				onClose={handleDialogClose}
 				onClick={(e) => {
-					if (e.target === dialogRef.current) close();
-				}}
-				className="
-					fixed inset-0 md:m-auto z-50
-					translate-y-5 opacity-0 transition-[transform,opacity,display] duration-300 allow-discrete
-					open:translate-y-0 open:opacity-100
-					md:w-[calc(100%-2rem)] md:max-w-130 h-fit md:max-h-[90vh]
-					max-md:w-screen max-md:max-h-1/2 max-md:mt-auto max-md:mx-auto
-					border-2 border-border md:rounded-lg max-md:rounded-t-lg bg-background shadow-2xl p-0
-					backdrop:fixed backdrop:inset-0 backdrop:z-999!
-					backdrop:bg-accent/10
-					backdrop:transition-opacity backdrop:duration-300
-					backdrop:opacity-0 open:backdrop:opacity-100
-				">
-				{/* + backdrop:backdrop-blur-xs */}
+					if (e.target === dialogRef.current) {
+						closeDialog();
+					}
+				}}>
 				<div className="flex flex-col w-full h-full overflow-hidden">
-					<header className="flex items-center justify-between p-5 border-b border-border font-semibold text-lg">
+					<header className="flex items-center justify-between border-b border-border p-5 font-semibold text-lg">
 						{title}
 						<button
-							onClick={close}
-							className="cursor-pointer text-text-muted hover:text-primary-text transition-colors duration-150 text-2xl leading-none">
+							onClick={closeDialog}
+							className="cursor-pointer text-2xl leading-none text-text-muted transition-colors duration-150 hover:text-primary-text">
 							&times;
 						</button>
 					</header>
 
 					<main className="flex-1 overflow-y-auto p-5">{children}</main>
 
-					<footer className="p-5 flex justify-end gap-3">
+					<footer className="flex justify-end gap-3 border-t border-border p-5">
 						{footer}
-						<div onClick={close}>{closeButton && closeButton}</div>
+						<div onClick={closeDialog}>{closeButton && closeButton}</div>
 					</footer>
 				</div>
 			</dialog>

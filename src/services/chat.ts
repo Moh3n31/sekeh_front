@@ -1,7 +1,7 @@
 interface MessageObject {
 	message_id: string;
 	// is_user: boolean;
-	time: string;
+	created_at: string;
 	content: string;
 	role: "user" | "assistant";
 	job_cards?: Job[];
@@ -12,9 +12,9 @@ import { api, type ApiResponse } from "./api";
 
 interface ChatObject {
 	chat_id: number;
+	created_at: string;
 	title: string;
-	date: string;
-	desc: string;
+	updated_at: string;
 }
 interface AllChatsReturn {
 	chats: ChatObject[];

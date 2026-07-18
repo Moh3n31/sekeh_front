@@ -4,7 +4,7 @@ interface AuthVariables {
 	password: string;
 }
 interface UserInfo {
-	phone_number: number;
+	phone_number: number | null;
 	username: string;
 	email: string;
 }
@@ -23,28 +23,27 @@ interface PasswordPayload {
 }
 
 const authNameSpace = "/auth";
-const meNameSpace = "/me";
+const meNameSpace = "user/me";
 
 export const authAPI = {
 	register: (payload: AuthVariables) =>
 		api.post<ApiResponse<SignupReturn>>(`${authNameSpace}/register`, payload),
-	
+
 	login: (payload: AuthVariables) =>
 		api.post<ApiResponse<LoginReturn>>(`${authNameSpace}/login`, payload),
-	
+
 	logout: () => api.post<ApiResponse<string>>(`${authNameSpace}/logout`),
-	
+
 	// Profile
 	updateProfile: (payload: UserInfo) =>
-		api.patch<ApiResponse<string>>(`${meNameSpace}`, payload),
-	
-	getProfile: () => api.get<ApiResponse<UserInfo>>(`${meNameSpace}`),
-	
-	deleteProfile: () => api.delete<ApiResponse<string>>(`${meNameSpace}`),
+		api.patch<ApiResponse<string>>(meNameSpace, payload),
+
+	getProfile: () => api.get<ApiResponse<UserInfo>>(meNameSpace),
+
+	deleteProfile: () => api.delete<ApiResponse<string>>(meNameSpace),
 
 	changePassword: (payload: PasswordPayload) =>
 		api.patch<ApiResponse<string>>(`${meNameSpace}/password`, payload),
-	
 };
 
 export type { AuthVariables, UserInfo };

@@ -40,9 +40,7 @@ export default function NewChatDialog() {
 			icon={
 				<PenBox
 					strokeWidth={1.5}
-					className="w-5 h-5 transition-colors duration-200
-						[&>g>path]:first:stroke-primary-action [&>g>path]:last:fill-primary-action
-						group-hover:[&>g>path]:first:stroke-white group-hover:[&>g>path]:last:fill-white"
+					className="w-5 h-5 transition-colors duration-200 text-primary-action group-hover:text-white"
 				/>
 			}
 		/>

@@ -1,13 +1,15 @@
 // Data & Services
 import { Copy, LoaderCircle, ThumbsDown, ThumbsUp } from "lucide-react";
-import type { MessageObject } from "../../../services/chat";
 interface MessageProps {
 	message: MessageObject;
 	isPending?: boolean;
 }
+import type { MessageObject } from "../../../services/chat";
 // Components
 import ReactMarkdown from "react-markdown";
 import rehypeHighlight from "rehype-highlight";
+import { formatDate } from "../../../utils/date";
+import JobCard from "./JobCard";
 
 function UserMessage({ message, isPending }: MessageProps) {
 	return (
@@ -17,7 +19,9 @@ function UserMessage({ message, isPending }: MessageProps) {
 					${isPending ? "animate-spin" : ""}`}>
 				<LoaderCircle
 					className={
-						isPending ? "size-6 p-0 rounded-full text-text-muted" : "hidden"
+						isPending
+							? "size-6 p-0 rounded-full text-text-muted animate-spin"
+							: "hidden"
 					}
 				/>
 			</span>
@@ -30,10 +34,7 @@ function UserMessage({ message, isPending }: MessageProps) {
 				<div
 					className={`flex items-center justify-between w-full ${isPending ? "hidden" : ""}`}>
 					<span className="text-[12px] text-text-muted/50 shrink-0">
-						{new Date(message.time).toLocaleTimeString([], {
-							hour: "2-digit",
-							minute: "2-digit",
-						})}
+						{formatDate(message.created_at, true)}
 					</span>
 					<menu className="flex items-center">
 						<button
@@ -83,13 +84,16 @@ function AiMessage({ message, isPending }: MessageProps) {
 					</ReactMarkdown>
 					{/* )} */}
 				</span>
+
+				<div className="grid grid-cols-3 max-md:grid-cols-1 gap-2">
+					{message.job_cards &&
+						message.job_cards.map((j) => <JobCard {...j} />)}
+				</div>
+
 				<div
 					className={`flex items-center justify-between w-full ${isPending ? "hidden" : ""}`}>
 					<span className="text-[12px] text-text-muted/50 shrink-0">
-						{new Date(message.time).toLocaleTimeString([], {
-							hour: "2-digit",
-							minute: "2-digit",
-						})}
+						{formatDate(message.created_at, true)}
 					</span>
 					<menu className="flex items-center">
 						<button

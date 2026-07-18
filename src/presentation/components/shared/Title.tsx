@@ -20,7 +20,7 @@ export default function Title({
 		<div
 			className={`flex items-center justify-start gap-2 ${wrapperClassName}`}>
 			{/* <span className="size-7 rounded-full border-5 border-accent-hover"></span> */}
-			<div className="relative md:size-10 max-md:size-5 rounded-full bg-linear-to-br from-accent to-accent-hover flex items-center justify-center">
+			<div className="relative md:size-10 max-md:size-5 shrink-0 rounded-full bg-linear-to-br from-accent to-accent-hover flex items-center justify-center">
 				<Sparkles className="md:size-5 max-md:size-3 text-background" />
 			</div>
 			<p
