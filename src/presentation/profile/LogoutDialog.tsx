@@ -1,23 +1,22 @@
 import Dialog from "../components/shared/Dialog";
 import { useCustomMutation } from "../components/hooks/useCostumMutation";
 import { authAPI } from "../../services/authentication";
-import type { Exceptions } from "../../services/api";
 import { removeTokens } from "../../utils/authTokens";
 import { useNavigate } from "react-router";
 import { DoorOpen, LoaderCircle } from "lucide-react";
 
 export default function LogoutDialog() {
-	const { mutate, isPending } = useCustomMutation(authAPI.logout);
+	const { mutate, isPending } = useCustomMutation(authAPI.logout, {
+		onSuccess: () => {
+			removeTokens();
+			console.log("logged out");
+			navigate("/auth/login");
+		},
+	});
 	const navigate = useNavigate();
 
 	function handleLogout() {
-		mutate({
-			onSuccess: () => {
-				removeTokens();
-				navigate("/auth/login");
-			},
-			onError: (err: Exceptions) => alert(err.error),
-		});
+		mutate();
 	}
 
 	return (

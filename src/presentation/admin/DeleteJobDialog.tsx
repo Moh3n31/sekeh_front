@@ -15,19 +15,18 @@ export default function DeleteJobDialog({
 	title,
 	onDeleted,
 }: DeleteJobDialogProps) {
-	const { mutate, isPending } = useCustomMutation(adminAPI.deleteJob);
+	const { mutate, isPending } = useCustomMutation(adminAPI.deleteJob, {
+		onSuccess: () => {
+			if (cancelButton.current) {
+				(cancelButton.current as HTMLButtonElement).click();
+			}
+			onDeleted();
+		},
+	});
 	const cancelButton = useRef(null);
 
 	function handleDelete() {
-		mutate(id, {
-			onSuccess: () => {
-				if (cancelButton.current) {
-					(cancelButton.current as HTMLButtonElement).click();
-				}
-				onDeleted();
-			},
-			onError: (err) => alert(err.message),
-		});
+		mutate(id);
 	}
 
 	return (

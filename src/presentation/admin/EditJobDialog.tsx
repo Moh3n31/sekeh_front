@@ -56,35 +56,31 @@ export default function EditJobDialog({ job }: EditJobDialogProps) {
 		setLoadedRawText(true);
 	}
 
-	const { mutate, isPending } = useCustomMutation(adminAPI.updateJob);
+	const { mutate, isPending } = useCustomMutation(adminAPI.updateJob, {
+		onSuccess: () => {
+			if (cancelButton.current) {
+				(cancelButton.current as HTMLButtonElement).click();
+			}
+			queryClient.invalidateQueries({ queryKey: ["adminJobs"] });
+		}
+	});
 
 	function handleSubmit() {
-		mutate(
-			{
-				job_id: job.job_id,
-				payload: {
-					job_title: form.job_title,
-					company_name: form.company_name,
-					location: form.location,
-					paycheck: form.paycheck,
-					source_site: form.source_site,
-					requirements: form.requirements
-						.split(",")
-						.map((r) => r.trim())
-						.filter(Boolean),
-					raw_text: form.raw_text,
-				},
+		mutate({
+			job_id: job.job_id,
+			payload: {
+				job_title: form.job_title,
+				company_name: form.company_name,
+				location: form.location,
+				paycheck: form.paycheck,
+				source_site: form.source_site,
+				requirements: form.requirements
+					.split(",")
+					.map((r) => r.trim())
+					.filter(Boolean),
+				raw_text: form.raw_text,
 			},
-			{
-				onSuccess: () => {
-					if (cancelButton.current) {
-						(cancelButton.current as HTMLButtonElement).click();
-					}
-					queryClient.invalidateQueries({ queryKey: ["adminJobs"] });
-				},
-				onError: (err) => alert(err.message),
-			},
-		);
+		});
 	}
 
 	return (

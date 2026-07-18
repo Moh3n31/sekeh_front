@@ -8,26 +8,25 @@ import { PenBox } from "lucide-react";
 // import LoadingIcon from "../../assets/icons/LoadingIcon";
 
 export default function NewChatDialog() {
-	const { mutate } = useCustomMutation(chatAPI.newChat); //isPending
+	const { mutate } = useCustomMutation(chatAPI.newChat, {
+		onSuccess: (res) => {
+			const { chat } = res.data;
+
+			console.log("Added a new chat: ", formData ?? "New Chat");
+			if (cancelButton.current) {
+				const btn = cancelButton.current as HTMLButtonElement;
+				btn.click();
+			}
+
+			navigate("/chats/" + chat.chat_id);
+		},
+	}); //isPending
 	const [formData] = useState<string>(""); //setFormData
 	const cancelButton = useRef(null);
 	const navigate = useNavigate();
 
 	function handleNewChat() {
-		mutate(formData, {
-			onSuccess: (res) => {
-				const { chat } = res.data;
-
-				console.log("Added a new chat: ", formData ?? "New Chat");
-				if (cancelButton.current) {
-					const btn = cancelButton.current as HTMLButtonElement;
-					btn.click();
-				}
-
-				navigate("/chats/" + chat.chat_id);
-			},
-			onError: (err) => alert(err.message),
-		});
+		mutate();
 	}
 
 	return (

@@ -7,7 +7,17 @@ import { LoaderCircle, PenBoxIcon } from "lucide-react";
 import { getRequiredError, sanitizeText } from "../../utils/formValidation";
 
 export default function EditDialog({ id }: { id: number }) {
-	const { mutate, isPending } = useCustomMutation(chatAPI.editTitle);
+	const { mutate, isPending } = useCustomMutation(chatAPI.editTitle, {
+		onSuccess: () => {
+			console.log("Deleted: ", id);
+			if (cancelButton.current) {
+				const btn = cancelButton.current as HTMLButtonElement;
+				btn.click();
+			}
+
+			queryClient.invalidateQueries({ queryKey: ["chatHistory"] });
+		},
+	});
 	const queryClient = useQueryClient();
 	const [formData, setFormData] = useState<string>("");
 	const [error, setError] = useState("");
@@ -20,21 +30,7 @@ export default function EditDialog({ id }: { id: number }) {
 			return;
 		}
 
-		mutate(
-			{ chat_id: id, payload: sanitizeText(formData) },
-			{
-				onSuccess: () => {
-					console.log("Deleted: ", id);
-					if (cancelButton.current) {
-						const btn = cancelButton.current as HTMLButtonElement;
-						btn.click();
-					}
-
-					queryClient.invalidateQueries({ queryKey: ["chatHistory"] });
-				},
-				onError: (err) => alert(err.message),
-			},
-		);
+		mutate({ chat_id: id, payload: sanitizeText(formData) });
 	}
 
 	return (

@@ -16,7 +16,7 @@ export default function NavbarDesktop() {
 				{/* Navigation Items */}
 				{menuItems.map(({ icon: Icon, path, label, admin }) => {
 					const isThisPage = location.pathname.includes(path);
-					if (!admin || profile?.role === "user")
+					if (!admin || profile?.role !== "user")
 						return (
 							<NavLink
 								to={`/${path}`}

@@ -10,6 +10,16 @@ import ReactMarkdown from "react-markdown";
 import rehypeHighlight from "rehype-highlight";
 import { formatDate } from "../../../utils/date";
 import JobCard from "./JobCard";
+import { toast } from "../../../services/toast";
+
+function handleCopy(text: string) {
+	try {
+		navigator.clipboard.writeText(text);
+		toast.success("پیام با موفقیت کپی شد.");
+	} catch {
+		toast.error("کپی کردن با خطا ماوجه شد. دوباره امتحان کنید.");
+	}
+}
 
 function UserMessage({ message, isPending }: MessageProps) {
 	return (
@@ -38,7 +48,7 @@ function UserMessage({ message, isPending }: MessageProps) {
 					</span>
 					<menu className="flex items-center">
 						<button
-							onClick={() => navigator.clipboard.writeText(message.content)}
+							onClick={() => handleCopy(message.content)}
 							className="size-7 p-1 border-2 border-transparent hover:border-border rounded-full transition-all duration-150 cursor-pointer">
 							<Copy
 								strokeWidth={1.5}
@@ -87,7 +97,12 @@ function AiMessage({ message, isPending }: MessageProps) {
 
 				<div className="grid grid-cols-3 max-md:grid-cols-1 gap-2">
 					{message.job_cards &&
-						message.job_cards.map((j) => <JobCard {...j} />)}
+						message.job_cards.map((j) => (
+							<JobCard
+								key={`marked-${message.message_id}-${j.job_url}`}
+								{...j}
+							/>
+						))}
 				</div>
 
 				<div
@@ -97,7 +112,7 @@ function AiMessage({ message, isPending }: MessageProps) {
 					</span>
 					<menu className="flex items-center">
 						<button
-							onClick={() => navigator.clipboard.writeText(message.content)}
+							onClick={() => handleCopy(message.content)}
 							className="size-7 p-1 border-2 border-transparent hover:border-border rounded-full transition-all duration-150 cursor-pointer">
 							<Copy
 								strokeWidth={1.5}

@@ -31,7 +31,12 @@ export default function ProfileDialog({ refetch }: { refetch: () => void }) {
 	);
 	const [errors, setErrors] = useState<ProfileErrors>({});
 	const { updateProfile } = authAPI;
-	const { mutate } = useCustomMutation(updateProfile);
+	const { mutate } = useCustomMutation(updateProfile, {
+		onSuccess: () => {
+			toast.success("پروفایل شما با موفقیت ثبت شد.");
+			refetch();
+		},
+	});
 
 	const hableChange = <K extends keyof UserForm>(
 		key: K,
@@ -71,12 +76,7 @@ export default function ProfileDialog({ refetch }: { refetch: () => void }) {
 			phone_number: parsedPhone,
 		};
 
-		mutate(payload, {
-			onSuccess: () => {
-				toast.success("پروفایل شما با موفقیت ثبت شد.");
-				refetch();
-			},
-		});
+		mutate(payload);
 	};
 
 	return (

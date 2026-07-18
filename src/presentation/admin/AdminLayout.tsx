@@ -14,7 +14,7 @@ export default function AdminLayout() {
 	const navigate = useNavigate();
 
 	useEffect(() => {
-		if (profile?.role === "admin") {
+		if (profile?.role !== "admin") {
 			toast.warning("شما به پنل مدیریتی دسترسی ندارید.");
 			navigate("/chats");
 		}

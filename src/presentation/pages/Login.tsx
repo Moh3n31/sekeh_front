@@ -4,7 +4,6 @@ import { useCustomMutation } from "../components/hooks/useCostumMutation";
 import { authAPI } from "../../services/authentication";
 import useProfile from "../../services/profileStorage";
 import { addTokens } from "../../utils/authTokens";
-import { toast } from "../../services/toast";
 import { LoaderCircle } from "lucide-react";
 import { getRequiredError, sanitizeText } from "../../utils/formValidation";
 
@@ -26,15 +25,25 @@ export default function Login() {
 	const [errors, setErrors] = useState<FormErrors>({});
 	const { setProfile } = useProfile();
 	const navigate = useNavigate();
-	const { mutate, isPending } = useCustomMutation(authAPI.login);
+	const { mutate, isPending } = useCustomMutation(authAPI.login, {
+		onSuccess: (res) => {
+			const { access_token, refresh_token, user } = res.data;
+			addTokens({ access: access_token, refresh: refresh_token });
+			setProfile(user);
+
+			navigate("/chats");
+		},
+	});
 
 	const validateForm = () => {
 		const nextErrors: FormErrors = {};
 		const username = sanitizeText(formData.username);
 		const password = sanitizeText(formData.password);
 
-		if (!username) nextErrors.username = getRequiredError(formData.username, "نام کاربری");
-		if (!password) nextErrors.password = getRequiredError(formData.password, "رمز عبور");
+		if (!username)
+			nextErrors.username = getRequiredError(formData.username, "نام کاربری");
+		if (!password)
+			nextErrors.password = getRequiredError(formData.password, "رمز عبور");
 
 		setErrors(nextErrors);
 		return !nextErrors.username && !nextErrors.password;
@@ -48,19 +57,11 @@ export default function Login() {
 			password: sanitizeText(formData.password),
 		};
 
-		mutate(payload, {
-			onSuccess: (res) => {
-				const { access_token, refresh_token, user } = res.data;
-				addTokens({ access: access_token, refresh: refresh_token });
-				setProfile(user);
-
-				navigate("/chats");
-			},
-			onError: (err) => toast.error(err.message),
-		});
+		mutate(payload);
 	};
 
-	const isFormFilled = !!sanitizeText(formData.username) && !!sanitizeText(formData.password);
+	const isFormFilled =
+		!!sanitizeText(formData.username) && !!sanitizeText(formData.password);
 
 	const handleChange = <K extends keyof Form>(key: K, value: Form[K]) => {
 		setFormData((prev) => ({
@@ -91,7 +92,9 @@ export default function Login() {
 						className={`px-2 border-2 rounded-md h-10 placeholder:text-text-muted text-[16px] outline-0 focus:border-accent transition-all duration-150 ${errors.username ? "border-red-500" : "border-border"}`}
 						placeholder="نام کاربری یا ایمیل"
 					/>
-					{errors.username ? <p className="text-sm text-red-500">{errors.username}</p> : null}
+					{errors.username ? (
+						<p className="text-sm text-red-500">{errors.username}</p>
+					) : null}
 				</div>
 				<div className="flex flex-col gap-2">
 					<label className="font-semibold">رمز عبور</label>
@@ -104,7 +107,9 @@ export default function Login() {
 						aria-invalid={Boolean(errors.password)}
 						className={`px-2 border-2 rounded-md h-10 placeholder:text-text-muted text-[16px] outline-0 focus:border-accent transition-all duration-150 ${errors.password ? "border-red-500" : "border-border"}`}
 					/>
-					{errors.password ? <p className="text-sm text-red-500">{errors.password}</p> : null}
+					{errors.password ? (
+						<p className="text-sm text-red-500">{errors.password}</p>
+					) : null}
 				</div>
 			</form>
 			<button

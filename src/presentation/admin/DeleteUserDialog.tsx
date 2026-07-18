@@ -15,19 +15,18 @@ export default function DeleteUserDialog({
 	username,
 	onDeleted,
 }: DeleteUserDialogProps) {
-	const { mutate, isPending } = useCustomMutation(adminAPI.deleteUser);
+	const { mutate, isPending } = useCustomMutation(adminAPI.deleteUser, {
+		onSuccess: () => {
+			if (cancelButton.current) {
+				(cancelButton.current as HTMLButtonElement).click();
+			}
+			onDeleted();
+		}
+	});
 	const cancelButton = useRef(null);
 
 	function handleDelete() {
-		mutate(id, {
-			onSuccess: () => {
-				if (cancelButton.current) {
-					(cancelButton.current as HTMLButtonElement).click();
-				}
-				onDeleted();
-			},
-			onError: (err) => alert(err.message),
-		});
+		mutate(id);
 	}
 
 	return (
