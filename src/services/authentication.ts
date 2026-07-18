@@ -7,7 +7,9 @@ interface UserInfo {
 	phone_number: number | null;
 	username: string;
 	email: string;
+	role: "user" | "admin";
 }
+type UserForm = Omit<UserInfo, "role">;
 interface SignupReturn {
 	user: UserInfo;
 }
@@ -35,7 +37,7 @@ export const authAPI = {
 	logout: () => api.post<ApiResponse<string>>(`${authNameSpace}/logout`),
 
 	// Profile
-	updateProfile: (payload: UserInfo) =>
+	updateProfile: (payload: UserForm) =>
 		api.patch<ApiResponse<string>>(meNameSpace, payload),
 
 	getProfile: () => api.get<ApiResponse<UserInfo>>(meNameSpace),
@@ -46,4 +48,4 @@ export const authAPI = {
 		api.patch<ApiResponse<string>>(`${meNameSpace}/password`, payload),
 };
 
-export type { AuthVariables, UserInfo };
+export type { AuthVariables, UserInfo, UserForm };

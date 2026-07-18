@@ -35,13 +35,13 @@ export default function AllRoutes() {
 				<Route path="profile" element={<Profile />} />
 				<Route path="resume" element={<Resume />} />
 				<Route path="contact-us" element={<ContactUs />} />
-			</Route>
 
-			<Route path="admin" element={<AdminLayout />}>
-				<Route index element={<Navigate to="dashboard" />} />
-				<Route path="dashboard" element={<AdminDashboard />} />
-				<Route path="users" element={<AdminUsers />} />
-				<Route path="jobs" element={<AdminJobs />} />
+				<Route path="admin" element={<AdminLayout />}>
+					<Route index element={<Navigate to="dashboard" />} />
+					<Route path="dashboard" element={<AdminDashboard />} />
+					<Route path="users" element={<AdminUsers />} />
+					<Route path="jobs" element={<AdminJobs />} />
+				</Route>
 			</Route>
 
 			<Route path="*" element={<NotFound />} />

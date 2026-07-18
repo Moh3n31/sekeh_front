@@ -1,11 +1,17 @@
 import { useState } from "react";
-import { authAPI, type UserInfo } from "../../services/authentication";
+import { authAPI, type UserForm } from "../../services/authentication";
 import { useCustomMutation } from "../components/hooks/useCostumMutation";
 import Dialog from "../components/shared/Dialog";
 import useProfile from "../../services/profileStorage";
 import { toast } from "../../services/toast";
 import { PenBoxIcon } from "lucide-react";
-import { getEmailError, getPhoneError, getRequiredError, parsePhoneNumber, sanitizeText } from "../../utils/formValidation";
+import {
+	getEmailError,
+	getPhoneError,
+	getRequiredError,
+	parsePhoneNumber,
+	sanitizeText,
+} from "../../utils/formValidation";
 
 interface ProfileErrors {
 	username?: string;
@@ -15,7 +21,7 @@ interface ProfileErrors {
 
 export default function ProfileDialog({ refetch }: { refetch: () => void }) {
 	const { profile } = useProfile();
-	const [form, setForm] = useState<UserInfo>({
+	const [form, setForm] = useState<UserForm>({
 		email: profile?.email ?? "",
 		phone_number: profile?.phone_number ?? null,
 		username: profile?.username ?? "",
@@ -27,9 +33,9 @@ export default function ProfileDialog({ refetch }: { refetch: () => void }) {
 	const { updateProfile } = authAPI;
 	const { mutate } = useCustomMutation(updateProfile);
 
-	const hableChange = <K extends keyof UserInfo>(
+	const hableChange = <K extends keyof UserForm>(
 		key: K,
-		value: UserInfo[K],
+		value: UserForm[K],
 	) => {
 		setForm((prev) => ({ ...prev, [key]: value }));
 		setErrors((prev) => ({ ...prev, [key]: undefined }));
@@ -47,7 +53,8 @@ export default function ProfileDialog({ refetch }: { refetch: () => void }) {
 		const phoneValue = sanitizeText(phoneInput);
 		const parsedPhone = phoneValue ? parsePhoneNumber(phoneValue) : null;
 
-		if (!username) nextErrors.username = getRequiredError(form.username, "نام کاربری");
+		if (!username)
+			nextErrors.username = getRequiredError(form.username, "نام کاربری");
 		if (getEmailError(email)) nextErrors.email = getEmailError(email);
 		if (phoneValue) {
 			const phoneError = getPhoneError(phoneValue);
@@ -114,7 +121,9 @@ export default function ProfileDialog({ refetch }: { refetch: () => void }) {
 							value={form.username}
 							onChange={(e) => hableChange("username", e.target.value)}
 						/>
-						{errors.username ? <p className="text-sm text-red-500">{errors.username}</p> : null}
+						{errors.username ? (
+							<p className="text-sm text-red-500">{errors.username}</p>
+						) : null}
 					</div>
 					<div className="flex flex-col gap-2">
 						<label className="text-[16px] text-primary-action">
@@ -126,7 +135,9 @@ export default function ProfileDialog({ refetch }: { refetch: () => void }) {
 							value={phoneInput}
 							onChange={(e) => handlePhoneChange(e.target.value)}
 						/>
-						{errors.phone_number ? <p className="text-sm text-red-500">{errors.phone_number}</p> : null}
+						{errors.phone_number ? (
+							<p className="text-sm text-red-500">{errors.phone_number}</p>
+						) : null}
 					</div>
 					<div className="flex flex-col gap-2 col-span-2">
 						<label className="text-[16px] text-primary-action">
@@ -138,7 +149,9 @@ export default function ProfileDialog({ refetch }: { refetch: () => void }) {
 							value={form.email}
 							onChange={(e) => hableChange("email", e.target.value)}
 						/>
-						{errors.email ? <p className="text-sm text-red-500">{errors.email}</p> : null}
+						{errors.email ? (
+							<p className="text-sm text-red-500">{errors.email}</p>
+						) : null}
 					</div>
 				</section>
 			</form>

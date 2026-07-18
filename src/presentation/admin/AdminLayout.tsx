@@ -1,12 +1,25 @@
-import { NavLink, Outlet } from "react-router";
+import { NavLink, Outlet, useNavigate } from "react-router";
+import useProfile from "../../services/profileStorage";
+import { useEffect } from "react";
+import { toast } from "../../services/toast";
 
 const tabs = [
-	{ path: "dashboard", label: "Dashboard" },
-	{ path: "users", label: "Users" },
-	{ path: "jobs", label: "Jobs" },
+	{ path: "dashboard", label: "داشبورد" },
+	{ path: "users", label: "کاربران" },
+	{ path: "jobs", label: "مشاغل" },
 ];
 
 export default function AdminLayout() {
+	const { profile } = useProfile();
+	const navigate = useNavigate();
+
+	useEffect(() => {
+		if (profile?.role === "admin") {
+			toast.warning("شما به پنل مدیریتی دسترسی ندارید.");
+			navigate("/chats");
+		}
+	}, []);
+
 	return (
 		<div className="flex flex-col h-full w-full">
 			<nav className="flex items-center gap-2 px-7 max-md:px-4 pt-5 border-b border-border">
