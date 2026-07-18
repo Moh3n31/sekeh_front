@@ -1,34 +1,42 @@
-import BoxIcon from "../../assets/icons/BoxIcon";
-import ChatIcon from "../../assets/icons/ChatIcon";
-import PhoneIcon from "../../assets/icons/PhoneIcon";
-import UserIcon from "../../assets/icons/UserIcon";
-import type { IconProps } from "../../services/types";
+import {
+	Archive,
+	File,
+	MessageCircle,
+	Phone,
+	User,
+	type LucideIcon,
+} from "lucide-react";
 
 interface MenuItems {
 	path: string;
 	label: string;
-	icon: React.ComponentType<IconProps>;
+	icon: LucideIcon;
 }
 
 export const menuItems: MenuItems[] = [
 	{
-		label: "Profile",
+		label: "پروفایل",
 		path: "profile",
-		icon: UserIcon,
+		icon: User,
 	},
 	{
-		label: "Marked",
+		label: "ذخیره‌ها",
 		path: "marks",
-		icon: BoxIcon,
+		icon: Archive,
 	},
 	{
-		label: "Chats",
+		label: "چت‌ها",
 		path: "chats",
-		icon: ChatIcon,
+		icon: MessageCircle,
 	},
 	{
-		label: "Contact Us",
+		label: "رزومه‌ها",
+		path: "resume",
+		icon: File,
+	},
+	{
+		label: "ارتباط با ما",
 		path: "contact-us",
-		icon: PhoneIcon,
+		icon: Phone,
 	},
 ];

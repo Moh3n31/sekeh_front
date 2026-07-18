@@ -1,66 +1,74 @@
 //Data & Services
-import {
-	// chatAPI,
-	// sendMessage,
-	// 	type MessagesFetch,
-	messages,
-	type MessageObject,
-} from "../../services/chat";
+import { chatAPI } from "../../services/chat";
+import { resumeAPI } from "../../services/resume";
 // Components
-import SendIcon from "../../assets/icons/SendIcon";
+import { Link } from "react-router";
 import Message from "../components/shared/Message";
 // Hooks
-import { useEffect, useRef, useState } from "react";
-import { Link } from "react-router";
-// import { useApi } from "../components/hooks/useApi";
-// import { useFetch } from "../components/hooks/useFetch";
-// import { useMutation } from "../components/hooks/useMutation";
-// import { useParams } from "react-router";
+import { useChatStream } from "../components/hooks/useChatStream";
+import { useEffect, useRef, useState, type FormEvent } from "react";
+import { useParams } from "react-router";
+import { useCustomQuery } from "../components/hooks/useCostumQuery";
+import { Send, Square } from "lucide-react";
+import ResumeModal from "../components/resume/ResumeModal";
+import { getRequiredError, sanitizeText } from "../../utils/formValidation";
 
 export default function Chat() {
+	const { chatId } = useParams();
+
+	const { data } = useCustomQuery({
+		key: ["chatMessages", chatId],
+		func: () => chatAPI.allMessages(chatId ?? ""),
+	});
+	const history = data?.data.messages ?? [];
+	const [pendingUserMessage, setPendingUserMessage] = useState<string | null>(
+		null,
+	);
+
 	const [inputData, setInputData] = useState<string>("");
-	const [chatData, setChatData] = useState<MessageObject[]>(
-		messages.slice(0, -1),
-	);
-	const [lastMessage, setLastMessage] = useState<MessageObject>(
-		messages[messages.length - 1],
-	);
-	const [isPending, setIsPending] = useState<boolean>(false);
+	const [error, setError] = useState("");
 	const textareaRef = useRef<HTMLTextAreaElement>(null);
-	// const { chatId } = useParams();
-	// const { data: messages, refetch } = useFetch<MessagesFetch>(
-	// 	chatAPI.messages(chatId ?? "1")
-	// );
-	// const { mutate } = useMutation();
+	const containerRef = useRef<HTMLDivElement | null>(null);
+	const bottomRef = useRef<HTMLDivElement | null>(null);
 
-	// const handleSubmit = async () => {
-	// 	await mutate(chatAPI.sendMessage(chatId ?? "1", inputData))
-	// 		.then(() => {
-	// 			setInputData("");
-	// 			refetch();
-	// 		})
-	// 		.catch((e) => console.log(e));
-	// };
+	const {
+		sendMessage,
+		abort,
+		isPending,
+		isStreaming,
+		assistantStreamingText,
+		jobs,
+	} = useChatStream(chatId ?? "");
 
-	function handleSubmit() {
-		setChatData((prev) => {
-			const temp = [...prev];
-			temp.push(lastMessage);
-			return temp;
-		});
-		const payload: MessageObject = {
-			content: inputData,
-			is_user: true,
-			message_id: "new-message" + inputData,
-			time: "",
-		};
-		setIsPending(true);
-		setLastMessage(payload);
+	async function handleSubmit() {
+		const userContent = sanitizeText(inputData);
+		const nextError = getRequiredError(userContent, "پیام");
+		if (nextError) {
+			setError(nextError);
+			return;
+		}
+
+		if (userContent.length > 400) {
+			setError("پیام نباید بیشتر از 400 کاراکتر باشد.");
+			return;
+		}
+
+		setError("");
+		setPendingUserMessage(userContent);
 		setInputData("");
-		setTimeout(() => {
-			setIsPending(false);
-		}, 2000);
+
+		await sendMessage(userContent);
+
+		setPendingUserMessage(null);
 	}
+
+	// Scroll to bottom whenever any visible content changes
+	useEffect(() => {
+		bottomRef.current?.scrollIntoView({
+			behavior: "smooth",
+			block: "end",
+		});
+	}, [data, pendingUserMessage, assistantStreamingText, jobs]);
 
 	useEffect(() => {
 		const el = textareaRef.current;
@@ -71,53 +79,142 @@ export default function Chat() {
 		el.style.height = Math.min(el.scrollHeight, maxHeight) + "px";
 	}, [inputData]);
 
+	const handleResumeSelect = async (resumeId: number | string) => {
+		try {
+			const response = await resumeAPI.getResumeById(resumeId);
+			const content = response.data.content;
+			setInputData((prev) => (prev ? `${prev}\n\n${content}` : content));
+			requestAnimationFrame(() => textareaRef.current?.focus());
+		} catch (error) {
+			console.error(error);
+			setInputData((prev) => prev ?? "");
+		}
+	};
+
 	return (
 		<div className="flex flex-col relative h-full">
-			<menu className="md:absolute md:top-5 md:left-5 max-md:pt-5 max-md:pb-1 max-md:pl-3 flex flex-col gap-1 items-start">
+			<menu className="md:absolute md:top-5 md:start-5 max-md:pt-5 max-md:pb-1 max-md:ps-3 flex flex-col gap-1 items-start">
 				<Link
-					to={".."}
+					to={"/chats"}
 					className="group text-lg flex items-center justify-center gap-1 transition-all duration-150
 					border-2 border-primary-action rounded-lg px-3 py-0.5 hover:bg-primary-action bg-surface">
-					{/* <span className="font-bold text-lg text-primary-action">{"<"}</span> */}
 					<p
 						className="text-primary-action text-[14px] font-semibold
 					group-hover:text-surface transition-all duration-150">
-						Go Back
+						بازگشت
 					</p>
 				</Link>
 			</menu>
 
-			<div className="md:pt-10 max-md:pt-5 pb-5 flex flex-col gap-10 overflow-y-auto md:px-75 px-5 scrollbar-gray h-full">
-				{chatData &&
-					chatData.map((m) => <Message message={m} key={m.message_id} />)}
-				<Message message={lastMessage} isPending={isPending} />
+			<div
+				dir="ltr"
+				ref={containerRef}
+				className="md:pt-10 max-md:pt-5 pb-5 flex flex-col gap-10 overflow-y-auto md:px-[20%] px-5 scrollbar-gray h-full">
+				{history.length === 0 && !pendingUserMessage && (
+					<Message
+						message={{
+							message_id: "welcome-message",
+							role: "assistant",
+							content:
+								"سلام!\n\nمن **دستیار کاریابی هوشمند** شما هستم.\n\nرزومه خودت رو برام بفرست تا ببینم چی کار میتونم بکنم.",
+							created_at: new Date().toISOString(),
+						}}
+						isPending={false}
+					/>
+				)}
+
+				{history.map((m) => (
+					<Message message={m} key={m.message_id} isPending={false} />
+				))}
+
+				{pendingUserMessage && (
+					<Message
+						message={{
+							message_id: "user-pending",
+							role: "user",
+							content: pendingUserMessage,
+							created_at: new Date().toISOString(),
+						}}
+						isPending={isPending}
+					/>
+				)}
+
+				{/* Thinking placeholder: waiting for the first content chunk */}
+				{isPending || (isStreaming && !assistantStreamingText) ? (
+					<Message
+						message={{
+							message_id: "assistant-pending",
+							role: "assistant",
+							content: "بذار ببینم چی می‌تونم پیدا کنم...",
+							created_at: new Date().toISOString(),
+						}}
+						isPending={true}
+					/>
+				) : null}
+
+				{/* Live streaming text */}
+				{assistantStreamingText && (
+					<Message
+						message={{
+							message_id: "assistant-streaming",
+							role: "assistant",
+							content: assistantStreamingText,
+							created_at: new Date().toISOString(),
+						}}
+						isPending={isStreaming}
+					/>
+				)}
+
+				<div ref={bottomRef} />
 			</div>
 
 			<form
-				onSubmit={(e) => {
+				onSubmit={(e: FormEvent<HTMLFormElement>) => {
 					e.preventDefault();
 					handleSubmit();
 				}}
-				className="md:mx-75 mx-5 mb-5 mt-2 rounded-xl shadow-lg shadow-border transition-all duration-150 bg-background
-				border-2 border-transparent has-focus:border-accent flex items-start gap-5 p-3">
-				<textarea
-					ref={textareaRef}
-					rows={1}
-					onChange={(e) => setInputData(e.target.value)}
-					value={inputData}
-					placeholder="Describe yourself..."
-					className="resize-none overflow-hidden h-auto w-full outline-0 text-[17px]
-					placeholder:font-medium placeholder:text-text-muted text-primary-text"
-				/>
-				<button
-					type="submit"
-					className=" bg-accent hover:bg-accent-hover rounded-full outline-0
-					cursor-pointer transition-all duration-150">
-					<SendIcon
-						id="sendIcon"
-						className="size-3.5 [&>g>path]:stroke-white mt-3 mb-2.5 mr-3 ml-2.5"
+				className="md:mx-75 mx-5 mb-5 mt-2 rounded-xl border border-border bg-background p-3 shadow-lg shadow-border transition-all duration-150">
+				<div className="flex items-end gap-2.5">
+					<textarea
+						onKeyDown={(e) => {
+							if (e.key === "Enter" && !e.shiftKey) {
+								e.preventDefault();
+								handleSubmit();
+							}
+						}}
+						ref={textareaRef}
+						rows={1}
+						onChange={(e) => {
+							setInputData(e.target.value);
+							if (error) setError("");
+						}}
+						value={inputData}
+						placeholder="درمورد خودت بنویس..."
+						maxLength={400}
+						className="h-auto min-h-10 w-full resize-none overflow-hidden rounded-lg px-2 py-2 outline-0 text-[17px] placeholder:font-medium placeholder:text-text-muted text-primary-text"
 					/>
-				</button>
+
+					<div className="flex shrink-0 items-center gap-2">
+						<ResumeModal onSelectResume={handleResumeSelect} />
+						{error ? <p className="text-sm text-red-500">{error}</p> : null}
+						<button
+							type={isStreaming ? "button" : "submit"}
+							onClick={() => {
+								if (isStreaming) abort();
+							}}
+							className="flex size-10 items-center justify-center rounded-full bg-accent transition-all duration-150 hover:bg-accent-hover cursor-pointer">
+							{isStreaming ? (
+								<Square strokeWidth={1.5} className="size-4 text-white" />
+							) : (
+								<Send
+									id="sendIcon"
+									strokeWidth={1.5}
+									className="size-4 text-white mt-0.5 me-px -rotate-90"
+								/>
+							)}
+						</button>
+					</div>
+				</div>
 			</form>
 		</div>
 	);

@@ -1,11 +1,11 @@
 @layer components {
 	.scrollbar-gray {
-		@apply  mr-1 [&::-webkit-scrollbar]:w-4.5 [&::-webkit-scrollbar-track]:bg-transparent
+		@apply  me-1 [&::-webkit-scrollbar]:w-4.5 [&::-webkit-scrollbar-track]:bg-transparent
     [&::-webkit-scrollbar-thumb]:border-5! [&::-webkit-scrollbar-thumb]:border-surface!
     [&::-webkit-scrollbar-thumb]:bg-primary-action [&::-webkit-scrollbar-thumb]:rounded-full;
 	}
 	.scrollbar-white {
-		@apply  mr-1 [&::-webkit-scrollbar]:w-4.5 [&::-webkit-scrollbar-track]:bg-transparent
+		@apply  me-1 [&::-webkit-scrollbar]:w-4.5 [&::-webkit-scrollbar-track]:bg-transparent
     [&::-webkit-scrollbar-thumb]:border-5! [&::-webkit-scrollbar-thumb]:border-background!
     [&::-webkit-scrollbar-thumb]:bg-primary-action [&::-webkit-scrollbar-thumb]:rounded-full;
 	}
