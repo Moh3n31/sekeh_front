@@ -22,8 +22,8 @@ export default function ContactUs() {
 							</div>
 						</div>
 						<div className="flex flex-col gap-2 text-primary-text text-sm">
-							<p>moh3nmahmoudi82@gmail.com</p>
-							<p>mohammad@fmail.com</p>
+							<p>mohsenmahmoudi79@gmail.com</p>
+							<p>moamini8343@gmail.com</p>
 						</div>
 					</div>
 
