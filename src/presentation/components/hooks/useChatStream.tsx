@@ -54,11 +54,11 @@ interface JobsEvent {
 	items?: unknown;
 }
 
-interface StreamErrorEvent {
-	message?: unknown;
-	error?: unknown;
-	detail?: unknown;
-}
+// interface StreamErrorEvent {
+// 	message?: unknown;
+// 	error?: unknown;
+// 	detail?: unknown;
+// }
 
 interface ActiveRequest {
 	controller: AbortController;

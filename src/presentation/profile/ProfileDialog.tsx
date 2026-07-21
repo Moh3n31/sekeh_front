@@ -66,7 +66,7 @@ export default function ProfileDialog({ refetch }: { refetch: () => void }) {
 	const handleUpdate = () => {
 		const nextErrors: ProfileErrors = {};
 		const username = sanitizeText(form.username);
-		const email = sanitizeText(form.email);
+		const email = sanitizeText(form.email ?? "");
 		const phoneValue = sanitizeText(phoneInput);
 		const parsedPhone = phoneValue ? parsePhoneNumber(phoneValue) : null;
 
@@ -158,7 +158,7 @@ export default function ProfileDialog({ refetch }: { refetch: () => void }) {
 						<input
 							className={`border-2 rounded-md py-2 px-2 outline-0 ${errors.email ? "border-red-500" : "border-border"}`}
 							placeholder="example@gmail.com"
-							value={form.email}
+							value={form.email ?? ""}
 							onChange={(e) => hableChange("email", e.target.value)}
 						/>
 						{errors.email ? (
