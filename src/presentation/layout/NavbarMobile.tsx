@@ -24,7 +24,7 @@ export default function NavbarMobile() {
 				<nav className="flex flex-col items-start gap-5 w-full h-full bg-background p-2">
 					{menuItems.map(({ icon: Icon, path, label, admin }) => {
 						const isThisPage = location.pathname.includes(path);
-						if (!admin || profile?.role !== "user")
+						if (!admin || profile?.role == "admin")
 							return (
 								<NavLink
 									to={`/${path}`}

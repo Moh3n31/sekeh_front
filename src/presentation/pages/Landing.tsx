@@ -16,11 +16,17 @@ import {
 	Star,
 } from "lucide-react";
 import Title from "../components/shared/Title";
+import { checkTokens } from "../../utils/authTokens";
 
 export default function Landing() {
 	const { getLanding } = landingAPI;
 	const { data } = useCustomQuery({ func: getLanding, key: ["landing-data"] });
 	const navigate = useNavigate();
+
+	const handleDirectPage = () => {
+		if (checkTokens()) navigate("/chats");
+		else navigate("/auth/login");
+	};
 
 	const landingContent = data?.data; // adjust based on your API response structure
 
@@ -43,7 +49,7 @@ export default function Landing() {
 					className="bg-accent text-white md:px-6 md:py-2.5 rounded-full text-sm font-medium
           hover:bg-accent-hover transition-all duration-300 hover:scale-105 hover:shadow-lg
           flex items-center gap-2 cursor-pointer max-md:size-8 max-md:justify-center"
-					onClick={() => navigate("/chats")}>
+					onClick={handleDirectPage}>
 					<MessageCircle size={18} />
 					<span className="max-md:hidden">
 						{landingContent.hero.secondary_cta}
@@ -68,7 +74,7 @@ export default function Landing() {
 					</p>
 					<div className="flex flex-wrap items-center justify-center gap-4 pt-4">
 						<button
-							onClick={() => navigate(landingContent.hero.secondary_cta_link)}
+							onClick={handleDirectPage}
 							className="bg-accent text-white px-8 py-4 rounded-full text-lg font-medium
               hover:bg-accent-hover transition-all duration-300 hover:scale-105 hover:shadow-xl
               flex items-center gap-2">

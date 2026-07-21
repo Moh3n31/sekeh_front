@@ -11,6 +11,9 @@ export default function ChatHistory() {
 		func: chatAPI.chatHistory,
 	});
 
+	const chats = data?.data?.chats ?? [];
+	const hasChats = chats.length > 0;
+
 	return (
 		<div className="p-7 overflow-y-auto overflow-x-hidden w-full h-full scrollbar-gray flex flex-col">
 			<header className="flex max-md:flex-col max-md:items-start md:items-center justify-between gap-4 mb-6">
@@ -33,7 +36,7 @@ export default function ChatHistory() {
 				<NewChatDialog />
 			</menu>
 
-			{isPending || (data?.data && data?.data?.chats.length !== 0) ? (
+			{isPending || hasChats ? (
 				<main className="grid grid-cols-5 max-[1100px]:grid-cols-3 max-md:grid-cols-1 gap-5 ">
 					{isPending
 						? Array(10)
@@ -43,9 +46,7 @@ export default function ChatHistory() {
 										key={index}
 										className="h-70 w-full rounded-lg bg-border/70 animate-pulse"></div>
 								))
-						: data?.data.chats.map((h) => (
-								<HistoryCard card={h} key={h.chat_id} />
-							))}
+						: chats.map((h) => <HistoryCard card={h} key={h.chat_id} />)}
 				</main>
 			) : (
 				<div className="flex flex-col items-center justify-center h-full">

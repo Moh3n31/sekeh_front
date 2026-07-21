@@ -1,6 +1,7 @@
 import { useRef, useState } from "react";
 // import Dialog from "../components/shared/Dialog";
 import { useNavigate } from "react-router";
+import { useQueryClient } from "@tanstack/react-query";
 import { useCustomMutation } from "../components/hooks/useCostumMutation";
 import { chatAPI } from "../../services/chat";
 import GrowableButton from "../components/shared/GrowableButton";
@@ -8,6 +9,7 @@ import { PenBox } from "lucide-react";
 // import LoadingIcon from "../../assets/icons/LoadingIcon";
 
 export default function NewChatDialog() {
+	const queryClient = useQueryClient();
 	const { mutate } = useCustomMutation(chatAPI.newChat, {
 		onSuccess: (res) => {
 			const { chat } = res.data;
@@ -18,6 +20,7 @@ export default function NewChatDialog() {
 				btn.click();
 			}
 
+			queryClient.invalidateQueries({ queryKey: ["chatHistory"] });
 			navigate("/chats/" + chat.chat_id);
 		},
 	}); //isPending

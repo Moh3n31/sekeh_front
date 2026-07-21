@@ -1,150 +1,271 @@
 // Data & Services
-import { Copy, LoaderCircle, ThumbsDown, ThumbsUp } from "lucide-react";
-interface MessageProps {
-	message: MessageObject;
-	isPending?: boolean;
-}
-import type { MessageObject } from "../../../services/chat";
+import type {
+	MessageObject,
+	MessageRole,
+	MessageStatus,
+} from "../../../services/chat";
+import { toast } from "../../../services/toast";
+
 // Components
 import ReactMarkdown from "react-markdown";
 import rehypeHighlight from "rehype-highlight";
-import { formatDate } from "../../../utils/date";
+import {
+	Check,
+	Copy,
+	LoaderCircle,
+	Square,
+	ThumbsDown,
+	ThumbsUp,
+	X,
+} from "lucide-react";
 import JobCard from "./JobCard";
-import { toast } from "../../../services/toast";
 
-function handleCopy(text: string) {
+// Utils
+import { formatDate } from "../../../utils/date";
+
+interface MessageProps {
+	message: MessageObject;
+}
+
+interface MessageStatusProps {
+	role: MessageRole;
+	status: MessageStatus;
+}
+
+async function handleCopy(text: string): Promise<void> {
+	const trimmedText = text.trim();
+
+	if (!trimmedText) {
+		toast.error("متنی برای کپی کردن وجود ندارد.");
+		return;
+	}
+
 	try {
-		navigator.clipboard.writeText(text);
+		if (!navigator.clipboard) {
+			throw new Error("Clipboard API is unavailable.");
+		}
+
+		await navigator.clipboard.writeText(text);
+
 		toast.success("پیام با موفقیت کپی شد.");
 	} catch {
-		toast.error("کپی کردن با خطا ماوجه شد. دوباره امتحان کنید.");
+		toast.error("کپی کردن پیام با خطا مواجه شد. دوباره امتحان کنید.");
 	}
 }
 
-function UserMessage({ message, isPending }: MessageProps) {
+function MessageStatusView({ status }: MessageStatusProps) {
+	switch (status) {
+		case "sent":
+			return <Check strokeWidth={1.8} className="size-3.5 text-match" />;
+
+		case "failed":
+			return <X strokeWidth={1.8} className="size-3.5 text-red-500" />;
+
+		case "stopped":
+			return <Square strokeWidth={1.5} className="size-3 text-text-muted" />;
+	}
+}
+
+function UserMessage({ message }: MessageProps) {
+	const status = resolveMessageStatus(message.status);
+	const isInProgress = status === "sending";
+	const canCopy = Boolean(message.content.trim());
+
 	return (
-		<div className={`h-auto flex items-start gap-3 justify-end`}>
-			<span
-				className={`size-6 shrink-0 rounded-full flex items-center justify-center 
-					${isPending ? "animate-spin" : ""}`}>
-				<LoaderCircle
-					className={
-						isPending
-							? "size-6 p-0 rounded-full text-text-muted animate-spin"
-							: "hidden"
-					}
-				/>
+		<div className="flex h-auto items-start justify-end gap-3">
+			<span className="flex size-6 shrink-0 items-center justify-center rounded-full">
+				{isInProgress ? (
+					<LoaderCircle
+						strokeWidth={1.5}
+						className="size-5 animate-spin text-text-muted"
+					/>
+				) : null}
 			</span>
-			<div className={`flex flex-col gap-3 max-w-[85%] items-end`}>
-				<span
+
+			<div className="flex max-w-[85%] flex-col items-end gap-3">
+				<p
 					dir="rtl"
-					className={`w-full text-primary-text text-[15px] text-right`}>
+					className="w-full whitespace-pre-wrap wrap-break-word text-right text-[15px] text-primary-text">
 					{message.content}
-				</span>
-				<div
-					className={`flex items-center justify-between w-full ${isPending ? "hidden" : ""}`}>
-					<span className="text-[12px] text-text-muted/50 shrink-0">
-						{formatDate(message.created_at, true)}
-					</span>
-					<menu className="flex items-center">
-						<button
-							onClick={() => handleCopy(message.content)}
-							className="size-7 p-1 border-2 border-transparent hover:border-border rounded-full transition-all duration-150 cursor-pointer">
-							<Copy
-								strokeWidth={1.5}
-								className="text-text-muted/60 size-full"
-							/>
-						</button>
-					</menu>
+				</p>
+
+				<div className="flex w-full items-center justify-between gap-3">
+					<div className="flex min-w-0 items-center gap-2">
+						<span className="shrink-0 text-[12px] text-text-muted/50">
+							{formatDate(message.created_at, true)}
+						</span>
+
+						<MessageStatusView role="user" status={status} />
+					</div>
+
+					{!isInProgress && (
+						<menu className="flex shrink-0 items-center">
+							<button
+								type="button"
+								disabled={!canCopy}
+								onClick={() => {
+									void handleCopy(message.content);
+								}}
+								aria-label="کپی پیام"
+								className="size-7 cursor-pointer rounded-full border-2 border-transparent p-1 transition-all duration-150 hover:border-border disabled:cursor-not-allowed disabled:opacity-40">
+								<Copy
+									strokeWidth={1.5}
+									className="size-full text-text-muted/60"
+								/>
+							</button>
+						</menu>
+					)}
 				</div>
+
+				{message.error && message.error.trim() !== message.content.trim() ? (
+					<p
+						dir="rtl"
+						className="w-full text-right text-[12px] text-primary-red">
+						{message.error}
+					</p>
+				) : null}
 			</div>
 		</div>
 	);
 }
 
-function AiMessage({ message, isPending }: MessageProps) {
-	function handleLike() {
-		console.log("Liked: ", message.message_id);
+function AssistantMessage({ message }: MessageProps) {
+	const status = resolveMessageStatus(message.status);
+
+	const isWaiting = status === "waiting";
+	const isStreaming = status === "streaming";
+	const isPending = isStreaming || isWaiting;
+	const isCompleted = status === "sent";
+	const canCopy = Boolean(message.content.trim());
+
+	function handleLike(): void {
+		console.log("Liked:", message.message_id);
 	}
-	function handleDislike() {
-		console.log("Disliked: ", message.message_id);
+
+	function handleDislike(): void {
+		console.log("Disliked:", message.message_id);
 	}
 
 	return (
-		<div className={`h-auto flex items-start gap-3 justify-start`}>
+		<div className="flex h-auto items-start justify-start gap-3">
 			<span
-				className={`size-6 shrink-0 rounded-full flex items-center justify-center
-					bg-linear-30 from-accent-hover to-primary-green
-					${isPending ? "animate-spin" : ""}`}>
-				<span
-					className={
-						isPending ? "size-4 bg-accent-soft rounded-full" : "hidden"
-					}></span>
+				aria-hidden="true"
+				className={[
+					"flex size-7 shrink-0 items-center justify-center rounded-full",
+					status === "failed"
+						? "border border-primary-red/30 bg-primary-red/10"
+						: "bg-linear-30 from-accent-hover to-primary-green",
+					isPending ? "animate-spin" : "",
+				].join(" ")}>
+				{status === "failed" ? (
+					<X strokeWidth={1.8} className="size-4 text-primary-red" />
+				) : status === "stopped" ? (
+					<Square strokeWidth={1.5} className="size-3 text-white" />
+				) : (
+					<span className="size-4.5 rounded-full bg-accent-soft" />
+				)}
 			</span>
 
-			<div className={`flex flex-col gap-3 max-w-[90%] items-start `}>
-				<span dir="rtl" className="w-full text-primary-text text-[16px]">
-					{/* {isPending ? (
-						<p className="whitespace-pre-wrap text-primary-text">
-							{message.content}
-						</p>
-					) : ( */}
+			<div className="flex max-w-[90%] min-w-0 flex-col items-start gap-3">
+				<div
+					dir="rtl"
+					className={[
+						"w-full wrap-break-word text-[16px] text-primary-text",
+						isWaiting ? "animate-pulse" : "",
+					].join(" ")}>
 					<ReactMarkdown rehypePlugins={[rehypeHighlight]}>
 						{message.content}
 					</ReactMarkdown>
-					{/* )} */}
-				</span>
 
-				<div className="grid grid-cols-3 max-md:grid-cols-1 gap-2">
-					{message.job_cards &&
-						message.job_cards.map((j) => (
-							<JobCard
-								key={`marked-${message.message_id}-${j.job_url}`}
-								{...j}
-							/>
+					{isStreaming ? (
+						<span
+							aria-hidden="true"
+							className="ms-1 inline-block h-4 w-0.5 animate-pulse rounded-full bg-primary-action align-middle"
+						/>
+					) : null}
+				</div>
+
+				{message.job_cards && message.job_cards.length > 0 ? (
+					<div className="grid w-full grid-cols-3 gap-2 max-md:grid-cols-1">
+						{message.job_cards.map((job) => (
+							<JobCard key={`${message.message_id}-${job.job_url}`} {...job} />
 						))}
+					</div>
+				) : null}
+
+				<div className="flex w-full items-center justify-between gap-3">
+					<div className="flex min-w-0 items-center gap-2">
+						<span className="shrink-0 text-[12px] text-text-muted/50">
+							{formatDate(message.created_at, true)}
+						</span>
+
+						<MessageStatusView role="assistant" status={status} />
+					</div>
+
+					{!isPending && isCompleted && (
+						<menu className="flex shrink-0 items-center">
+							<button
+								type="button"
+								disabled={!canCopy}
+								onClick={() => {
+									void handleCopy(message.content);
+								}}
+								aria-label="کپی پاسخ"
+								className="size-7 cursor-pointer rounded-full border-2 border-transparent p-1 transition-all duration-150 hover:border-border disabled:cursor-not-allowed disabled:opacity-40">
+								<Copy
+									strokeWidth={1.5}
+									className="size-full text-text-muted/60"
+								/>
+							</button>
+							<button
+								type="button"
+								onClick={handleLike}
+								aria-label="پاسخ مفید بود"
+								className="size-7 cursor-pointer rounded-full border-2 border-transparent p-1 transition-all duration-150 hover:border-border">
+								<ThumbsUp
+									strokeWidth={1.5}
+									className="size-full text-text-muted/60"
+								/>
+							</button>
+
+							<button
+								type="button"
+								onClick={handleDislike}
+								aria-label="پاسخ مفید نبود"
+								className="size-7 cursor-pointer rounded-full border-2 border-transparent p-1 transition-all duration-150 hover:border-border">
+								<ThumbsDown
+									strokeWidth={1.5}
+									className="size-full text-text-muted/60"
+								/>
+							</button>
+						</menu>
+					)}
 				</div>
 
-				<div
-					className={`flex items-center justify-between w-full ${isPending ? "hidden" : ""}`}>
-					<span className="text-[12px] text-text-muted/50 shrink-0">
-						{formatDate(message.created_at, true)}
-					</span>
-					<menu className="flex items-center">
-						<button
-							onClick={() => handleCopy(message.content)}
-							className="size-7 p-1 border-2 border-transparent hover:border-border rounded-full transition-all duration-150 cursor-pointer">
-							<Copy
-								strokeWidth={1.5}
-								className="text-text-muted/60 size-full"
-							/>
-						</button>
-						<button
-							onClick={handleLike}
-							className="size-7 p-1 border-2 border-transparent hover:border-border rounded-full transition-all duration-150 cursor-pointer">
-							<ThumbsUp
-								strokeWidth={1.5}
-								className="text-text-muted/60 size-full"
-							/>
-						</button>
-						<button
-							onClick={handleDislike}
-							className="size-7 p-1 border-2 border-transparent hover:border-border rounded-full transition-all duration-150 cursor-pointer">
-							<ThumbsDown
-								strokeWidth={1.5}
-								className="text-text-muted/60 size-full"
-							/>
-						</button>
-					</menu>
-				</div>
+				{message.error && message.error.trim() !== message.content.trim() ? (
+					<p
+						dir="rtl"
+						className="w-full text-right text-[12px] text-primary-red">
+						{message.error}
+					</p>
+				) : null}
 			</div>
 		</div>
 	);
 }
 
-export default function Message({ message, isPending }: MessageProps) {
-	if (message.role === "user")
-		return <UserMessage message={message} isPending={isPending} />;
-	else if (message.role === "assistant")
-		return <AiMessage message={message} isPending={isPending} />;
+export default function Message({ message }: MessageProps) {
+	if (message.role === "user") {
+		return <UserMessage message={message} />;
+	}
+
+	return <AssistantMessage message={message} />;
+}
+
+function resolveMessageStatus(status: MessageObject["status"]): MessageStatus {
+	/*
+	 * Messages loaded from the API currently have no lifecycle field.
+	 * They are historical, successfully persisted messages.
+	 */
+	return status ?? "sent";
 }

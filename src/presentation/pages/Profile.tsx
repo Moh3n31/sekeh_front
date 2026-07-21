@@ -9,6 +9,7 @@ import { Sparkles } from "lucide-react";
 export default function Profile() {
 	const { getProfile } = authAPI;
 	const { profile, setProfile } = useProfile();
+	console.log("profile: ",profile)
 	const { refetch } = useCustomQuery({
 		key: ["prfoileInfo"],
 		func: getProfile,
