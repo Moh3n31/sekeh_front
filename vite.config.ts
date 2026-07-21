@@ -6,9 +6,9 @@ import path from "path";
 // https://vite.dev/config/
 export default defineConfig(({ mode }) => {
 	const env = loadEnv(mode, process.cwd(), "");
-
+	
 	return {
-		base: env.VITE_BASE_RONT_URL,
+		base: env.VITE_BASE_FRONT_URL,
 		plugins: [react(), tailwindcss()],
 		resolve: {
 			alias: {
