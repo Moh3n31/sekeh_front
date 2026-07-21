@@ -8,7 +8,7 @@ export default defineConfig(({ mode }) => {
 	const env = loadEnv(mode, process.cwd(), "");
 
 	return {
-		base: env.VITE_BASEـFRONT_URL,
+		base: env.VITE_BASE_RONT_URL,
 		plugins: [react(), tailwindcss()],
 		resolve: {
 			alias: {
