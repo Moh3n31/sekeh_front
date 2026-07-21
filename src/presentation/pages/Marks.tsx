@@ -17,8 +17,12 @@ export default function Marks() {
 						<BookmarkCheck className="size-6 text-background" />
 					</div>
 					<div>
-						<p className="font-semibold text-2xl text-primary-text">شغل‌های ذخیره‌شده</p>
-						<p className="text-text-muted">در این بخش شغل‌های مورد علاقه‌تان را مدیریت کنید.</p>
+						<p className="font-semibold text-2xl text-primary-text">
+							شغل‌های ذخیره‌شده
+						</p>
+						<p className="text-text-muted">
+							در این بخش شغل‌های مورد علاقه‌تان را مدیریت کنید.
+						</p>
 					</div>
 				</header>
 				<div className="flex items-center justify-center flex-1">
@@ -36,14 +40,23 @@ export default function Marks() {
 					<BookmarkCheck className="size-6 text-background" />
 				</div>
 				<div>
-					<p className="font-semibold text-2xl text-primary-text">شغل‌های ذخیره‌شده</p>
-					<p className="text-text-muted">در این بخش شغل‌های مورد علاقه‌تان را مدیریت کنید.</p>
+					<p className="font-semibold text-2xl text-primary-text">
+						شغل‌های ذخیره‌شده
+					</p>
+					<p className="text-text-muted">
+						در این بخش شغل‌های مورد علاقه‌تان را مدیریت کنید.
+					</p>
 				</div>
 			</header>
 
 			<div className="grid grid-cols-4 max-md:grid-cols-1 gap-5 w-full">
 				{all.map((j) => (
-					<JobCard {...j} jobFetchKey="allMarked" />
+					<JobCard
+						{...j}
+						key={`marked-${j.job_url}`}
+						jobFetchKey="allMarked"
+						bookmarked
+					/>
 				))}
 			</div>
 		</div>

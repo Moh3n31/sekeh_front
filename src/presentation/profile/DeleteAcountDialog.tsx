@@ -3,16 +3,20 @@ import { authAPI } from "../../services/authentication";
 import { removeTokens } from "../../utils/authTokens";
 import { useCustomMutation } from "../components/hooks/useCostumMutation";
 import Dialog from "../components/shared/Dialog";
+import { useNavigate } from "react-router";
 
 export default function DeleteAcountDialog() {
+	const navigate = useNavigate();
 	const { deleteProfile } = authAPI;
-	const { mutate } = useCustomMutation(deleteProfile);
+	const { mutate } = useCustomMutation(deleteProfile, {
+		onSuccess: () => {
+			removeTokens();
+			navigate("/");
+		},
+	});
 
 	function handleDeleteAcount() {
-		mutate(null, {
-			onSuccess: removeTokens,
-			onError: (err) => alert(err.message),
-		});
+		mutate();
 	}
 
 	return (

@@ -122,6 +122,7 @@ export default function Dialog({
 					<header className="flex items-center justify-between border-b border-border p-5 font-semibold text-lg">
 						{title}
 						<button
+							type="button"
 							onClick={closeDialog}
 							className="cursor-pointer text-2xl leading-none text-text-muted transition-colors duration-150 hover:text-primary-text">
 							&times;

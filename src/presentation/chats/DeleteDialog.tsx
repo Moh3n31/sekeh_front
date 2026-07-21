@@ -20,8 +20,7 @@ export default function DeleteDialog({ id }: { id: number }) {
 				}
 
 				queryClient.invalidateQueries({ queryKey: ["chatHistory"] });
-			},
-			onError: (err) => alert(err.message),
+			}
 		});
 	}
 

@@ -4,10 +4,14 @@ interface AuthVariables {
 	password: string;
 }
 interface UserInfo {
-	phone_number: number | null;
+	phone_number: string | null;
 	username: string;
-	email: string;
+	email: string | null;
+	role: "user" | "admin";
+	created_at: string;
+	updated_at: string | null;
 }
+type UserForm = Pick<UserInfo, "phone_number" | "email" | "username">;
 interface SignupReturn {
 	user: UserInfo;
 }
@@ -35,10 +39,10 @@ export const authAPI = {
 	logout: () => api.post<ApiResponse<string>>(`${authNameSpace}/logout`),
 
 	// Profile
-	updateProfile: (payload: UserInfo) =>
+	updateProfile: (payload: UserForm) =>
 		api.patch<ApiResponse<string>>(meNameSpace, payload),
 
-	getProfile: () => api.get<ApiResponse<UserInfo>>(meNameSpace),
+	getProfile: () => api.get<ApiResponse<{ user: UserInfo }>>(meNameSpace),
 
 	deleteProfile: () => api.delete<ApiResponse<string>>(meNameSpace),
 
@@ -46,4 +50,4 @@ export const authAPI = {
 		api.patch<ApiResponse<string>>(`${meNameSpace}/password`, payload),
 };
 
-export type { AuthVariables, UserInfo };
+export type { AuthVariables, UserInfo, UserForm };

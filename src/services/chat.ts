@@ -1,44 +1,93 @@
-interface MessageObject {
-	message_id: string;
-	// is_user: boolean;
-	created_at: string;
-	content: string;
-	role: "user" | "assistant";
-	job_cards?: Job[];
-}
-
-import type { Job } from "../presentation/components/hooks/useChatStream";
 import { api, type ApiResponse } from "./api";
 
-interface ChatObject {
+export type MessageRole = "user" | "assistant";
+
+/**
+ * UI lifecycle of a message.
+ *
+ * Server messages do not need to return this field.
+ * When status is missing, the UI treats the message as successfully completed.
+ */
+export type MessageStatus =
+	| "sending"
+	| "sent"
+	| "waiting"
+	| "streaming"
+	| "failed"
+	| "stopped";
+
+export interface CompanyReviews {
+	rating: number;
+	count: number;
+}
+
+export interface Job {
+	job_title: string;
+	company_name: string;
+	match_percent: number;
+	requirements: string[];
+	job_url: string;
+	source_site: string;
+	company_reviews?: CompanyReviews | null;
+	paycheck?: string | null;
+}
+
+export interface MessageObject {
+	message_id: string;
+	created_at: string;
+	content: string;
+	role: MessageRole;
+	job_cards?: Job[];
+
+	/**
+	 * Local UI state.
+	 *
+	 * This property is optional because messages loaded from the API may not
+	 * contain a status. Existing server messages are considered completed.
+	 */
+	status?: MessageStatus;
+
+	/**
+	 * Optional error belonging specifically to this message.
+	 */
+	error?: string;
+}
+
+export interface ChatObject {
 	chat_id: number;
 	created_at: string;
 	title: string;
 	updated_at: string;
 }
-interface AllChatsReturn {
+
+export interface AllChatsReturn {
 	chats: ChatObject[];
 }
-interface ChatReturn {
+
+export interface ChatReturn {
 	chat: ChatObject;
 }
-interface MessagesReturn {
-	chat: Omit<ChatObject, "date" | "desc">;
+
+export interface MessagesReturn {
+	chat: ChatObject;
 	messages: MessageObject[];
 }
 
 const chatAPI = {
 	chatHistory: () => api.get<ApiResponse<AllChatsReturn>>("/chats"),
+
 	newChat: () => api.post<ApiResponse<ChatReturn>>("/chats"),
-	deleteChat: (chat_id: number) =>
-		api.delete<ApiResponse<string>>("chats/" + chat_id),
+
+	deleteChat: (chatId: number) =>
+		api.delete<ApiResponse<string>>(`/chats/${chatId}`),
+
 	editTitle: ({ chat_id, payload }: { chat_id: number; payload: string }) =>
-		api.patch<ApiResponse<ChatReturn>>(`chats/${chat_id}/title`, {
+		api.patch<ApiResponse<ChatReturn>>(`/chats/${chat_id}/title`, {
 			title: payload,
 		}),
-	allMessages: (chat_id: string) =>
-		api.get<ApiResponse<MessagesReturn>>(`chats/${chat_id}/messages`),
+
+	allMessages: (chatId: string) =>
+		api.get<ApiResponse<MessagesReturn>>(`/chats/${chatId}/messages`),
 };
 
-export type { MessageObject, ChatObject };
 export { chatAPI };

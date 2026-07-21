@@ -63,7 +63,6 @@ export default function ChangePasswordDialog() {
 					setForm({ current: "", new: "", confirm: "" });
 					setErrors({});
 				},
-				onError: (e) => toast.error(e.message),
 			},
 		);
 	}

@@ -3,8 +3,11 @@ import { useCustomMutation } from "../components/hooks/useCostumMutation";
 import { authAPI } from "../../services/authentication";
 import { useState } from "react";
 import { LoaderCircle } from "lucide-react";
-import { getPasswordError, getRequiredError, sanitizeText } from "../../utils/formValidation";
-import { toast } from "../../services/toast";
+import {
+	getPasswordError,
+	getRequiredError,
+	sanitizeText,
+} from "../../utils/formValidation";
 
 interface Form {
 	username: string;
@@ -26,7 +29,9 @@ export default function Signup() {
 	});
 	const [errors, setErrors] = useState<FormErrors>({});
 	const navigate = useNavigate();
-	const { mutate, isPending } = useCustomMutation(authAPI.register);
+	const { mutate, isPending } = useCustomMutation(authAPI.register, {
+		onSuccess: () => navigate("/chats"),
+	});
 
 	const validateForm = () => {
 		const nextErrors: FormErrors = {};
@@ -34,11 +39,16 @@ export default function Signup() {
 		const password = sanitizeText(formData.password);
 		const confirm = sanitizeText(formData.confirm);
 
-		if (!username) nextErrors.username = getRequiredError(formData.username, "نام کاربری");
-		if (!password) nextErrors.password = getRequiredError(formData.password, "رمز عبور");
-		else if (getPasswordError(password)) nextErrors.password = getPasswordError(password);
-		if (!confirm) nextErrors.confirm = getRequiredError(formData.confirm, "تکرار رمز عبور");
-		else if (password !== confirm) nextErrors.confirm = "رمز عبور و تکرار آن یکسان نیست.";
+		if (!username)
+			nextErrors.username = getRequiredError(formData.username, "نام کاربری");
+		if (!password)
+			nextErrors.password = getRequiredError(formData.password, "رمز عبور");
+		else if (getPasswordError(password))
+			nextErrors.password = getPasswordError(password);
+		if (!confirm)
+			nextErrors.confirm = getRequiredError(formData.confirm, "تکرار رمز عبور");
+		else if (password !== confirm)
+			nextErrors.confirm = "رمز عبور و تکرار آن یکسان نیست.";
 
 		setErrors(nextErrors);
 		return !nextErrors.username && !nextErrors.password && !nextErrors.confirm;
@@ -47,16 +57,16 @@ export default function Signup() {
 	const handleSubmit = () => {
 		if (!validateForm()) return;
 
-		mutate(
-			{ password: sanitizeText(formData.password), username: sanitizeText(formData.username) },
-			{
-				onSuccess: () => navigate("/chats"),
-				onError: (err) => toast.error(err.message),
-			},
-		);
+		mutate({
+			password: sanitizeText(formData.password),
+			username: sanitizeText(formData.username),
+		});
 	};
 
-	const isFormFilled = !!sanitizeText(formData.username) && !!sanitizeText(formData.password) && !!sanitizeText(formData.confirm);
+	const isFormFilled =
+		!!sanitizeText(formData.username) &&
+		!!sanitizeText(formData.password) &&
+		!!sanitizeText(formData.confirm);
 
 	const handleChange = <K extends keyof Form>(key: K, value: Form[K]) => {
 		setFormData((prev) => ({
@@ -87,7 +97,9 @@ export default function Signup() {
 						aria-invalid={Boolean(errors.username)}
 						className={`px-2 border-2 rounded-md h-10 placeholder:text-text-muted text-[16px] outline-0 focus:border-accent transition-all duration-150 ${errors.username ? "border-red-500" : "border-border"}`}
 					/>
-					{errors.username ? <p className="text-sm text-red-500">{errors.username}</p> : null}
+					{errors.username ? (
+						<p className="text-sm text-red-500">{errors.username}</p>
+					) : null}
 				</div>
 				<div className="flex flex-col gap-2">
 					<label className="font-semibold">رمزعبور</label>
@@ -99,7 +111,9 @@ export default function Signup() {
 						aria-invalid={Boolean(errors.password)}
 						className={`px-2 border-2 rounded-md h-10 placeholder:text-text-muted text-[16px] outline-0 focus:border-accent transition-all duration-150 ${errors.password ? "border-red-500" : "border-border"}`}
 					/>
-					{errors.password ? <p className="text-sm text-red-500">{errors.password}</p> : null}
+					{errors.password ? (
+						<p className="text-sm text-red-500">{errors.password}</p>
+					) : null}
 				</div>
 				<div className="flex flex-col gap-2">
 					<label className="font-semibold">تکرار رمزعبور</label>
@@ -111,7 +125,9 @@ export default function Signup() {
 						aria-invalid={Boolean(errors.confirm)}
 						className={`px-2 border-2 rounded-md h-10 placeholder:text-text-muted text-[16px] outline-0 focus:border-accent transition-all duration-150 ${errors.confirm ? "border-red-500" : "border-border"}`}
 					/>
-					{errors.confirm ? <p className="text-sm text-red-500">{errors.confirm}</p> : null}
+					{errors.confirm ? (
+						<p className="text-sm text-red-500">{errors.confirm}</p>
+					) : null}
 				</div>
 			</form>
 			<button

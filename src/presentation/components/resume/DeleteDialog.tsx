@@ -6,22 +6,21 @@ import { useQueryClient } from "@tanstack/react-query";
 import { LoaderCircle, X } from "lucide-react";
 
 export default function DeleteDialog({ id }: { id: number | string }) {
-	const { mutate, isPending } = useCustomMutation(resumeAPI.deleteResume);
+	const { mutate, isPending } = useCustomMutation(resumeAPI.deleteResume, {
+		onSuccess: () => {
+			if (cancelButton.current) {
+				const btn = cancelButton.current as HTMLButtonElement;
+				btn.click();
+			}
+
+			queryClient.invalidateQueries({ queryKey: ["resumes"] });
+		},
+	});
 	const queryClient = useQueryClient();
 	const cancelButton = useRef<HTMLButtonElement | null>(null);
 
 	function handleDelete() {
-		mutate(id, {
-			onSuccess: () => {
-				if (cancelButton.current) {
-					const btn = cancelButton.current as HTMLButtonElement;
-					btn.click();
-				}
-
-				queryClient.invalidateQueries({ queryKey: ["resumes"] });
-			},
-			onError: (err: Error) => alert(err.message),
-		});
+		mutate(id);
 	}
 
 	return (
