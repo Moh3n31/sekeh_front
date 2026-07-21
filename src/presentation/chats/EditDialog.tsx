@@ -9,7 +9,6 @@ import { getRequiredError, sanitizeText } from "../../utils/formValidation";
 export default function EditDialog({ id }: { id: number }) {
 	const { mutate, isPending } = useCustomMutation(chatAPI.editTitle, {
 		onSuccess: () => {
-			console.log("Deleted: ", id);
 			if (cancelButton.current) {
 				const btn = cancelButton.current as HTMLButtonElement;
 				btn.click();

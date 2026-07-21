@@ -29,12 +29,7 @@ export default function Login() {
 		onSuccess: (res) => {
 			const { access_token, refresh_token, user } = res.data;
 			addTokens({ access: access_token, refresh: refresh_token });
-			setProfile({
-				email: user.email,
-				phone_number: user.phone_number,
-				role: user.role,
-				username: user.username,
-			});
+			setProfile(user);
 
 			navigate("/chats");
 		},

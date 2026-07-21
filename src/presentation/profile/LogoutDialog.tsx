@@ -9,7 +9,6 @@ export default function LogoutDialog() {
 	const { mutate, isPending } = useCustomMutation(authAPI.logout, {
 		onSuccess: () => {
 			removeTokens();
-			console.log("logged out");
 			navigate("/auth/login");
 		},
 	});

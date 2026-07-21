@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useRef } from "react";
 // import Dialog from "../components/shared/Dialog";
 import { useNavigate } from "react-router";
 import { useQueryClient } from "@tanstack/react-query";
@@ -14,7 +14,6 @@ export default function NewChatDialog() {
 		onSuccess: (res) => {
 			const { chat } = res.data;
 
-			console.log("Added a new chat: ", formData ?? "New Chat");
 			if (cancelButton.current) {
 				const btn = cancelButton.current as HTMLButtonElement;
 				btn.click();
@@ -24,7 +23,6 @@ export default function NewChatDialog() {
 			navigate("/chats/" + chat.chat_id);
 		},
 	}); //isPending
-	const [formData] = useState<string>(""); //setFormData
 	const cancelButton = useRef(null);
 	const navigate = useNavigate();
 

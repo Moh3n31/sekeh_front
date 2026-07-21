@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { authAPI, type UserForm } from "../../services/authentication";
 import { useCustomMutation } from "../components/hooks/useCostumMutation";
 import Dialog from "../components/shared/Dialog";
@@ -21,10 +21,11 @@ interface ProfileErrors {
 
 export default function ProfileDialog({ refetch }: { refetch: () => void }) {
 	const { profile } = useProfile();
+
 	const [form, setForm] = useState<UserForm>({
-		email: profile?.email ?? "",
-		phone_number: profile?.phone_number ?? null,
-		username: profile?.username ?? "",
+		email: "",
+		phone_number: "",
+		username: "",
 	});
 	const [phoneInput, setPhoneInput] = useState(
 		profile?.phone_number ? String(profile.phone_number) : "",
@@ -37,6 +38,17 @@ export default function ProfileDialog({ refetch }: { refetch: () => void }) {
 			refetch();
 		},
 	});
+
+	useEffect(() => {
+		(() => {
+			if (profile)
+				setForm({
+					email: profile.email ?? "",
+					phone_number: profile.phone_number ?? "",
+					username: profile.username ?? "",
+				});
+		})();
+	}, [profile]);
 
 	const hableChange = <K extends keyof UserForm>(
 		key: K,

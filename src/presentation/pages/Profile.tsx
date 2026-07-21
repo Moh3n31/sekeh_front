@@ -5,19 +5,25 @@ import ProfileDialog from "../profile/ProfileDialog";
 import { authAPI } from "../../services/authentication";
 import { useCustomQuery } from "../components/hooks/useCostumQuery";
 import { Sparkles } from "lucide-react";
+import { useEffect } from "react";
+import { formatDate } from "../../utils/date";
 
 export default function Profile() {
 	const { getProfile } = authAPI;
 	const { profile, setProfile } = useProfile();
-	console.log("profile: ",profile)
-	const { refetch } = useCustomQuery({
+
+	const { data, refetch } = useCustomQuery({
 		key: ["prfoileInfo"],
 		func: getProfile,
-		options: {
-			enabled: false,
-			onSuccess: (p) => setProfile(p),
-		},
 	});
+
+	useEffect(() => {
+		if (data?.data) {
+			const p = data.data.user;
+
+			setProfile(p);
+		}
+	}, [data?.data, setProfile]);
 
 	return (
 		<div className="md:p-7 max-md:py-5 max-md:px-6 flex flex-col gap-10 w-full">
@@ -50,6 +56,17 @@ export default function Profile() {
 				<ChangePasswordDialog />
 				<DeleteAcountDialog />
 			</menu>
+
+			<footer className="flex flex-col gap-1">
+				<p className="text-[14px] font-medium text-text-muted">
+					تاریخ عضویت : {formatDate(profile?.created_at ?? "")}
+				</p>
+				{profile?.updated_at && (
+					<p className="text-[14px] font-medium text-text-muted">
+						آخرین تغییرات : {formatDate(profile.updated_at)}
+					</p>
+				)}
+			</footer>
 		</div>
 	);
 }

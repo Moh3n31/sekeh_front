@@ -38,7 +38,7 @@ export const sanitizePhoneInput = (value: string) => {
 	return withoutSpaces.replace(/\D/g, "");
 };
 
-export const parsePhoneNumber = (value: string): number | null => {
+export const parsePhoneNumber = (value: string): string | null => {
 	const sanitized = sanitizePhoneInput(value);
 	if (!sanitized) return null;
 
@@ -46,7 +46,7 @@ export const parsePhoneNumber = (value: string): number | null => {
 	if (digitsOnly.length < 7 || digitsOnly.length > 15) return null;
 
 	const parsed = Number(sanitized);
-	return Number.isFinite(parsed) ? parsed : null;
+	return Number.isFinite(parsed) ? sanitized : null;
 };
 
 export const getPhoneError = (value: string) => {
