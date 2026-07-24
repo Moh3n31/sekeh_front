@@ -12,7 +12,7 @@ export default function MobileNavigation() {
 	const { profile } = useProfile();
 
 	return (
-		<div className=" md:hidden">
+		<div className="md:hidden">
 			<input type="checkbox" id="navbar-menu" className="peer hidden" />
 			<label htmlFor="navbar-menu">
 				<Menu
@@ -20,7 +20,7 @@ export default function MobileNavigation() {
 					className="text-white bg-accent p-1 size-7 rounded-full"
 				/>
 			</label>
-			<section className="fixed w-1/2 h-full top-17 start-0 animate-slide-in-left hidden peer-checked:block z-20">
+			<section className="fixed w-1/2 h-dvh top-17 start-0 animate-slide-in-left hidden peer-checked:block z-20">
 				<nav className="flex flex-col items-start gap-5 w-full h-full bg-background p-2">
 					{menuItems.map(({ icon: Icon, path, label, admin }) => {
 						const isThisPage = location.pathname.includes(path);

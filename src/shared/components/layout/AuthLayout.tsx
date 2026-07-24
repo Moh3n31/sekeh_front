@@ -3,7 +3,7 @@ import Title from "@/shared/components/ui/PageTitle";
 
 export default function AuthLayout() {
 	return (
-		<div className="bg-linear-300 from-accent-hover to-primary-green w-full h-screen flex flex-row-reverse justify-end overflow-hidden p-7">
+		<div className="bg-linear-300 from-accent-hover to-primary-green w-full h-dvh flex flex-row-reverse justify-end overflow-hidden p-7">
 			<main className="bg-background w-140 rounded-lg">
 				<Outlet />
 			</main>

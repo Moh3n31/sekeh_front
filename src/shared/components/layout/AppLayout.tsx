@@ -31,12 +31,12 @@ export default function AppLayout() {
 	return (
 		<div className="h-screen w-screen bg-surface flex" id="main-container">
 			<NavbarDesktop />
-			<div className="grid grid-rows-[68px_calc(100vh-68px)] h-full w-full">
-				<header className="bg-background h-full md:pe-5 max-md:px-3 flex items-center max-md:gap-7">
+			<div className="flex flex-col h-full w-full">
+				<header className="bg-background md:pe-5 max-md:px-3 flex h-17 shrink-0 items-center max-md:gap-7">
 					<NavbarMobile />
 					<Title mianColor="accent" subColor="primary-text" />
 				</header>
-				<main className="overflow-hidden">
+				<main className="max-h-dvh overflow-x-hidden overflow-y-auto">
 					<Outlet />
 				</main>
 			</div>
