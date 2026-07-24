@@ -8,7 +8,7 @@ export default function AuthLayout() {
 				<Outlet />
 			</main>
 			<Title
-				wrapperClassName="fixed flex-row-reverse bottom-7 end-7 max-md:hidden"
+				wrapperClassName="fixed flex-row-reverse bottom-7 end-7 max-[1030px]:hidden"
 				subColor="background"
 				mianColor="accent"
 				iconClass="md:size-20"
