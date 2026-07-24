@@ -1,10 +1,14 @@
-import { useState } from "react";
 import { authAPI } from "@/features/auth/api/authApi";
-import { useCustomMutation } from "@/shared/hooks/useCustomMutation";
+import Button from "@/shared/components/ui/Button";
 import Dialog from "@/shared/components/ui/Dialog";
+import PasswordInput from "@/shared/components/ui/PasswordInput";
+import PasswordRequirements from "@/shared/components/ui/PasswordRequirements";
+import { useCustomMutation } from "@/shared/hooks/useCustomMutation";
+import { useDialog } from "@/shared/hooks/useDialog";
+import { getPasswordError } from "@/shared/lib/formValidation";
 import { toast } from "@/shared/lib/toast";
-import { KeyRound } from "lucide-react";
-import { getPasswordError, getRequiredError, sanitizeText } from "@/shared/lib/formValidation";
+import { KeyRound, LoaderCircle } from "lucide-react";
+import { useState } from "react";
 
 interface PasswordForm {
 	current: string;
@@ -12,137 +16,149 @@ interface PasswordForm {
 	confirm: string;
 }
 
-interface PasswordErrors {
-	current?: string;
-	new?: string;
-	confirm?: string;
-}
+type TouchedFields = Partial<Record<keyof PasswordForm, boolean>>;
+
+const initialForm: PasswordForm = {
+	current: "",
+	new: "",
+	confirm: "",
+};
+
+const getFormErrors = (form: PasswordForm) => ({
+	current: form.current ? "" : "رمز عبور فعلی الزامی است.",
+	new: getPasswordError(form.new),
+	confirm: !form.confirm
+		? "تکرار رمز عبور جدید الزامی است."
+		: form.new !== form.confirm
+			? "رمز عبور جدید و تکرار آن یکسان نیست."
+			: "",
+});
 
 export default function ChangePasswordDialog() {
-	const [form, setForm] = useState<PasswordForm>({
-		current: "",
-		new: "",
-		confirm: "",
-	});
-	const [errors, setErrors] = useState<PasswordErrors>({});
+	const [form, setForm] = useState<PasswordForm>(initialForm);
+	const [touched, setTouched] = useState<TouchedFields>({});
+	const dialog = useDialog();
+	const { mutate, isPending } = useCustomMutation(authAPI.changePassword);
 
-	const { changePassword } = authAPI;
-	const { mutate } = useCustomMutation(changePassword);
+	const validationErrors = getFormErrors(form);
+	const isFormValid = Object.values(validationErrors).every((error) => !error);
 
-	function handleChange<K extends keyof PasswordForm>(
+	const handleChange = <K extends keyof PasswordForm>(
 		key: K,
 		value: PasswordForm[K],
-	) {
-		setForm((prev) => ({ ...prev, [key]: value }));
-		setErrors((prev) => ({ ...prev, [key]: undefined }));
-	}
+	) => {
+		setForm((current) => ({ ...current, [key]: value }));
+	};
 
-	function handleSubmit() {
-		const nextErrors: PasswordErrors = {};
-		const current = sanitizeText(form.current);
-		const next = sanitizeText(form.new);
-		const confirm = sanitizeText(form.confirm);
+	const markTouched = (key: keyof PasswordForm) => {
+		setTouched((current) => ({ ...current, [key]: true }));
+	};
 
-		if (!current) nextErrors.current = getRequiredError(form.current, "رمز عبور قبلی");
-		if (!next) nextErrors.new = getRequiredError(form.new, "رمز عبور جدید");
-		else {
-			const passwordError = getPasswordError(next);
-			if (passwordError) nextErrors.new = passwordError;
-		}
-		if (!confirm) nextErrors.confirm = getRequiredError(form.confirm, "تایید رمز عبور");
-		else if (next !== confirm) nextErrors.confirm = "رمز عبور و تکرار آن یکسان نیست.";
+	const handleOpenChange = (open: boolean) => {
+		dialog.setDialogOpen(open);
+		if (!open) setTouched({});
+	};
 
-		setErrors(nextErrors);
-		if (Object.keys(nextErrors).length > 0) return;
+	const handleSubmit = () => {
+		setTouched({ current: true, new: true, confirm: true });
+		if (!isFormValid || isPending) return;
 
 		mutate(
-			{ current_password: current, new_password: next },
+			{ current_password: form.current, new_password: form.new },
 			{
 				onSuccess: () => {
-					toast.success("رمز عبور شما با موفقیت بروزرسانی شد.");
-					setForm({ current: "", new: "", confirm: "" });
-					setErrors({});
+					toast.success("رمز عبور شما با موفقیت به‌روزرسانی شد.");
+					setForm(initialForm);
+					setTouched({});
+					dialog.closeDialog();
 				},
 			},
 		);
-	}
+	};
 
 	return (
-		<Dialog
-			variant="fullscreen"
-			trigger={
-				<div className="flex gap-2 cursor-pointer items-center bg-primary-action py-1.5 px-3 rounded-full">
-					<KeyRound
-						strokeWidth={1.5}
-						className="size-5 transition-colors duration-200 text-white"
-					/>
-					<span className="align-middle text-white pb-2">تغییر رمز عبور</span>
-				</div>
-			}
-			title="تغییر رمز عبور"
-			footer={
-				<button
-					onClick={handleSubmit}
-					className="py-1 px-3 border-2 border-accent text-accent rounded-md font-semibold cursor-pointer
-					hover:bg-accent hover:text-white transition-all duration-150">
-					ثبت
-				</button>
-			}
-			closeButton={
-				<button
-					className="py-1 px-3 border-2 border-primary-action text-primary-action rounded-md font-semibold cursor-pointer
-					hover:bg-primary-action hover:text-white transition-all duration-150">
-					بازگشت
-				</button>
-			}>
-			<form
-				onSubmit={(e) => e.preventDefault()}
-				className="flex flex-col items-center gap-5">
-				<div className="flex flex-col gap-2 w-full">
-					<label className="text-[16px] text-primary-action">
-						رمز عبور قبلی
-					</label>
-					<input
-						type="password"
+		<>
+			<Button
+				onClick={dialog.openDialog}
+				aria-haspopup="dialog"
+				aria-expanded={dialog.isOpen}>
+				<KeyRound className="size-5" strokeWidth={1.5} />
+				<span className="pb-1">تغییر رمز عبور</span>
+			</Button>
+
+			<Dialog
+				open={dialog.isOpen}
+				onOpenChange={handleOpenChange}
+				variant="fullscreen"
+				title="تغییر رمز عبور"
+				footer={
+					<>
+						<Button
+							variant="outline"
+							onClick={dialog.closeDialog}
+							disabled={isPending}>
+							بازگشت
+						</Button>
+						<Button
+							type="submit"
+							form="change-password-form"
+							disabled={!isFormValid || isPending}>
+							{isPending ? (
+								<>
+									<LoaderCircle className="size-4 animate-spin" />
+									<span>در حال ثبت</span>
+								</>
+							) : (
+								"ثبت"
+							)}
+						</Button>
+					</>
+				}>
+				<form
+					id="change-password-form"
+					noValidate
+					onSubmit={(event) => {
+						event.preventDefault();
+						handleSubmit();
+					}}
+					className="flex min-w-0 flex-col gap-5 md:min-w-96">
+					<PasswordInput
+						label="رمز عبور فعلی"
 						value={form.current}
-						onChange={(e) => handleChange("current", e.target.value)}
+						onChange={(event) => handleChange("current", event.target.value)}
+						onBlur={() => markTouched("current")}
+						autoComplete="current-password"
 						maxLength={64}
-						aria-invalid={Boolean(errors.current)}
-						className={`border-2 rounded-md py-2 px-2 outline-0 ${errors.current ? "border-red-500" : "border-border"}`}
+						required
+						error={touched.current ? validationErrors.current : undefined}
 					/>
-					{errors.current ? <p className="text-sm text-red-500">{errors.current}</p> : null}
-				</div>
 
-				<div className="flex flex-col gap-2 w-full">
-					<label className="text-[16px] text-primary-action">
-						رمز عبور جدید
-					</label>
-					<input
-						type="password"
-						value={form.new}
-						onChange={(e) => handleChange("new", e.target.value)}
-						maxLength={64}
-						aria-invalid={Boolean(errors.new)}
-						className={`border-2 rounded-md py-2 px-2 outline-0 ${errors.new ? "border-red-500" : "border-border"}`}
-					/>
-					{errors.new ? <p className="text-sm text-red-500">{errors.new}</p> : null}
-				</div>
+					<div className="space-y-2">
+						<PasswordInput
+							label="رمز عبور جدید"
+							value={form.new}
+							onChange={(event) => handleChange("new", event.target.value)}
+							onBlur={() => markTouched("new")}
+							autoComplete="new-password"
+							maxLength={64}
+							required
+							error={touched.new ? validationErrors.new : undefined}
+						/>
+						<PasswordRequirements value={form.new} />
+					</div>
 
-				<div className="flex flex-col gap-2 w-full">
-					<label className="text-[16px] text-primary-action">
-						تایید رمز عبور
-					</label>
-					<input
-						type="password"
+					<PasswordInput
+						label="تکرار رمز عبور جدید"
 						value={form.confirm}
-						onChange={(e) => handleChange("confirm", e.target.value)}
+						onChange={(event) => handleChange("confirm", event.target.value)}
+						onBlur={() => markTouched("confirm")}
+						autoComplete="new-password"
 						maxLength={64}
-						aria-invalid={Boolean(errors.confirm)}
-						className={`border-2 rounded-md py-2 px-2 outline-0 ${errors.confirm ? "border-red-500" : "border-border"}`}
+						required
+						error={touched.confirm ? validationErrors.confirm : undefined}
 					/>
-					{errors.confirm ? <p className="text-sm text-red-500">{errors.confirm}</p> : null}
-				</div>
-			</form>
-		</Dialog>
+				</form>
+			</Dialog>
+		</>
 	);
 }

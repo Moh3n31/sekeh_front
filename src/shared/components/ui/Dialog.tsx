@@ -20,6 +20,7 @@ export interface DialogProps {
 	open?: boolean;
 	onClose?: () => void;
 	onOpen?: () => void;
+	onOpenChange?: (open: boolean) => void;
 	variant?: "bottom" | "fullscreen";
 }
 
@@ -33,6 +34,7 @@ export default function Dialog({
 	open,
 	onClose,
 	onOpen,
+	onOpenChange,
 	variant = "bottom",
 }: DialogProps) {
 	const dialogRef = useRef<HTMLDialogElement | null>(null);
@@ -46,16 +48,17 @@ export default function Dialog({
 		if (!isControlled) {
 			setInternalOpen(true);
 		}
+		onOpenChange?.(true);
 		onOpen?.();
-	}, [isControlled, onOpen]);
+	}, [isControlled, onOpen, onOpenChange]);
 
 	const closeDialog = useCallback(() => {
-		dialogRef.current?.close();
 		if (!isControlled) {
 			setInternalOpen(false);
 		}
+		onOpenChange?.(false);
 		onClose?.();
-	}, [isControlled, onClose]);
+	}, [isControlled, onClose, onOpenChange]);
 
 	useEffect(() => {
 		if (!dialogRef.current) return;
@@ -92,7 +95,6 @@ export default function Dialog({
 		if (!isControlled) {
 			setInternalOpen(false);
 		}
-		onClose?.();
 	};
 
 	return (

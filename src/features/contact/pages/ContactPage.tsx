@@ -36,11 +36,18 @@ export default function ContactPage() {
 							</div>
 						</div>
 						<a
-							href="https://github.com/your-org/your-repo"
+							href="https://github.com/Moh3n31/sekeh_front"
 							target="_blank"
 							rel="noreferrer"
 							className="text-sm font-semibold text-accent hover:underline">
-							github.com/your-org/your-repo
+							https://github.com/Moh3n31/sekeh_front
+						</a>
+						<a
+							href="https://github.com/Astr0Net/3k-backend"
+							target="_blank"
+							rel="noreferrer"
+							className="text-sm font-semibold text-accent hover:underline">
+							https://github.com/Astr0Net/3k-backend
 						</a>
 					</div>
 				</div>

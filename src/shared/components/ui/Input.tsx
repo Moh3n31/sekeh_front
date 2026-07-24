@@ -1,72 +1,59 @@
-import { useState } from "react";
-import type { ComponentProps, ChangeEvent } from "react";
 import { cn } from "@/shared/lib/cn";
+import { useId, type ComponentProps } from "react";
 
 export interface InputProps extends ComponentProps<"input"> {
-	label?: string;
-	validation?: string;
+	label: string;
+	error?: string;
+	hint?: string;
 }
 
 export default function Input({
-	type = "text",
-	required = false,
-	label = "",
-	validation = "",
-	pattern,
-	onChange,
-	className,
 	id,
-	...rest
+	label,
+	error,
+	hint,
+	className,
+	required,
+	...props
 }: InputProps) {
-	const [isValid, setIsValid] = useState<boolean>(true);
-	const inputId = id ?? rest.name;
-
-	const validate = (value: string) => {
-		if (!pattern) return;
-
-		let regex: RegExp;
-		try {
-			regex = new RegExp(pattern);
-		} catch {
-			console.warn("Invalid RegExp pattern:", pattern);
-			return;
-		}
-
-		setIsValid(regex.test(value));
-	};
-
-	const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
-		validate(event.target.value);
-		onChange?.(event);
-	};
+	const generatedId = useId();
+	const inputId = id ?? generatedId;
+	const descriptionId = `${inputId}-description`;
 
 	return (
-		<div className="flex flex-col gap-2">
-			{label && (
-				<div className="flex gap-3">
-					<label htmlFor={inputId}>{label}</label>
-					{required && <span className="text-primary-red">*</span>}
-				</div>
-			)}
+		<div className="flex w-full flex-col gap-2">
+			<label htmlFor={inputId} className="font-semibold text-primary-text">
+				{label}
+				{required ? (
+					<span className="ms-1 text-primary-red" aria-hidden="true">
+						*
+					</span>
+				) : null}
+			</label>
 
 			<input
-				{...rest}
 				id={inputId}
-				type={type}
 				required={required}
-				onChange={handleChange}
-				pattern={pattern}
-				aria-invalid={!isValid}
+				aria-invalid={Boolean(error)}
+				aria-describedby={error || hint ? descriptionId : undefined}
 				className={cn(
-					"h-10 w-full rounded-md border-2 border-border bg-background px-3 text-primary-text outline-none transition-colors placeholder:text-text-muted focus:border-accent focus-visible:ring-2 focus-visible:ring-accent/20 disabled:cursor-not-allowed disabled:opacity-50",
-					!isValid && "border-primary-red",
+					"h-10 w-full rounded-md border-2 bg-background px-3 text-base text-primary-text outline-none transition-colors placeholder:text-text-muted focus:border-accent focus-visible:ring-2 focus-visible:ring-accent/20 disabled:cursor-not-allowed disabled:opacity-50",
+					error ? "border-primary-red" : "border-border",
 					className,
 				)}
+				{...props}
 			/>
 
-			{!isValid && validation && (
-				<span className="text-sm text-primary-red">{validation}</span>
-			)}
+			{error || hint ? (
+				<p
+					id={descriptionId}
+					className={cn(
+						"text-sm",
+						error ? "text-primary-red" : "text-text-muted",
+					)}>
+					{error ?? hint}
+				</p>
+			) : null}
 		</div>
 	);
 }
