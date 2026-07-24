@@ -1,0 +1,8 @@
+@theme {
+	--font-vazir: "Vazirmatn", sans-serif;
+	--font-inter: "Inter", sans-serif;
+}
+
+body {
+	font-family: var(--font-vazir) var(--font-inter) sans-serif;
+}

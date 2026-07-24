@@ -1,0 +1,77 @@
+:root {
+	--color-background: #f7fafc;
+	--color-surface: #e2e8f0;
+	--color-border: #cbd5e1;
+
+	--color-primary-text: #0f172a;
+	--color-primary-action: #334155;
+	--color-text-muted: #64748b;
+
+	--color-accent: #2563eb;
+	--color-accent-hover: #1d4ed8;
+	--color-accent-soft: #dbeafe;
+
+	--color-informational: #0d9488;
+	--color-informational-hover: #0f766e;
+	--color-informational-soft: #ccfbf1;
+
+	--color-match: #16a34a;
+	--color-match-soft: #dcfce7;
+
+	--color-primary-green: #7bf1a8;
+	--color-primary-red: #d1493f;
+	--color-highlight: #38bdf8;
+	--color-highlight-soft: #e0f2fe;
+}
+
+.dark {
+	--color-background: #0f172a;
+	--color-surface: #1e293b;
+	--color-border: #334155;
+
+	--color-primary-text: #f7fafc;
+	--color-primary-action: #cbd5e1;
+	--color-text-muted: #94a3b8;
+
+	--color-accent: #60a5fa;
+	--color-accent-hover: #3b82f6;
+	--color-accent-soft: #1e40af33;
+
+	--color-informational: #2dd4bf;
+	--color-informational-hover: #14b8a6;
+	--color-informational-soft: #164e63aa;
+
+	--color-match: #22c55e;
+	--color-match-soft: #16653433;
+
+	--color-primary-green: #4ade80;
+	--color-primary-red: #f87171;
+	--color-highlight: #38bdf8;
+	--color-highlight-soft: #0c4a6e33;
+}
+
+@theme {
+	--color-background: var(--color-background);
+	--color-surface: var(--color-surface);
+	--color-border: var(--color-border);
+
+	--color-primary-text: var(--color-primary-text);
+	--color-primary-action: var(--color-primary-action);
+	--color-text-muted: var(--color-text-muted);
+
+	--color-accent: var(--color-accent);
+	--color-accent-hover: var(--color-accent-hover);
+	--color-accent-soft: var(--color-accent-soft);
+
+	--color-informational: var(--color-informational);
+	--color-informational-hover: var(--color-informational-hover);
+	--color-informational-soft: var(--color-informational-soft);
+
+	--color-match: var(--color-match);
+	--color-match-soft: var(--color-match-soft);
+
+	--color-primary-green: var(--color-primary-green);
+	--color-primary-red: var(--color-primary-red);
+	--color-highlight: var(--color-highlight);
+	--color-highlight-soft: var(--color-highlight-soft);
+}
