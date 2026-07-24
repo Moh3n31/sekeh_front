@@ -2,7 +2,7 @@ import { Outlet, useLocation, useNavigate } from "react-router";
 import NavbarDesktop from "@/shared/components/layout/DesktopNavigation";
 import NavbarMobile from "@/shared/components/layout/MobileNavigation";
 import { useEffect } from "react";
-import { checkTokens } from "@/shared/lib/authTokens";
+import { checkTokens, removeTokens } from "@/shared/lib/authTokens";
 import { toast } from "@/shared/lib/toast";
 import Title from "@/shared/components/ui/PageTitle";
 
@@ -12,10 +12,21 @@ export default function AppLayout() {
 
 	useEffect(() => {
 		if (!checkTokens() && location.pathname !== "auth/login") {
-			navigate("/auth/login");
-			toast.error("لطفا وارد حساب کاربری خود شوید.");
+			window.dispatchEvent(new Event("unauthorized"));
 		}
 	}, [location.pathname, navigate]);
+
+	useEffect(() => {
+		const handler = () => {
+			removeTokens();
+			toast.error("لطفا وارد حساب کاربری خود شوید.");
+			navigate("/auth/login");
+		};
+
+		window.addEventListener("unauthorized", handler);
+
+		return () => window.removeEventListener("unauthorized", handler);
+	}, [navigate]);
 
 	return (
 		<div className="h-screen w-screen bg-surface flex" id="main-container">

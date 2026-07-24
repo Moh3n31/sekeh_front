@@ -81,7 +81,7 @@ api.interceptors.response.use(
 				toast.error("لطفا مجددا وارد حساب کاربری خود شوید.");
 
 				setTimeout(() => {
-					window.location.href = "/auth/login";
+					window.dispatchEvent(new Event("unauthorized"));
 				}, 1000);
 
 				return Promise.reject(err);
