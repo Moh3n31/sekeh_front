@@ -4,6 +4,7 @@ import { removeTokens } from "@/shared/lib/authTokens";
 import { useCustomMutation } from "@/shared/hooks/useCustomMutation";
 import Dialog from "@/shared/components/ui/Dialog";
 import { useNavigate } from "react-router";
+import Button from "@/shared/components/ui/Button";
 
 export default function DeleteAccountDialog() {
 	const navigate = useNavigate();
@@ -22,13 +23,13 @@ export default function DeleteAccountDialog() {
 	return (
 		<Dialog
 			trigger={
-				<div className="flex gap-2 cursor-pointer items-center bg-primary-red py-1.5 px-3 rounded-full">
+				<Button variant="destructive">
 					<BanIcon
 						strokeWidth={1.5}
-						className="size-5 transition-colors duration-200 text-white"
+						className="size-5 transition-colors duration-200"
 					/>
-					<span className="align-middle text-white pb-2">حذف حساب</span>
-				</div>
+					<span>حذف حساب</span>
+				</Button>
 			}
 			title="حذف حساب کاربری"
 			footer={

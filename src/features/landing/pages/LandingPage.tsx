@@ -12,8 +12,8 @@ import {
 	Briefcase,
 	MessagesSquare,
 	FileText,
-	Zap,
 	Star,
+	AlertTriangle,
 } from "lucide-react";
 import Title from "@/shared/components/ui/PageTitle";
 import { checkTokens } from "@/shared/lib/authTokens";
@@ -35,7 +35,7 @@ export default function LandingPage() {
 			<div className="h-screen w-screen bg-surface flex items-center justify-center">
 				<div className="animate-pulse flex flex-col items-center gap-4">
 					<div className="w-16 h-16 border-4 border-accent border-t-transparent rounded-full animate-spin"></div>
-					<p className="text-primary-text text-lg">Loading...</p>
+					<p className="text-primary-text text-lg">کمی صبر کنید...</p>
 				</div>
 			</div>
 		);
@@ -62,10 +62,6 @@ export default function LandingPage() {
 			<main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-24">
 				{/* Hero Section */}
 				<section className="text-center space-y-6 pt-8">
-					<div className="inline-flex items-center gap-2 bg-accent-soft text-accent px-4 py-2 rounded-full text-sm font-medium">
-						<Zap size={16} />
-						AI-Powered Career Assistant
-					</div>
 					<h1 className="text-4xl md:text-6xl lg:text-7xl font-bold text-primary-text leading-tight">
 						{landingContent.hero.title}
 					</h1>
@@ -100,7 +96,10 @@ export default function LandingPage() {
 								key={idx}
 								className="bg-surface rounded-2xl p-6 hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
 								<div className="bg-primary-red/10 w-12 h-12 rounded-full flex items-center justify-center mb-4">
-									<span className="text-2xl">⚠️</span>
+									<AlertTriangle
+										className="text-primary-red"
+										strokeWidth={1.5}
+									/>
 								</div>
 								<h3 className="text-xl font-semibold text-primary-text mb-2">
 									{point.title}
@@ -173,27 +172,23 @@ export default function LandingPage() {
 				</section>
 
 				{/* How It Works */}
-				<section className="bg-background rounded-3xl p-8 md:p-12 border border-border">
-					<h2 className="text-3xl md:text-4xl font-bold text-primary-text text-center mb-12">
+				<section className="bg-background rounded-3xl p-8 md:p-12 border border-border flex flex-col gap-5">
+					<h2 className="text-3xl md:text-4xl font-bold text-primary-text text-center pb-7">
 						{landingContent.how_it_works.title}
 					</h2>
-					<div className="relative">
-						<div className="hidden md:block absolute top-1/2 start-0 end-0 h-0.5 bg-border -translate-y-1/2"></div>
-						<div className="grid md:grid-cols-3 gap-8 relative">
-							{landingContent.how_it_works.steps.map((step, idx) => (
-								<div
-									key={idx}
-									className="flex flex-col items-center text-center">
-									<div className="relative z-10 w-16 h-16 rounded-full bg-accent text-white flex items-center justify-center text-2xl font-bold mb-4 shadow-lg shadow-accent/30">
-										{step.step}
-									</div>
-									<h3 className="text-xl font-semibold text-primary-text mb-2">
-										{step.title}
-									</h3>
-									<p className="text-text-muted">{step.description}</p>
+					<hr className="hidden md:block border-2 rounded-full border-border" />
+					<div className="grid md:grid-cols-3 gap-8 relative">
+						{landingContent.how_it_works.steps.map((step, idx) => (
+							<div key={idx} className="flex flex-col items-center text-center">
+								<div className="relative z-10 w-16 h-16 rounded-full bg-accent text-white flex items-center justify-center text-2xl font-bold mb-4 shadow-lg shadow-accent/30">
+									{step.step}
 								</div>
-							))}
-						</div>
+								<h3 className="text-xl font-semibold text-primary-text mb-2">
+									{step.title}
+								</h3>
+								<p className="text-text-muted">{step.description}</p>
+							</div>
+						))}
 					</div>
 				</section>
 
@@ -233,9 +228,7 @@ export default function LandingPage() {
 						{landingContent.final_cta.title}
 					</h2>
 					<button
-						onClick={() =>
-							navigate(landingContent.final_cta.secondary_cta_link)
-						}
+						onClick={handleDirectPage}
 						className="bg-accent text-white px-10 py-5 rounded-full text-xl font-medium
             hover:bg-accent-hover transition-all duration-300 hover:scale-105 hover:shadow-2xl
             flex items-center gap-3 mx-auto shadow-lg shadow-accent/30">
@@ -248,7 +241,7 @@ export default function LandingPage() {
 			{/* Footer */}
 			<footer className="bg-background border-t border-border mt-16 py-8">
 				<div className="max-w-7xl mx-auto px-4 text-center text-text-muted text-sm">
-					<p>© 2026 JobAssistant — AI-Powered Career Platform</p>
+					<p>© 2026 Seke — AI-Powered Job Discovery Platform</p>
 				</div>
 			</footer>
 		</div>

@@ -1,151 +1,144 @@
-import { Link, useNavigate } from "react-router";
-import { useCustomMutation } from "@/shared/hooks/useCustomMutation";
 import { authAPI } from "@/features/auth/api/authApi";
-import { useState } from "react";
-import { LoaderCircle } from "lucide-react";
+import Button from "@/shared/components/ui/Button";
+import Input from "@/shared/components/ui/Input";
+import PasswordInput from "@/shared/components/ui/PasswordInput";
+import PasswordRequirements from "@/shared/components/ui/PasswordRequirements";
+import { useCustomMutation } from "@/shared/hooks/useCustomMutation";
 import {
 	getPasswordError,
-	getRequiredError,
+	getUsernameError,
 	sanitizeText,
 } from "@/shared/lib/formValidation";
+import { LoaderCircle } from "lucide-react";
+import { useState } from "react";
+import { Link, useNavigate } from "react-router";
 
-interface Form {
+interface SignupForm {
 	username: string;
 	password: string;
 	confirm: string;
 }
 
-interface FormErrors {
-	username?: string;
-	password?: string;
-	confirm?: string;
-}
+type TouchedFields = Partial<Record<keyof SignupForm, boolean>>;
+
+const getSignupErrors = (form: SignupForm) => ({
+	username: getUsernameError(form.username),
+	password: getPasswordError(form.password),
+	confirm: !form.confirm
+		? "تکرار رمز عبور الزامی است."
+		: form.password !== form.confirm
+			? "رمز عبور و تکرار آن یکسان نیست."
+			: "",
+});
 
 export default function SignupPage() {
-	const [formData, setFormData] = useState<Form>({
+	const [form, setForm] = useState<SignupForm>({
 		username: "",
 		password: "",
 		confirm: "",
 	});
-	const [errors, setErrors] = useState<FormErrors>({});
+	const [touched, setTouched] = useState<TouchedFields>({});
 	const navigate = useNavigate();
 	const { mutate, isPending } = useCustomMutation(authAPI.register, {
 		onSuccess: () => navigate("/chats"),
 	});
 
-	const validateForm = () => {
-		const nextErrors: FormErrors = {};
-		const username = sanitizeText(formData.username);
-		const password = sanitizeText(formData.password);
-		const confirm = sanitizeText(formData.confirm);
+	const validationErrors = getSignupErrors(form);
+	const isFormValid = Object.values(validationErrors).every((error) => !error);
 
-		if (!username)
-			nextErrors.username = getRequiredError(formData.username, "نام کاربری");
-		if (!password)
-			nextErrors.password = getRequiredError(formData.password, "رمز عبور");
-		else if (getPasswordError(password))
-			nextErrors.password = getPasswordError(password);
-		if (!confirm)
-			nextErrors.confirm = getRequiredError(formData.confirm, "تکرار رمز عبور");
-		else if (password !== confirm)
-			nextErrors.confirm = "رمز عبور و تکرار آن یکسان نیست.";
+	const handleChange = <K extends keyof SignupForm>(
+		key: K,
+		value: SignupForm[K],
+	) => {
+		setForm((current) => ({ ...current, [key]: value }));
+	};
 
-		setErrors(nextErrors);
-		return !nextErrors.username && !nextErrors.password && !nextErrors.confirm;
+	const markTouched = (key: keyof SignupForm) => {
+		setTouched((current) => ({ ...current, [key]: true }));
 	};
 
 	const handleSubmit = () => {
-		if (!validateForm()) return;
+		setTouched({ username: true, password: true, confirm: true });
+		if (!isFormValid || isPending) return;
 
 		mutate({
-			password: sanitizeText(formData.password),
-			username: sanitizeText(formData.username),
+			username: sanitizeText(form.username),
+			password: form.password,
 		});
 	};
 
-	const isFormFilled =
-		!!sanitizeText(formData.username) &&
-		!!sanitizeText(formData.password) &&
-		!!sanitizeText(formData.confirm);
-
-	const handleChange = <K extends keyof Form>(key: K, value: Form[K]) => {
-		setFormData((prev) => ({
-			...prev,
-			[key]: value,
-		}));
-		setErrors((prev) => ({ ...prev, [key]: undefined }));
-	};
-
 	return (
-		<div className="flex flex-col gap-10 justify-center h-full">
-			<p className="text-4xl font-bold text-primary-text text-center">
-				ثبت نام
-			</p>
-			<form
-				id="login-form"
-				onSubmit={(e) => {
-					e.preventDefault();
-					handleSubmit();
-				}}
-				className="text-primary-text flex flex-col gap-7">
-				<div className="flex flex-col gap-2">
-					<label className="font-semibold">نام کاربری</label>
-					<input
-						value={formData.username}
-						onChange={(e) => handleChange("username", e.target.value)}
+		<div className="flex h-full flex-col justify-center gap-7 py-5 ">
+			<div className="space-y-2 text-center">
+				<h1 className="text-4xl font-bold text-primary-text">ثبت نام</h1>
+				<p className="text-sm text-text-muted">
+					یک نام کاربری و رمز عبور امن انتخاب کنید.
+				</p>
+			</div>
+
+			<section className="relative">
+				<form
+					id="signup-form"
+					noValidate
+					onSubmit={(event) => {
+						event.preventDefault();
+						handleSubmit();
+					}}
+					className="flex flex-col gap-4 px-10 pb-6 text-primary-text overflow-y-auto max-md:max-h-[300px] md:max-h-[400px]">
+					<Input
+						label="نام کاربری"
+						value={form.username}
+						onChange={(event) => handleChange("username", event.target.value)}
+						onBlur={() => markTouched("username")}
+						autoComplete="username"
 						maxLength={40}
-						aria-invalid={Boolean(errors.username)}
-						className={`px-2 border-2 rounded-md h-10 placeholder:text-text-muted text-[16px] outline-0 focus:border-accent transition-all duration-150 ${errors.username ? "border-red-500" : "border-border"}`}
+						error={touched.username ? validationErrors.username : undefined}
+						hint="۳ تا ۴۰ کاراکتر؛ شروع با حرف و استفاده از حروف، اعداد، نقطه، خط تیره یا زیرخط"
 					/>
-					{errors.username ? (
-						<p className="text-sm text-red-500">{errors.username}</p>
-					) : null}
-				</div>
-				<div className="flex flex-col gap-2">
-					<label className="font-semibold">رمزعبور</label>
-					<input
-						type="password"
-						value={formData.password}
-						onChange={(e) => handleChange("password", e.target.value)}
+
+					<div className="space-y-2">
+						<PasswordInput
+							label="رمز عبور"
+							value={form.password}
+							onChange={(event) => handleChange("password", event.target.value)}
+							onBlur={() => markTouched("password")}
+							autoComplete="new-password"
+							maxLength={64}
+							error={touched.password ? validationErrors.password : undefined}
+						/>
+						<PasswordRequirements value={form.password} />
+					</div>
+
+					<PasswordInput
+						label="تکرار رمز عبور"
+						value={form.confirm}
+						onChange={(event) => handleChange("confirm", event.target.value)}
+						onBlur={() => markTouched("confirm")}
+						autoComplete="new-password"
 						maxLength={64}
-						aria-invalid={Boolean(errors.password)}
-						className={`px-2 border-2 rounded-md h-10 placeholder:text-text-muted text-[16px] outline-0 focus:border-accent transition-all duration-150 ${errors.password ? "border-red-500" : "border-border"}`}
+						error={touched.confirm ? validationErrors.confirm : undefined}
 					/>
-					{errors.password ? (
-						<p className="text-sm text-red-500">{errors.password}</p>
-					) : null}
-				</div>
-				<div className="flex flex-col gap-2">
-					<label className="font-semibold">تکرار رمزعبور</label>
-					<input
-						type="password"
-						value={formData.confirm}
-						onChange={(e) => handleChange("confirm", e.target.value)}
-						maxLength={64}
-						aria-invalid={Boolean(errors.confirm)}
-						className={`px-2 border-2 rounded-md h-10 placeholder:text-text-muted text-[16px] outline-0 focus:border-accent transition-all duration-150 ${errors.confirm ? "border-red-500" : "border-border"}`}
-					/>
-					{errors.confirm ? (
-						<p className="text-sm text-red-500">{errors.confirm}</p>
-					) : null}
-				</div>
-			</form>
-			<button
-				disabled={!isFormFilled}
+				</form>
+				<div className="md:hidden pointer-events-none absolute bottom-0 left-0 h-10 w-full bg-linear-to-t from-background to-transparent" />
+			</section>
+
+			<Button
+				disabled={!isFormValid || isPending}
 				type="submit"
-				form="login-form"
-				className={`px-5 h-12 rounded-full bg-primary-action active:bg-primary-text
-        text-white cursor-pointer font-semibold text-xl transition-all duration-150
-				disabled:pointer-events-none disabled:opacity-40 flex justify-center items-center
-				${isPending ? "pointer-events-none" : ""}`}>
+				form="signup-form"
+				className="h-12 rounded-full text-xl mx-10">
 				{isPending ? (
-					<LoaderCircle className="text-white animate-spin" />
+					<>
+						<LoaderCircle className="size-5 animate-spin" />
+						<span>در حال ثبت نام</span>
+					</>
 				) : (
 					"ادامه"
 				)}
-			</button>
+			</Button>
+
 			<footer className="flex flex-col items-center">
-				<p className="text-primary-action">قبلا حساب کاربری ساخته‌اید؟</p>
+				<p className="text-primary-action">قبلاً حساب کاربری ساخته‌اید؟</p>
 				<Link to="../login" className="font-semibold text-accent">
 					ورود
 				</Link>

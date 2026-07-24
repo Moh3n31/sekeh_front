@@ -12,6 +12,7 @@ import {
 	parsePhoneNumber,
 	sanitizeText,
 } from "@/shared/lib/formValidation";
+import Button from "@/shared/components/ui/Button";
 
 interface ProfileErrors {
 	username?: string;
@@ -19,7 +20,11 @@ interface ProfileErrors {
 	email?: string;
 }
 
-export default function EditProfileDialog({ refetch }: { refetch: () => void }) {
+export default function EditProfileDialog({
+	refetch,
+}: {
+	refetch: () => void;
+}) {
 	const { profile } = useProfile();
 
 	const [form, setForm] = useState<UserForm>({
@@ -95,13 +100,10 @@ export default function EditProfileDialog({ refetch }: { refetch: () => void }) 
 		<Dialog
 			variant="fullscreen"
 			trigger={
-				<div className="flex gap-2 cursor-pointer items-center bg-primary-action py-1.5 px-3 rounded-full w-full">
-					<PenBoxIcon
-						strokeWidth={1.5}
-						className="size-5 transition-colors duration-200 text-white"
-					/>
-					<span className="align-middle text-white pb-2">ویرایش پروفایل</span>
-				</div>
+				<Button variant="default">
+					<PenBoxIcon strokeWidth={1.5} className="size-5" />
+					<span>ویرایش پروفایل</span>
+				</Button>
 			}
 			title="ویرایش پروفایل"
 			footer={

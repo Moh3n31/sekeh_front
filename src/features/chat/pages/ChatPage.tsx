@@ -316,10 +316,10 @@ export default function ChatPage() {
 			return;
 		}
 
-		if (userContent.length > 400) {
-			setError("پیام نباید بیشتر از 400 کاراکتر باشد.");
-			return;
-		}
+		// if (userContent.length > 400) {
+		// 	setError("پیام نباید بیشتر از 400 کاراکتر باشد.");
+		// 	return;
+		// }
 
 		/*
 		 * In the unlikely case that the terminal persistence effect has not
@@ -504,7 +504,7 @@ export default function ChatPage() {
 							message_id: "welcome-message",
 							role: "assistant",
 							content:
-								"سلام!\n\nمن **دستیار کاریابی هوشمند** شما هستم.\n\nرزومه خودت رو برام بفرست تا ببینم چی کار میتونم بکنم.",
+								"سلام!\n\nمن **سکه** (سـامانه کـاریابی هـوشمند) هستم.\n\nرزومه خودت رو برام بفرست تا ببینم چی کار میتونم بکنم.",
 							created_at: welcomeCreatedAt,
 							status: "sent",
 						}}
@@ -526,8 +526,10 @@ export default function ChatPage() {
 			</div>
 
 			<form
+				id="chat-input"
 				onSubmit={(event: FormEvent<HTMLFormElement>) => {
 					event.preventDefault();
+					console.log("submited");
 					void handleSubmit();
 				}}
 				className="mx-5 mb-5 mt-2 rounded-xl border border-border bg-background p-3 shadow-lg shadow-border transition-all duration-150 md:mx-75">
@@ -562,6 +564,7 @@ export default function ChatPage() {
 						<ResumeModal onSelectResume={handleResumeSelect} />
 
 						<button
+							form="chat-input"
 							type={isBusy ? "button" : "submit"}
 							onClick={() => {
 								if (isBusy) {

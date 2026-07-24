@@ -1,133 +1,128 @@
-import { Link, useNavigate } from "react-router";
-import { useState } from "react";
-import { useCustomMutation } from "@/shared/hooks/useCustomMutation";
 import { authAPI } from "@/features/auth/api/authApi";
 import useProfile from "@/features/profile/store/profileStore";
+import Button from "@/shared/components/ui/Button";
+import Input from "@/shared/components/ui/Input";
+import PasswordInput from "@/shared/components/ui/PasswordInput";
+import { useCustomMutation } from "@/shared/hooks/useCustomMutation";
 import { addTokens } from "@/shared/lib/authTokens";
+import {
+	getPasswordError,
+	getUsernameError,
+	sanitizeText,
+} from "@/shared/lib/formValidation";
 import { LoaderCircle } from "lucide-react";
-import { getRequiredError, sanitizeText } from "@/shared/lib/formValidation";
+import { useState } from "react";
+import { Link, useNavigate } from "react-router";
 
-interface Form {
+interface LoginForm {
 	username: string;
 	password: string;
 }
 
-interface FormErrors {
-	username?: string;
-	password?: string;
-}
+type TouchedFields = Partial<Record<keyof LoginForm, boolean>>;
+
+const getLoginErrors = (form: LoginForm) => ({
+	username: getUsernameError(form.username, { allowEmail: true }),
+	password: getPasswordError(form.password),
+});
 
 export default function LoginPage() {
-	const [formData, setFormData] = useState<Form>({
+	const [form, setForm] = useState<LoginForm>({
 		username: "",
 		password: "",
 	});
-	const [errors, setErrors] = useState<FormErrors>({});
+	const [touched, setTouched] = useState<TouchedFields>({});
 	const { setProfile } = useProfile();
 	const navigate = useNavigate();
 	const { mutate, isPending } = useCustomMutation(authAPI.login, {
-		onSuccess: (res) => {
-			const { access_token, refresh_token, user } = res.data;
+		onSuccess: (response) => {
+			const { access_token, refresh_token, user } = response.data;
 			addTokens({ access: access_token, refresh: refresh_token });
 			setProfile(user);
-
 			navigate("/chats");
 		},
 	});
 
-	const validateForm = () => {
-		const nextErrors: FormErrors = {};
-		const username = sanitizeText(formData.username);
-		const password = sanitizeText(formData.password);
+	const validationErrors = getLoginErrors(form);
+	const isFormValid = Object.values(validationErrors).every((error) => !error);
 
-		if (!username)
-			nextErrors.username = getRequiredError(formData.username, "نام کاربری");
-		if (!password)
-			nextErrors.password = getRequiredError(formData.password, "رمز عبور");
+	const handleChange = <K extends keyof LoginForm>(
+		key: K,
+		value: LoginForm[K],
+	) => {
+		setForm((current) => ({ ...current, [key]: value }));
+	};
 
-		setErrors(nextErrors);
-		return !nextErrors.username && !nextErrors.password;
+	const markTouched = (key: keyof LoginForm) => {
+		setTouched((current) => ({ ...current, [key]: true }));
 	};
 
 	const handleSubmit = () => {
-		if (!validateForm()) return;
+		setTouched({ username: true, password: true });
+		if (!isFormValid || isPending) return;
 
-		const payload = {
-			username: sanitizeText(formData.username),
-			password: sanitizeText(formData.password),
-		};
-
-		mutate(payload);
-	};
-
-	const isFormFilled =
-		!!sanitizeText(formData.username) && !!sanitizeText(formData.password);
-
-	const handleChange = <K extends keyof Form>(key: K, value: Form[K]) => {
-		setFormData((prev) => ({
-			...prev,
-			[key]: value,
-		}));
-		setErrors((prev) => ({ ...prev, [key]: undefined }));
+		mutate({
+			username: sanitizeText(form.username),
+			password: form.password,
+		});
 	};
 
 	return (
-		<div className="flex flex-col gap-10 justify-center h-full">
-			<p className="text-4xl font-bold text-primary-text text-center">ورود</p>
+		<div className="flex h-full flex-col justify-center gap-8 py-5 px-10">
+			<div className="space-y-2 text-center">
+				<h1 className="text-4xl font-bold text-primary-text">ورود</h1>
+				<p className="text-sm text-text-muted">
+					اطلاعات حساب کاربری خود را وارد کنید.
+				</p>
+			</div>
+
 			<form
 				id="login-form"
-				onSubmit={(e) => {
-					e.preventDefault();
+				noValidate
+				onSubmit={(event) => {
+					event.preventDefault();
 					handleSubmit();
 				}}
-				className="text-primary-text flex flex-col gap-7">
-				<div className="flex flex-col gap-2">
-					<label className="font-semibold">نام کاربری</label>
-					<input
-						value={formData.username}
-						onChange={(e) => handleChange("username", e.target.value)}
-						autoComplete="username"
-						maxLength={40}
-						aria-invalid={Boolean(errors.username)}
-						className={`px-2 border-2 rounded-md h-10 placeholder:text-text-muted text-[16px] outline-0 focus:border-accent transition-all duration-150 ${errors.username ? "border-red-500" : "border-border"}`}
-						placeholder="نام کاربری یا ایمیل"
-					/>
-					{errors.username ? (
-						<p className="text-sm text-red-500">{errors.username}</p>
-					) : null}
-				</div>
-				<div className="flex flex-col gap-2">
-					<label className="font-semibold">رمز عبور</label>
-					<input
-						type="password"
-						value={formData.password}
-						onChange={(e) => handleChange("password", e.target.value)}
-						autoComplete="current-password"
-						maxLength={64}
-						aria-invalid={Boolean(errors.password)}
-						className={`px-2 border-2 rounded-md h-10 placeholder:text-text-muted text-[16px] outline-0 focus:border-accent transition-all duration-150 ${errors.password ? "border-red-500" : "border-border"}`}
-					/>
-					{errors.password ? (
-						<p className="text-sm text-red-500">{errors.password}</p>
-					) : null}
-				</div>
+				className="flex flex-col gap-5 text-primary-text">
+				<Input
+					label="نام کاربری یا ایمیل"
+					value={form.username}
+					onChange={(event) => handleChange("username", event.target.value)}
+					onBlur={() => markTouched("username")}
+					autoComplete="username"
+					maxLength={40}
+					error={touched.username ? validationErrors.username : undefined}
+					placeholder="نام کاربری یا ایمیل"
+				/>
+
+				<PasswordInput
+					label="رمز عبور"
+					value={form.password}
+					onChange={(event) => handleChange("password", event.target.value)}
+					onBlur={() => markTouched("password")}
+					autoComplete="current-password"
+					maxLength={64}
+					error={touched.password ? validationErrors.password : undefined}
+				/>
 			</form>
-			<button
-				disabled={!isFormFilled}
+
+			<Button
+				disabled={!isFormValid || isPending}
 				type="submit"
 				form="login-form"
-				className={`px-5 h-12 rounded-full bg-primary-action active:bg-primary-text
-				text-white cursor-pointer font-semibold text-xl transition-all duration-150
-				disabled:pointer-events-none disabled:opacity-40 flex justify-center items-center
-				${isPending ? "pointer-events-none" : ""}`}>
+				className="h-12 rounded-full text-xl">
 				{isPending ? (
-					<LoaderCircle className="text-white animate-spin" />
+					<>
+						<LoaderCircle className="size-5 animate-spin" />
+						<span>در حال ورود</span>
+					</>
 				) : (
 					"ورود"
 				)}
-			</button>
+			</Button>
+
 			<footer className="flex flex-col items-center">
-				<p className="text-primary-action">قبلا حساب کاربری نساخته‌اید؟</p>
+				<p className="text-primary-action">هنوز حساب کاربری نساخته‌اید؟</p>
 				<Link to="../signup" className="font-semibold text-accent">
 					ثبت نام
 				</Link>
