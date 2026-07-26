@@ -2,6 +2,7 @@ import { MarkAPI } from "@/features/marks/api/marksApi";
 import { useCustomQuery } from "@/shared/hooks/useCustomQuery";
 import JobCard from "@/shared/components/jobs/JobCard";
 import { BookmarkCheck } from "lucide-react";
+import PageTitle from "@/shared/components/layout/PageTitle";
 
 export default function MarksPage() {
 	const { allMarked } = MarkAPI;
@@ -12,19 +13,12 @@ export default function MarksPage() {
 	if (all.length == 0)
 		return (
 			<div className="flex flex-col gap-6 w-full h-full p-7">
-				<header className="flex items-center gap-3">
-					<div className="flex items-center justify-center rounded-full size-12 bg-linear-30 from-accent-hover to-match">
-						<BookmarkCheck className="size-6 text-background" />
-					</div>
-					<div>
-						<p className="font-semibold text-2xl text-primary-text">
-							شغل‌های ذخیره‌شده
-						</p>
-						<p className="text-text-muted">
-							در این بخش شغل‌های مورد علاقه‌تان را مدیریت کنید.
-						</p>
-					</div>
-				</header>
+				<PageTitle
+					icon={BookmarkCheck}
+					title="شغل‌های ذخیره‌شده"
+					desc="شغل‌های مورد علاقه‌تان را مدیریت کنید."
+				/>
+
 				<div className="flex items-center justify-center flex-1">
 					<p className="text-text-muted max-w-2/3 text-center">
 						برای ذخیره کردن کارت مشاغل، از صفحه چت اقدام کنید.
@@ -35,19 +29,11 @@ export default function MarksPage() {
 
 	return (
 		<div className="flex flex-col gap-6 h-full p-7 overflow-y-auto w-full">
-			<header className="flex items-center gap-3">
-				<div className="flex items-center justify-center rounded-full size-12 bg-linear-30 from-accent-hover to-match">
-					<BookmarkCheck className="size-6 text-background" />
-				</div>
-				<div>
-					<p className="font-semibold text-2xl text-primary-text">
-						شغل‌های ذخیره‌شده
-					</p>
-					<p className="text-text-muted">
-						در این بخش شغل‌های مورد علاقه‌تان را مدیریت کنید.
-					</p>
-				</div>
-			</header>
+			<PageTitle
+				icon={BookmarkCheck}
+				title="شغل‌های ذخیره‌شده"
+				desc="شغل‌های مورد علاقه‌تان را مدیریت کنید."
+			/>
 
 			<div className="grid grid-cols-4 max-md:grid-cols-1 gap-5 w-full">
 				{all.map((j) => (

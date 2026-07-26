@@ -62,7 +62,7 @@ export default function EditJobDialog({ job }: EditJobDialogProps) {
 				(cancelButton.current as HTMLButtonElement).click();
 			}
 			queryClient.invalidateQueries({ queryKey: ["adminJobs"] });
-		}
+		},
 	});
 
 	function handleSubmit() {
@@ -85,6 +85,7 @@ export default function EditJobDialog({ job }: EditJobDialogProps) {
 
 	return (
 		<Dialog
+			variant="fullscreen"
 			trigger={
 				<div
 					onClick={loadFullJob}
@@ -93,7 +94,7 @@ export default function EditJobDialog({ job }: EditJobDialogProps) {
 					<PenBoxIcon className="size-full text-primary-action" />
 				</div>
 			}
-			title="Edit Job"
+			title="ویرایش کارت شغل"
 			footer={
 				<button
 					onClick={handleSubmit}
@@ -103,7 +104,7 @@ export default function EditJobDialog({ job }: EditJobDialogProps) {
 					{isPending ? (
 						<LoaderCircle className="text-accent animate-spin" />
 					) : (
-						"Save"
+						"ذخیره"
 					)}
 				</button>
 			}
@@ -112,10 +113,10 @@ export default function EditJobDialog({ job }: EditJobDialogProps) {
 					ref={cancelButton}
 					className="py-1 px-3 border-2 border-primary-action text-primary-action rounded-md font-semibold cursor-pointer
 					hover:bg-primary-action hover:text-white transition-all duration-150">
-					Cancel
+					بازگشت
 				</button>
 			}>
-			<div className="flex flex-col gap-3 w-90 max-md:w-full">
+			<div className="flex flex-col gap-3">
 				<div className="grid grid-cols-2 gap-3">
 					<Field
 						label="Title"

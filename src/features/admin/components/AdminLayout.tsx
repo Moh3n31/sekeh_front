@@ -38,7 +38,7 @@ export default function AdminLayout() {
 					</NavLink>
 				))}
 			</nav>
-			<div className="flex-1 overflow-hidden">
+			<div className="flex-1 h-full overflow-x-hidden overflow-y-auto scrollbar-gray">
 				<Outlet />
 			</div>
 		</div>

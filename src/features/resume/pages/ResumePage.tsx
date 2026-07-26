@@ -1,4 +1,4 @@
-import { useState, type FormEvent } from "react";
+import { useEffect, useState, type FormEvent } from "react";
 import { FileText, LoaderCircle, Pencil, Plus } from "lucide-react";
 import ResumeForm from "@/features/resume/components/ResumeForm";
 import DeleteDialog from "@/features/resume/components/DeleteResumeDialog";
@@ -11,6 +11,8 @@ import {
 	type ResumeItem,
 } from "@/features/resume/api/resumeApi";
 import { getRequiredError, sanitizeText } from "@/shared/lib/formValidation";
+import PageTitle from "@/shared/components/layout/PageTitle";
+import { useDialogContext } from "@/app/contexts/useDialogContext";
 
 export default function ResumePage() {
 	const [formData, setFormData] = useState<ResumeFormObject>({
@@ -18,10 +20,10 @@ export default function ResumePage() {
 		content: "",
 	});
 	const [editingId, setEditingId] = useState<number | string | null>(null);
-	const [isFormOpen, setIsFormOpen] = useState(false);
 	const [errors, setErrors] = useState<{ title?: string; content?: string }>(
 		{},
 	);
+	const { isOpen, closeDialog, openDialog } = useDialogContext();
 
 	const { data, isLoading } = useCustomQuery({
 		key: ["resumes"],
@@ -29,12 +31,28 @@ export default function ResumePage() {
 	});
 	const resumes = (data?.data ?? []) as ResumeItem[];
 
+	const { data: singleResume, isLoading: isSinglePending } = useCustomQuery({
+		key: ["single.resume", editingId],
+		func: () => resumeAPI.getResumeById(editingId ?? 0),
+		options: { enabled: !!editingId },
+	});
+	useEffect(() => {
+		(() => {
+			if (!singleResume) return;
+			setFormData({
+				title: singleResume.data.title,
+				content: singleResume.data.content,
+			});
+			openDialog();
+		})();
+	}, [singleResume, openDialog]);
+
 	const createMutation = useCustomMutation(
 		resumeAPI.createResume,
 		{
 			onSuccess: () => {
 				toast.success("رزومه جدید با موفقیت ثبت شد.");
-				setIsFormOpen(false);
+				closeDialog();
 				setErrors({});
 				setFormData({ title: "", content: "" });
 			},
@@ -47,7 +65,6 @@ export default function ResumePage() {
 		{
 			onSuccess: () => {
 				toast.success("رزومه با موفقیت ویرایش شد.");
-				setIsFormOpen(false);
 				setEditingId(null);
 				setErrors({});
 				setFormData({ title: "", content: "" });
@@ -71,27 +88,23 @@ export default function ResumePage() {
 		setErrors((prev) => ({ ...prev, [key]: undefined }));
 	};
 
-	const openCreateForm = () => {
-		setEditingId(null);
-		setErrors({});
-		setFormData({ title: "", content: "" });
-		setIsFormOpen(true);
-	};
+	useEffect(() => {
+		const open = () => {
+			openDialog();
+			setEditingId(null);
+			setErrors({});
+			setFormData({ title: "", content: "" });
+		};
+		const close = () => {
+			closeDialog();
+			setEditingId(null);
+			setErrors({});
+			setFormData({ title: "", content: "" });
+		};
 
-	const handleEdit = async (resume: ResumeItem) => {
-		try {
-			const response = await resumeAPI.getResumeById(resume.id);
-			setEditingId(resume.id);
-			setFormData({
-				title: response.data.title,
-				content: response.data.content,
-			});
-			setIsFormOpen(true);
-		} catch (error) {
-			console.error(error);
-			toast.error("امکان بارگذاری رزومه برای ویرایش وجود ندارد.");
-		}
-	};
+		if (isOpen) open();
+		else close();
+	}, [isOpen, closeDialog, openDialog]);
 
 	const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
@@ -125,22 +138,15 @@ export default function ResumePage() {
 	return (
 		<div className="md:p-7 max-md:py-5 max-md:px-6 flex flex-col gap-8 w-full">
 			<header className="flex max-md:flex-col max-md:items-start md:items-center justify-between gap-4">
-				<div className="flex items-center gap-3">
-					<div className="flex items-center justify-center rounded-full size-12 bg-linear-30 from-accent-hover to-match">
-						<FileText className="size-6 text-background" />
-					</div>
-					<div className="flex flex-col gap-1">
-						<p className="font-semibold text-2xl text-primary-text">رزومه‌ها</p>
-						<p className="text-text-muted">
-							رزومه‌های ذخیره‌شده خود را مدیریت کنید.
-						</p>
-					</div>
-				</div>
+				<PageTitle
+					icon={FileText}
+					title="رزومه‌ها"
+					desc="رزومه‌های ذخیره‌شده خود را مدیریت کنید."
+				/>
 
 				<div className="flex flex-wrap gap-2">
 					<button
 						type="button"
-						onClick={openCreateForm}
 						className="flex items-center gap-2 px-4 h-10 rounded-full bg-primary-action text-white font-semibold cursor-pointer">
 						<Plus className="size-4" />
 						<span>افزودن رزومه</span>
@@ -177,10 +183,16 @@ export default function ResumePage() {
 								<div className="flex flex-wrap gap-2">
 									<button
 										type="button"
-										onClick={() => handleEdit(resume)}
+										onClick={() => setEditingId(resume.id)}
 										className="flex items-center gap-1 px-3 h-9 rounded-full border border-border cursor-pointer">
-										<Pencil className="size-4" />
-										<p>ویرایش</p>
+										{!isSinglePending ? (
+											<>
+												<Pencil className="size-4" />
+												<p>ویرایش</p>
+											</>
+										) : (
+											<LoaderCircle className="size-5 animate-spin" />
+										)}
 									</button>
 									<DeleteDialog id={resume.id} />
 								</div>
@@ -189,14 +201,10 @@ export default function ResumePage() {
 					</div>
 				)}
 			</section>
+
 			<ResumeForm
-				open={isFormOpen}
-				onClose={() => {
-					setIsFormOpen(false);
-					setEditingId(null);
-					setErrors({});
-					setFormData({ title: "", content: "" });
-				}}
+				open={isOpen}
+				onClose={closeDialog}
 				editingId={editingId}
 				formData={formData}
 				onChange={handleChange}

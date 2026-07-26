@@ -15,7 +15,7 @@ import {
 	Star,
 	AlertTriangle,
 } from "lucide-react";
-import Title from "@/shared/components/ui/PageTitle";
+import Title from "@/shared/components/ui/MainTitle";
 import { checkTokens } from "@/shared/lib/authTokens";
 
 export default function LandingPage() {

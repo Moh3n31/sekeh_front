@@ -6,6 +6,7 @@ import Pagination from "@/shared/components/ui/Pagination";
 import EditJobDialog from "@/features/admin/components/EditJobDialog";
 import DeleteJobDialog from "@/features/admin/components/DeleteJobDialog";
 import { useQueryClient } from "@tanstack/react-query";
+import PageTitle from "@/shared/components/layout/PageTitle";
 
 export default function AdminJobsPage() {
 	const [search, setSearch] = useState("");
@@ -20,17 +21,13 @@ export default function AdminJobsPage() {
 	const jobs = data?.data.jobs ?? [];
 
 	return (
-		<div className="p-7 max-md:p-4 overflow-y-auto h-full w-full scrollbar-gray flex flex-col gap-5">
+		<div className="p-7 max-md:p-4 w-full flex flex-col gap-5 h-full overflow-hidden">
 			<header className="flex flex-col gap-4">
-				<div className="flex items-center gap-3">
-					<div className="flex items-center justify-center rounded-full size-12 bg-linear-30 from-accent-hover to-match">
-						<Briefcase className="size-6 text-background" />
-					</div>
-					<div>
-						<p className="font-semibold text-2xl text-primary-text">مدیریت مشاغل</p>
-						<p className="text-text-muted">لیست مشاغل را مرور، ویرایش یا حذف کنید.</p>
-					</div>
-				</div>
+				<PageTitle
+					icon={Briefcase}
+					title="مدیریت مشاغل"
+					desc="لیست مشاغل را مرور، ویرایش یا حذف کنید."
+				/>
 				<div className="flex items-center justify-between gap-3 max-md:flex-col max-md:items-stretch">
 					<input
 						value={search}
@@ -39,20 +36,26 @@ export default function AdminJobsPage() {
 							setSearch(e.target.value);
 						}}
 						placeholder="جستجو بر اساس عنوان، شرکت یا متن..."
-					className="border-2 border-border rounded-md h-10 px-3 w-72 max-md:w-full outline-0
+						className="border-2 border-border rounded-md h-10 px-3 w-72 max-md:w-full outline-0
 					focus:border-accent transition-all duration-150 text-[15px]"
-				/>
+					/>
 				</div>
 			</header>
 
-			<div className="rounded-lg border-2 border-border overflow-hidden overflow-x-auto">
+			<div className="rounded-lg border-2 border-border overflow-auto scrollbar-gray">
 				<table className="w-full text-[14px]">
 					<thead className="bg-surface text-primary-action">
 						<tr>
 							<th className="text-right p-3 font-semibold">عنوان</th>
-							<th className="text-right p-3 font-semibold max-md:hidden">شرکت</th>
-							<th className="text-right p-3 font-semibold max-md:hidden">مکان</th>
-							<th className="text-right p-3 font-semibold max-md:hidden">منبع</th>
+							<th className="text-right p-3 font-semibold max-md:hidden">
+								شرکت
+							</th>
+							<th className="text-right p-3 font-semibold max-md:hidden">
+								مکان
+							</th>
+							<th className="text-right p-3 font-semibold max-md:hidden">
+								منبع
+							</th>
 							<th className="text-right p-3 font-semibold">امبدینگ</th>
 							<th className="text-right p-3 font-semibold"></th>
 						</tr>
@@ -69,11 +72,21 @@ export default function AdminJobsPage() {
 										</tr>
 									))
 							: jobs.map((j) => (
-									<tr key={j.job_id} className="border-t border-border hover:bg-surface/50 transition-all duration-150">
-										<td className="p-3 text-primary-text font-medium">{j.job_title ?? "—"}</td>
-										<td className="p-3 text-text-muted max-md:hidden">{j.company_name ?? "—"}</td>
-										<td className="p-3 text-text-muted max-md:hidden">{j.location ?? "—"}</td>
-										<td className="p-3 text-text-muted max-md:hidden">{j.source_site ?? "—"}</td>
+									<tr
+										key={j.job_id}
+										className="border-t border-border hover:bg-surface/50 transition-all duration-150">
+										<td className="p-3 text-primary-text font-medium">
+											{j.job_title ?? "—"}
+										</td>
+										<td className="p-3 text-text-muted max-md:hidden">
+											{j.company_name ?? "—"}
+										</td>
+										<td className="p-3 text-text-muted max-md:hidden">
+											{j.location ?? "—"}
+										</td>
+										<td className="p-3 text-text-muted max-md:hidden">
+											{j.source_site ?? "—"}
+										</td>
 										<td className="p-3">
 											<span
 												className={`px-2 py-0.5 rounded-full text-[12px] font-semibold
@@ -86,7 +99,11 @@ export default function AdminJobsPage() {
 											<DeleteJobDialog
 												id={j.job_id}
 												title={j.job_title ?? j.job_url}
-												onDeleted={() => queryClient.invalidateQueries({ queryKey: ["adminJobs"] })}
+												onDeleted={() =>
+													queryClient.invalidateQueries({
+														queryKey: ["adminJobs"],
+													})
+												}
 											/>
 										</td>
 									</tr>
@@ -103,7 +120,13 @@ export default function AdminJobsPage() {
 				</table>
 			</div>
 
-			{data?.data && <Pagination page={data.data.page} pages={data.data.pages} onChange={setPage} />}
+			{data?.data && (
+				<Pagination
+					page={data.data.page}
+					pages={data.data.pages}
+					onChange={setPage}
+				/>
+			)}
 		</div>
 	);
 }

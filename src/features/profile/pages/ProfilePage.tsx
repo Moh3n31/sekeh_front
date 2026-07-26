@@ -53,7 +53,7 @@ export default function ProfilePage() {
 				</div>
 			</section>
 
-			<menu className="flex flex-col items-start gap-3">
+			<menu className="flex flex-col md:items-start max-md:items-center gap-3">
 				<EditProfileDialog refetch={refetch} />
 				<ChangePasswordDialog />
 				<DeleteAccountDialog />

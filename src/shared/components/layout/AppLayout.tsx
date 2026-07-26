@@ -4,7 +4,7 @@ import NavbarMobile from "@/shared/components/layout/MobileNavigation";
 import { useEffect } from "react";
 import { checkTokens, removeTokens } from "@/shared/lib/authTokens";
 import { toast } from "@/shared/lib/toast";
-import Title from "@/shared/components/ui/PageTitle";
+import Title from "@/shared/components/ui/MainTitle";
 
 export default function AppLayout() {
 	const navigate = useNavigate();
@@ -29,14 +29,14 @@ export default function AppLayout() {
 	}, [navigate]);
 
 	return (
-		<div className="h-screen w-screen bg-surface flex" id="main-container">
+		<div className="h-dvh w-screen bg-surface flex" id="main-container">
 			<NavbarDesktop />
-			<div className="flex flex-col h-full w-full">
-				<header className="bg-background md:pe-5 max-md:px-3 flex h-17 shrink-0 items-center max-md:gap-7">
+			<div className="flex flex-col h-dvh w-full">
+				<header className="bg-background md:pe-5 max-md:px-3 flex h-(--navbar-height) shrink-0 items-center max-md:gap-7">
 					<NavbarMobile />
 					<Title mianColor="accent" subColor="primary-text" />
 				</header>
-				<main className="max-h-dvh overflow-x-hidden overflow-y-auto">
+				<main className="h-(--full-outlet-height) overflow-x-hidden overflow-y-auto">
 					<Outlet />
 				</main>
 			</div>

@@ -2,13 +2,15 @@ import { Mail, BookOpen, GraduationCap } from "lucide-react";
 
 export default function ContactPage() {
 	return (
-		<div className="flex items-center justify-center h-full px-4 py-10">
+		<div className="flex items-center justify-center px-4 py-10">
 			<div className="w-full max-w-3xl rounded-3xl border border-border bg-background p-8 shadow-lg shadow-border flex flex-col gap-8">
 				<div className="flex items-center gap-5 text-primary-action">
 					<BookOpen className="size-6" />
 					<div className="flex flex-col items-start gap-3">
 						<p className="text-3xl font-bold">تماس و اطلاعات پروژه</p>
-						<p className="text-sm text-text-muted">این پروژه دانشگاهی زیر نظر دکتر جلالی انجام شده است.</p>
+						<p className="text-sm text-text-muted">
+							این پروژه دانشگاهی زیر نظر دکتر جلالی انجام شده است.
+						</p>
 					</div>
 				</div>
 
@@ -57,11 +59,15 @@ export default function ContactPage() {
 						<GraduationCap className="size-5 text-primary-action" />
 						<div>
 							<p className="font-semibold text-primary-text">مشخصات پروژه</p>
-							<p className="text-sm text-text-muted">پروژه‌ای دانشگاهی در دوره کارشناسی</p>
+							<p className="text-sm text-text-muted">
+								پروژه‌ای دانشگاهی در دوره کارشناسی
+							</p>
 						</div>
 					</div>
 					<p className="text-sm text-primary-text leading-7">
-						این پروژه به عنوان یک کار دانشگاهی زیر نظر دکتر جلالی طراحی و پیاده‌سازی شده است. هدف ایجاد یک سامانه هوشمند برای کمک به کاریابی و رزومه‌‌سازی کاربران بود.
+						این پروژه به عنوان یک کار دانشگاهی زیر نظر دکتر جلالی طراحی و
+						پیاده‌سازی شده است. هدف ایجاد یک سامانه هوشمند برای کمک به کاریابی و
+						رزومه‌‌سازی کاربران بود.
 					</p>
 				</div>
 			</div>

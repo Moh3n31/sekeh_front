@@ -5,6 +5,7 @@ import { useCustomQuery } from "@/shared/hooks/useCustomQuery";
 import Pagination from "@/shared/components/ui/Pagination";
 import DeleteUserDialog from "@/features/admin/components/DeleteUserDialog";
 import { useQueryClient } from "@tanstack/react-query";
+import PageTitle from "@/shared/components/layout/PageTitle";
 
 export default function AdminUsersPage() {
 	const [search, setSearch] = useState("");
@@ -19,17 +20,13 @@ export default function AdminUsersPage() {
 	const users = data?.data.users ?? [];
 
 	return (
-		<div className="p-7 max-md:p-4 overflow-y-auto h-full w-full scrollbar-gray flex flex-col gap-5">
+		<div className="p-7 max-md:p-4 w-full h-full grid-cols-2 flex flex-col gap-5">
 			<header className="flex flex-col gap-4">
-				<div className="flex items-center gap-3">
-					<div className="flex items-center justify-center rounded-full size-12 bg-linear-30 from-accent-hover to-match">
-						<Users className="size-6 text-background" />
-					</div>
-					<div>
-						<p className="font-semibold text-2xl text-primary-text">مدیریت کاربران</p>
-						<p className="text-text-muted">کاربران ثبت‌نام‌شده را جستجو و مدیریت کنید.</p>
-					</div>
-				</div>
+				<PageTitle
+					icon={Users}
+					title="مدیریت کاربران"
+					desc="کاربران ثبت‌نام‌شده را جستجو و مدیریت کنید."
+				/>
 				<div className="flex items-center justify-between gap-3 max-md:flex-col max-md:items-stretch">
 					<input
 						value={search}
@@ -44,15 +41,21 @@ export default function AdminUsersPage() {
 				</div>
 			</header>
 
-			<div className="rounded-lg border-2 border-border overflow-hidden overflow-x-auto">
+			<div className="rounded-lg border-2 border-border overflow-auto h-full scrollbar-gray">
 				<table className="w-full text-[14px]">
 					<thead className="bg-surface text-primary-action">
 						<tr>
 							<th className="text-right p-3 font-semibold">نام کاربری</th>
-							<th className="text-right p-3 font-semibold max-md:hidden">ایمیل</th>
-							<th className="text-right p-3 font-semibold max-md:hidden">تلفن</th>
+							<th className="text-right p-3 font-semibold max-md:hidden">
+								ایمیل
+							</th>
+							<th className="text-right p-3 font-semibold max-md:hidden">
+								تلفن
+							</th>
 							<th className="text-right p-3 font-semibold">نقش</th>
-							<th className="text-right p-3 font-semibold max-md:hidden">تاریخ ثبت</th>
+							<th className="text-right p-3 font-semibold max-md:hidden">
+								تاریخ ثبت
+							</th>
 							<th className="text-right p-3 font-semibold"></th>
 						</tr>
 					</thead>
@@ -68,10 +71,18 @@ export default function AdminUsersPage() {
 										</tr>
 									))
 							: users.map((u) => (
-									<tr key={u.user_id} className="border-t border-border hover:bg-surface/50 transition-all duration-150">
-										<td className="p-3 text-primary-text font-medium">{u.username}</td>
-										<td className="p-3 text-text-muted max-md:hidden">{u.email ?? "—"}</td>
-										<td className="p-3 text-text-muted max-md:hidden">{u.phone_number ?? "—"}</td>
+									<tr
+										key={u.user_id}
+										className="border-t border-border hover:bg-surface/50 transition-all duration-150">
+										<td className="p-3 text-primary-text font-medium">
+											{u.username}
+										</td>
+										<td className="p-3 text-text-muted max-md:hidden">
+											{u.email ?? "—"}
+										</td>
+										<td className="p-3 text-text-muted max-md:hidden">
+											{u.phone_number ?? "—"}
+										</td>
 										<td className="p-3">
 											<span
 												className={`px-2 py-0.5 rounded-full text-[12px] font-semibold
@@ -86,7 +97,11 @@ export default function AdminUsersPage() {
 											<DeleteUserDialog
 												id={u.user_id}
 												username={u.username}
-												onDeleted={() => queryClient.invalidateQueries({ queryKey: ["adminUsers"] })}
+												onDeleted={() =>
+													queryClient.invalidateQueries({
+														queryKey: ["adminUsers"],
+													})
+												}
 											/>
 										</td>
 									</tr>
@@ -103,7 +118,13 @@ export default function AdminUsersPage() {
 				</table>
 			</div>
 
-			{data?.data && <Pagination page={data.data.page} pages={data.data.pages} onChange={setPage} />}
+			{data?.data && (
+				<Pagination
+					page={data.data.page}
+					pages={data.data.pages}
+					onChange={setPage}
+				/>
+			)}
 		</div>
 	);
 }

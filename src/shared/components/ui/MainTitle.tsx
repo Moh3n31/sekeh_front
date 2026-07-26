@@ -1,6 +1,6 @@
 import MainIcon from "./MainIcon";
 
-export default function PageTitle({
+export default function MainTitle({
 	wrapperClassName,
 	mianColor,
 	subColor,

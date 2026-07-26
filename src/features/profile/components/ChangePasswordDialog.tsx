@@ -1,10 +1,10 @@
+import { useDialogContext } from "@/app/contexts/useDialogContext";
 import { authAPI } from "@/features/auth/api/authApi";
 import Button from "@/shared/components/ui/Button";
 import Dialog from "@/shared/components/ui/Dialog";
 import PasswordInput from "@/shared/components/ui/PasswordInput";
 import PasswordRequirements from "@/shared/components/ui/PasswordRequirements";
 import { useCustomMutation } from "@/shared/hooks/useCustomMutation";
-import { useDialog } from "@/shared/hooks/useDialog";
 import { getPasswordError } from "@/shared/lib/formValidation";
 import { toast } from "@/shared/lib/toast";
 import { KeyRound, LoaderCircle } from "lucide-react";
@@ -37,7 +37,7 @@ const getFormErrors = (form: PasswordForm) => ({
 export default function ChangePasswordDialog() {
 	const [form, setForm] = useState<PasswordForm>(initialForm);
 	const [touched, setTouched] = useState<TouchedFields>({});
-	const dialog = useDialog();
+	const dialog = useDialogContext();
 	const { mutate, isPending } = useCustomMutation(authAPI.changePassword);
 
 	const validationErrors = getFormErrors(form);
@@ -52,11 +52,6 @@ export default function ChangePasswordDialog() {
 
 	const markTouched = (key: keyof PasswordForm) => {
 		setTouched((current) => ({ ...current, [key]: true }));
-	};
-
-	const handleOpenChange = (open: boolean) => {
-		dialog.setDialogOpen(open);
-		if (!open) setTouched({});
 	};
 
 	const handleSubmit = () => {
@@ -78,24 +73,23 @@ export default function ChangePasswordDialog() {
 
 	return (
 		<>
-			<Button
-				onClick={dialog.openDialog}
-				aria-haspopup="dialog"
-				aria-expanded={dialog.isOpen}>
-				<KeyRound className="size-5" strokeWidth={1.5} />
-				<span className="pb-1">تغییر رمز عبور</span>
-			</Button>
-
 			<Dialog
-				open={dialog.isOpen}
-				onOpenChange={handleOpenChange}
+				trigger={
+					<Button aria-haspopup="dialog" aria-expanded={dialog.isOpen}>
+						<KeyRound className="size-5" strokeWidth={1.5} />
+						<span className="pb-1">تغییر رمز عبور</span>
+					</Button>
+				}
 				variant="fullscreen"
 				title="تغییر رمز عبور"
 				footer={
 					<>
 						<Button
 							variant="outline"
-							onClick={dialog.closeDialog}
+							onClick={() => {
+								dialog.closeDialog();
+								setTouched({});
+							}}
 							disabled={isPending}>
 							بازگشت
 						</Button>

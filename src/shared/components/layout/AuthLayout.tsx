@@ -1,5 +1,5 @@
 import { Outlet } from "react-router";
-import Title from "@/shared/components/ui/PageTitle";
+import Title from "@/shared/components/ui/MainTitle";
 
 export default function AuthLayout() {
 	return (

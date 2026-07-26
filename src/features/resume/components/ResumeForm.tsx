@@ -8,7 +8,10 @@ interface Props {
 	onClose: () => void;
 	editingId: number | string | null;
 	formData: ResumeFormObject;
-	onChange: <K extends keyof ResumeFormObject>(key: K, value: ResumeFormObject[K]) => void;
+	onChange: <K extends keyof ResumeFormObject>(
+		key: K,
+		value: ResumeFormObject[K],
+	) => void;
 	onSubmit: (e: FormEvent<HTMLFormElement>) => void;
 	validate: boolean;
 	isPending: boolean;
@@ -35,7 +38,13 @@ export default function ResumeForm({
 			onClose={onClose}
 			variant="fullscreen"
 			title={editingId ? "ویرایش رزومه" : "رزومه جدید"}
-			closeButton={<button className="py-1 px-3 border-2 border-border text-text-muted rounded-md">بازگشت</button>}
+			closeButton={
+				<button
+					type="button"
+					className="py-1 px-3 border-2 border-border text-text-muted rounded-md">
+					بازگشت
+				</button>
+			}
 			footer={
 				<button
 					form="resume-form"
@@ -43,11 +52,18 @@ export default function ResumeForm({
 					className={`py-1 px-3 rounded-md font-semibold bg-primary-action text-white flex items-center gap-2 ${
 						isPending || !validate ? "opacity-40 pointer-events-none" : ""
 					}`}>
-					{isPending ? <LoaderCircle className="size-4 animate-spin" /> : <SendHorizonal className="size-4" />}
+					{isPending ? (
+						<LoaderCircle className="size-4 animate-spin" />
+					) : (
+						<SendHorizonal className="size-4" />
+					)}
 					<span>{editingId ? "ذخیره تغییرات" : "ثبت رزومه"}</span>
 				</button>
 			}>
-			<form id="resume-form" onSubmit={onSubmit} className="flex flex-col gap-6">
+			<form
+				id="resume-form"
+				onSubmit={onSubmit}
+				className="flex flex-col gap-6">
 				<div className="flex flex-col gap-2">
 					<label className="font-semibold text-primary-text">عنوان</label>
 					<input
@@ -58,7 +74,9 @@ export default function ResumeForm({
 						aria-invalid={Boolean(errors?.title)}
 						className={`px-2 border-2 rounded-md h-10 placeholder:text-text-muted text-[16px] outline-0 focus:border-accent transition-all duration-150 ${errors?.title ? "border-red-500" : "border-border"}`}
 					/>
-					{errors?.title ? <p className="text-sm text-red-500">{errors.title}</p> : null}
+					{errors?.title ? (
+						<p className="text-sm text-red-500">{errors.title}</p>
+					) : null}
 				</div>
 
 				<div className="flex flex-col gap-2">
@@ -72,7 +90,9 @@ export default function ResumeForm({
 						aria-invalid={Boolean(errors?.content)}
 						className={`px-2 py-2 border-2 rounded-md placeholder:text-text-muted text-[16px] outline-0 focus:border-accent transition-all duration-150 resize-y ${errors?.content ? "border-red-500" : "border-border"}`}
 					/>
-					{errors?.content ? <p className="text-sm text-red-500">{errors.content}</p> : null}
+					{errors?.content ? (
+						<p className="text-sm text-red-500">{errors.content}</p>
+					) : null}
 				</div>
 			</form>
 		</Dialog>

@@ -4,6 +4,7 @@ import NewChatDialog from "@/features/chat/components/NewChatDialog";
 import HistoryCard from "@/features/chat/components/ChatHistoryCard";
 import { useCustomQuery } from "@/shared/hooks/useCustomQuery";
 import { MessageSquareText } from "lucide-react";
+import PageTitle from "@/shared/components/layout/PageTitle";
 
 export default function ChatHistoryPage() {
 	const { data, isPending } = useCustomQuery({
@@ -15,22 +16,12 @@ export default function ChatHistoryPage() {
 	const hasChats = chats.length > 0;
 
 	return (
-		<div className="p-7 overflow-y-auto overflow-x-hidden w-full h-full scrollbar-gray flex flex-col">
-			<header className="flex max-md:flex-col max-md:items-start md:items-center justify-between gap-4 mb-6">
-				<div className="flex items-center gap-3">
-					<div className="flex items-center justify-center rounded-full size-12 bg-linear-30 from-accent-hover to-match">
-						<MessageSquareText className="size-6 text-background" />
-					</div>
-					<div>
-						<p className="font-semibold text-2xl text-primary-text">
-							تاریخچه چت‌ها
-						</p>
-						<p className="text-text-muted">
-							چت‌های قبلی خود را مرور و مدیریت کنید.
-						</p>
-					</div>
-				</div>
-			</header>
+		<div className="p-7 overflow-y-auto overflow-x-hidden w-full h-full scrollbar-gray flex flex-col gap-5">
+			<PageTitle
+				icon={MessageSquareText}
+				title="تاریخچه چت‌ها"
+				desc="چت‌های قبلی خود را مرور و مدیریت کنید."
+			/>
 
 			<menu className="absolute top-25 end-5 flex flex-col items-end gap-3 z-3">
 				<NewChatDialog />

@@ -4,3 +4,8 @@
 @import "../../assets/styles/fonts.css";
 
 @custom-variant dark (&:where(.dark, .dark *));
+
+:root {
+	--navbar-height: 68px;
+	--full-outlet-height: calc(100dvh - var(--navbar-height));
+}
