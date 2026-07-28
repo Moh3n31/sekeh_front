@@ -146,6 +146,7 @@ export default function ResumePage() {
 
 				<div className="flex flex-wrap gap-2">
 					<button
+						onClick={openDialog}
 						type="button"
 						className="flex items-center gap-2 px-4 h-10 rounded-full bg-primary-action text-white font-semibold cursor-pointer">
 						<Plus className="size-4" />
