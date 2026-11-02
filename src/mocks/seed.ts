@@ -694,6 +694,38 @@ mohsenmahmoudi79@gmail.com
 
 تحصیلات: کارشناسی مهندسی کامپیوتر، پروژه پایانی زیر نظر دکتر جلالی`;
 
+export const backendResume = `محسن محمودی
+توسعه‌دهنده بک‌اند | تهران
+mohsenmahmoudi79@gmail.com | 09127654321
+
+خلاصه
+حدود سه سال روی سرویس‌های بک‌اند با Python، FastAPI و Django کار کرده‌ام. در پروژه سکه، API گفتگو، رزومه و پیشنهاد شغل را طراحی و پیاده کردم. دنبال نقش میانی بک‌اند در یک تیم محصول‌محور هستم.
+
+مهارت‌ها
+Python، FastAPI، Django، PostgreSQL، Redis، REST API، JWT، Docker، Git، SQL
+
+تجربه
+توسعه‌دهنده بک‌اند | پروژه سکه | ۱۴۰۳ تا ۱۴۰۴
+طراحی و پیاده‌سازی API گفتگو و استریم پاسخ دستیار.
+ذخیره رزومه، نشان‌گذاری شغل و فیلتر پیشنهاد بر اساس تطابق.
+احراز هویت، تازه‌سازی توکن و مدیریت نشست کاربر.
+بهینه‌سازی کوئری‌های PostgreSQL و کش Redis برای لیست مشاغل.
+
+کارآموز بک‌اند | استودیو وب‌نو | تابستان ۱۴۰۲
+ساخت endpointهای ثبت‌نام و ورود.
+نوشتن تست سرویس و مستندسازی قرارداد API.
+
+تحصیلات
+کارشناسی مهندسی کامپیوتر
+پروژه پایانی: سامانه کاریابی هوشمند سکه، زیر نظر دکتر جلالی
+
+زبان
+فارسی، زبان مادری
+انگلیسی، خواندن مستندات فنی`;
+
+export const FRONTEND_RESUME_MARKER = "توسعه‌دهنده فرانت‌اند | تهران";
+export const BACKEND_RESUME_MARKER = "توسعه‌دهنده بک‌اند | تهران";
+
 function buildResumes(userId: number): MockResume[] {
 	return [
 		{
@@ -711,6 +743,14 @@ function buildResumes(userId: number): MockResume[] {
 			content: shortResume,
 			created_at: "2026-10-06T13:50:00.000Z",
 			updated_at: "2026-10-06T14:10:00.000Z",
+		},
+		{
+			id: 3,
+			user_id: userId,
+			title: "رزومه بک‌اند — محسن محمودی",
+			content: backendResume,
+			created_at: "2026-10-18T09:20:00.000Z",
+			updated_at: "2026-10-25T16:40:00.000Z",
 		},
 	];
 }
@@ -760,7 +800,7 @@ export function createSeed(): MockDatabase {
 	);
 
 	return {
-		version: 1,
+		version: 2,
 		users,
 		chats,
 		resumes,
@@ -775,7 +815,7 @@ export function createSeed(): MockDatabase {
 		sequences: {
 			user: users.length + 1,
 			chat: 8,
-			resume: 3,
+			resume: 4,
 			message: 100,
 			job: catalog.length + 1,
 		},

@@ -11,7 +11,7 @@ import type {
 } from "@/mocks/types";
 
 const STORAGE_KEY = "sekeh-mock-db";
-const DB_VERSION = 1;
+const DB_VERSION = 2;
 
 let memory: MockDatabase | null = null;
 
